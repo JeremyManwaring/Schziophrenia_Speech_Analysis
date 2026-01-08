@@ -1,0 +1,4710 @@
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Starting analysis for all subjects...
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+
+╔══════════════════════════════════════════════════════════╗
+║    Processing All 71 Subjects                           ║
+╚══════════════════════════════════════════════════════════╝
+
+
+═══════════════════════════════════════════════════════════
+BATCH 1/24: Subjects 1-3
+Processing: 01, 02, 03
+═══════════════════════════════════════════════════════════
+
+
+[1/71] Subject 01
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 01
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 01...
+[Warning: Failed to preprocess subject 01: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-01/func/rsub-01_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 01 completed
+
+[2/71] Subject 02
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 02
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 02...
+[Warning: Failed to preprocess subject 02: Functional image not found for
+subject 02] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 02 completed
+
+[3/71] Subject 03
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 03
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 03...
+[Warning: Failed to preprocess subject 03: Functional image not found for
+subject 03] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 03 completed
+
+Batch 1 completed in 0.3 minutes
+Progress: 3/3 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 2/24: Subjects 4-6
+Processing: 04, 05, 06
+═══════════════════════════════════════════════════════════
+
+
+[4/71] Subject 04
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 04
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 04...
+[Warning: Failed to preprocess subject 04: Functional image not found for
+subject 04] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 04 completed
+
+[5/71] Subject 05
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 05
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 05...
+[Warning: Failed to preprocess subject 05: Functional image not found for
+subject 05] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 05 completed
+
+[6/71] Subject 06
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 06
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 06...
+[Warning: Failed to preprocess subject 06: Functional image not found for
+subject 06] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 06 completed
+
+Batch 2 completed in 0.3 minutes
+Progress: 6/6 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 3/24: Subjects 7-9
+Processing: 07, 08, 09
+═══════════════════════════════════════════════════════════
+
+
+[7/71] Subject 07
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 07
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 07...
+[Warning: Failed to preprocess subject 07: Functional image not found for
+subject 07] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 07 completed
+
+[8/71] Subject 08
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 08
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 08...
+[Warning: Failed to preprocess subject 08: Functional image not found for
+subject 08] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 08 completed
+
+[9/71] Subject 09
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 09
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 09...
+[Warning: Failed to preprocess subject 09: Functional image not found for
+subject 09] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 09 completed
+
+Batch 3 completed in 0.2 minutes
+Progress: 9/9 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 4/24: Subjects 10-12
+Processing: 10, 11, 12
+═══════════════════════════════════════════════════════════
+
+
+[10/71] Subject 10
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 10
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 10...
+[Warning: Failed to preprocess subject 10: Functional image not found for
+subject 10] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 10 completed
+
+[11/71] Subject 11
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 11
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 11...
+[Warning: Failed to preprocess subject 11: Functional image not found for
+subject 11] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 11 completed
+
+[12/71] Subject 12
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 12
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 12...
+[Warning: Failed to preprocess subject 12: Functional image not found for
+subject 12] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 12 completed
+
+Batch 4 completed in 0.3 minutes
+Progress: 12/12 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 5/24: Subjects 13-15
+Processing: 13, 14, 15
+═══════════════════════════════════════════════════════════
+
+
+[13/71] Subject 13
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 13
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 13...
+[Warning: Failed to preprocess subject 13: Functional image not found for
+subject 13] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 13 completed
+
+[14/71] Subject 14
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 14
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 14...
+[Warning: Failed to preprocess subject 14: Functional image not found for
+subject 14] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 14 completed
+
+[15/71] Subject 15
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 15
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 15...
+[Warning: Failed to preprocess subject 15: Functional image not found for
+subject 15] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 15 completed
+
+Batch 5 completed in 0.3 minutes
+Progress: 15/15 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 6/24: Subjects 16-18
+Processing: 16, 17, 18
+═══════════════════════════════════════════════════════════
+
+
+[16/71] Subject 16
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 16
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 16...
+[Warning: Failed to preprocess subject 16: Functional image not found for
+subject 16] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 16 completed
+
+[17/71] Subject 17
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 17
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 17...
+[Warning: Failed to preprocess subject 17: Functional image not found for
+subject 17] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 17 completed
+
+[18/71] Subject 18
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 18
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 18...
+[Warning: Failed to preprocess subject 18: Functional image not found for
+subject 18] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 18 completed
+
+Batch 6 completed in 0.3 minutes
+Progress: 18/18 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 7/24: Subjects 19-21
+Processing: 19, 20, 21
+═══════════════════════════════════════════════════════════
+
+
+[19/71] Subject 19
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 19
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 19...
+[Warning: Failed to preprocess subject 19: Functional image not found for
+subject 19] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 19 completed
+
+[20/71] Subject 20
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 20
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 20...
+[Warning: Failed to preprocess subject 20: Functional image not found for
+subject 20] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 20 completed
+
+[21/71] Subject 21
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 21
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 21...
+[Warning: Failed to preprocess subject 21: Functional image not found for
+subject 21] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 21 completed
+
+Batch 7 completed in 0.3 minutes
+Progress: 21/21 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 8/24: Subjects 22-24
+Processing: 22, 23, 24
+═══════════════════════════════════════════════════════════
+
+
+[22/71] Subject 22
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 22
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 22...
+[Warning: Failed to preprocess subject 22: Functional image not found for
+subject 22] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 22 completed
+
+[23/71] Subject 23
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 23
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 23...
+[Warning: Failed to preprocess subject 23: Functional image not found for
+subject 23] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 23 completed
+
+[24/71] Subject 24
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 24
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 24...
+[Warning: Failed to preprocess subject 24: Functional image not found for
+subject 24] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 24 completed
+
+Batch 8 completed in 0.3 minutes
+Progress: 24/24 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 9/24: Subjects 25-27
+Processing: 25, 26, 27
+═══════════════════════════════════════════════════════════
+
+
+[25/71] Subject 25
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 25
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 25...
+[Warning: Failed to preprocess subject 25: Functional image not found for
+subject 25] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 25 completed
+
+[26/71] Subject 26
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 26
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 26...
+[Warning: Failed to preprocess subject 26: Functional image not found for
+subject 26] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 26 completed
+
+[27/71] Subject 27
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 27
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 27...
+[Warning: Failed to preprocess subject 27: Functional image not found for
+subject 27] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 27 completed
+
+Batch 9 completed in 0.3 minutes
+Progress: 27/27 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 10/24: Subjects 28-30
+Processing: 28, 29, 30
+═══════════════════════════════════════════════════════════
+
+
+[28/71] Subject 28
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 28
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 28...
+[Warning: Failed to preprocess subject 28: Functional image not found for
+subject 28] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 28 completed
+
+[29/71] Subject 29
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 29
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 29...
+[Warning: Failed to preprocess subject 29: Functional image not found for
+subject 29] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 29 completed
+
+[30/71] Subject 30
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 30
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 30...
+[Warning: Failed to preprocess subject 30: Functional image not found for
+subject 30] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 30 completed
+
+Batch 10 completed in 0.3 minutes
+Progress: 30/30 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 11/24: Subjects 31-33
+Processing: 32, 33, 34
+═══════════════════════════════════════════════════════════
+
+
+[31/71] Subject 32
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 32
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 32...
+[Warning: Failed to preprocess subject 32: Functional image not found for
+subject 32] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 32 completed
+
+[32/71] Subject 33
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 33
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 33...
+[Warning: Failed to preprocess subject 33: Functional image not found for
+subject 33] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 33 completed
+
+[33/71] Subject 34
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 34
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 34...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 34...
+[Warning: Failed to preprocess subject 34: Functional image not found for
+subject 34] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 34 completed
+
+Batch 11 completed in 0.3 minutes
+Progress: 33/33 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 12/24: Subjects 34-36
+Processing: 36, 37, 38
+═══════════════════════════════════════════════════════════
+
+
+[34/71] Subject 36
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 36
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 36...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 36...
+[Warning: Failed to preprocess subject 36: Functional image not found for
+subject 36] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 36 completed
+
+[35/71] Subject 37
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 37
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 37...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 37...
+[Warning: Failed to preprocess subject 37: Functional image not found for
+subject 37] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 37 completed
+
+[36/71] Subject 38
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 38
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 38...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 38...
+[Warning: Failed to preprocess subject 38: Functional image not found for
+subject 38] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 38 completed
+
+Batch 12 completed in 0.3 minutes
+Progress: 36/36 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 13/24: Subjects 37-39
+Processing: 40, 42, 43
+═══════════════════════════════════════════════════════════
+
+
+[37/71] Subject 40
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 40
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 40...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 40...
+[Warning: Failed to preprocess subject 40: Functional image not found for
+subject 40] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 40 completed
+
+[38/71] Subject 42
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 42
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 42...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 42...
+[Warning: Failed to preprocess subject 42: Functional image not found for
+subject 42] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 42 completed
+
+[39/71] Subject 43
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 43
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 43...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 43...
+[Warning: Failed to preprocess subject 43: Functional image not found for
+subject 43] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 43 completed
+
+Batch 13 completed in 0.3 minutes
+Progress: 39/39 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 14/24: Subjects 40-42
+Processing: 44, 45, 46
+═══════════════════════════════════════════════════════════
+
+
+[40/71] Subject 44
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 44
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 44...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 44...
+[Warning: Failed to preprocess subject 44: Functional image not found for
+subject 44] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 44 completed
+
+[41/71] Subject 45
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 45
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 45...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 45...
+[Warning: Failed to preprocess subject 45: Functional image not found for
+subject 45] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 45 completed
+
+[42/71] Subject 46
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 46
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 46...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 46...
+[Warning: Failed to preprocess subject 46: Functional image not found for
+subject 46] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 46 completed
+
+Batch 14 completed in 0.3 minutes
+Progress: 42/42 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 15/24: Subjects 43-45
+Processing: 47, 48, 49
+═══════════════════════════════════════════════════════════
+
+
+[43/71] Subject 47
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 47
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 47...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 47...
+[Warning: Failed to preprocess subject 47: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-47/func/rsub-47_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 47 completed
+
+[44/71] Subject 48
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 48
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 48...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 48...
+[Warning: Failed to preprocess subject 48: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-48/func/rsub-48_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 48 completed
+
+[45/71] Subject 49
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 49
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 49...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 49...
+[Warning: Failed to preprocess subject 49: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-49/func/rsub-49_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 49 completed
+
+Batch 15 completed in 0.3 minutes
+Progress: 45/45 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 16/24: Subjects 46-48
+Processing: 50, 53, 54
+═══════════════════════════════════════════════════════════
+
+
+[46/71] Subject 50
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 50
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 50...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 50...
+[Warning: Failed to preprocess subject 50: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-50/func/rsub-50_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 50 completed
+
+[47/71] Subject 53
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 53
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 53...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 53...
+[Warning: Failed to preprocess subject 53: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-53/func/rsub-53_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 53 completed
+
+[48/71] Subject 54
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 54
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 54...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 54...
+[Warning: Failed to preprocess subject 54: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-54/func/rsub-54_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 54 completed
+
+Batch 16 completed in 0.4 minutes
+Progress: 48/48 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 17/24: Subjects 49-51
+Processing: 55, 56, 57
+═══════════════════════════════════════════════════════════
+
+
+[49/71] Subject 55
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 55
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  Unzipping anatomical image for subject 55...
+    ✓ Anatomical image unzipped
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 55...
+[Warning: Failed to preprocess subject 55: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-55/func/rsub-55_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 55 completed
+
+[50/71] Subject 56
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 56
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 56...
+[Warning: Failed to preprocess subject 56: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-56/func/rsub-56_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 56 completed
+
+[51/71] Subject 57
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 57
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 57...
+[Warning: Failed to preprocess subject 57: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-57/func/rsub-57_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 57 completed
+
+Batch 17 completed in 0.4 minutes
+Progress: 51/51 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 18/24: Subjects 52-54
+Processing: 58, 59, 60
+═══════════════════════════════════════════════════════════
+
+
+[52/71] Subject 58
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 58
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 58...
+[Warning: Failed to preprocess subject 58: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-58/func/rsub-58_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 58 completed
+
+[53/71] Subject 59
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 59
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 59...
+[Warning: Failed to preprocess subject 59: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-59/func/rsub-59_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 59 completed
+
+[54/71] Subject 60
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 60
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 60...
+[Warning: Failed to preprocess subject 60: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-60/func/rsub-60_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 60 completed
+
+Batch 18 completed in 0.4 minutes
+Progress: 54/54 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 19/24: Subjects 55-57
+Processing: 61, 62, 63
+═══════════════════════════════════════════════════════════
+
+
+[55/71] Subject 61
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 61
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 61...
+[Warning: Failed to preprocess subject 61: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-61/func/rsub-61_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 61 completed
+
+[56/71] Subject 62
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 62
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 62...
+[Warning: Failed to preprocess subject 62: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-62/func/rsub-62_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 62 completed
+
+[57/71] Subject 63
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 63
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 63...
+[Warning: Failed to preprocess subject 63: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-63/func/rsub-63_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 63 completed
+
+Batch 19 completed in 0.4 minutes
+Progress: 57/57 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 20/24: Subjects 58-60
+Processing: 64, 65, 66
+═══════════════════════════════════════════════════════════
+
+
+[58/71] Subject 64
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 64
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 64...
+[Warning: Failed to preprocess subject 64: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-64/func/rsub-64_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 64 completed
+
+[59/71] Subject 65
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 65
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 65...
+[Warning: Failed to preprocess subject 65: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-65/func/rsub-65_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 65 completed
+
+[60/71] Subject 66
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 66
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 66...
+[Warning: Failed to preprocess subject 66: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-66/func/rsub-66_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 66 completed
+
+Batch 20 completed in 0.5 minutes
+Progress: 60/60 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 21/24: Subjects 61-63
+Processing: 67, 68, 69
+═══════════════════════════════════════════════════════════
+
+
+[61/71] Subject 67
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 67
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 67...
+[Warning: Failed to preprocess subject 67: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-67/func/rsub-67_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 67 completed
+
+[62/71] Subject 68
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 68
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 68...
+[Warning: Failed to preprocess subject 68: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-68/func/rsub-68_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 68 completed
+
+[63/71] Subject 69
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 69
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 69...
+[Warning: Failed to preprocess subject 69: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-69/func/rsub-69_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 69 completed
+
+Batch 21 completed in 0.4 minutes
+Progress: 63/63 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 22/24: Subjects 64-66
+Processing: 70, 71, 72
+═══════════════════════════════════════════════════════════
+
+
+[64/71] Subject 70
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 70
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 70...
+[Warning: Failed to preprocess subject 70: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-70/func/rsub-70_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 70 completed
+
+[65/71] Subject 71
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 71
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 71...
+[Warning: Failed to preprocess subject 71: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-71/func/rsub-71_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 71 completed
+
+[66/71] Subject 72
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 72
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 72...
+[Warning: Failed to preprocess subject 72: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-72/func/rsub-72_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 72 completed
+
+Batch 22 completed in 0.3 minutes
+Progress: 66/66 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 23/24: Subjects 67-69
+Processing: 73, 74, 75
+═══════════════════════════════════════════════════════════
+
+
+[67/71] Subject 73
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 73
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 73...
+[Warning: Failed to preprocess subject 73: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-73/func/rsub-73_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 73 completed
+
+[68/71] Subject 74
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 74
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 74...
+[Warning: Failed to preprocess subject 74: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-74/func/rsub-74_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 74 completed
+
+[69/71] Subject 75
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 75
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 75...
+[Warning: Failed to preprocess subject 75: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-75/func/rsub-75_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 75 completed
+
+Batch 23 completed in 0.3 minutes
+Progress: 69/69 (100.0%), Failed: 0
+
+
+═══════════════════════════════════════════════════════════
+BATCH 24/24: Subjects 70-71
+Processing: 76, 77
+═══════════════════════════════════════════════════════════
+
+
+[70/71] Subject 76
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 76
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 76...
+[Warning: Failed to preprocess subject 76: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-76/func/rsub-76_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 76 completed
+
+[71/71] Subject 77
+────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════╗
+║      Complete Analysis: Preprocessing + GLM + Viz       ║
+╚══════════════════════════════════════════════════════════╝
+
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+Found 71 subjects
+Loaded participant information for 71 participants
+Processing 1 subjects for demonstration: 77
+
+═══════════════════════════════════════════════════════════
+Step 1: Preparing Data (unzipping if needed)
+═══════════════════════════════════════════════════════════
+  ✓ Data preparation complete
+
+═══════════════════════════════════════════════════════════
+Step 2: Preprocessing
+═══════════════════════════════════════════════════════════
+This step includes:
+  - Realignment (motion correction)
+  - Coregistration (functional to structural)
+  - Segmentation and Normalization
+  - Smoothing (8mm FWHM)
+
+Processing subjects...
+
+[1/1] Processing subject 77...
+[Warning: Failed to preprocess subject 77: Realigned functional file not found:
+/Users/adrianecheverria/DATASET/ds004302/sub-77/func/rsub-77_task-speech_bold.nii] 
+[> In run_complete_analysis (line 95)
+In process_all_subjects (line 48)] 
+
+✓ Preprocessing complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 3: GLM Analysis (T-tests and F-tests)
+═══════════════════════════════════════════════════════════
+
+✓ GLM analysis complete (0 subjects, 0.0 minutes)
+
+═══════════════════════════════════════════════════════════
+Step 4: Generating Visualizations
+═══════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════╗
+║                    Analysis Complete                     ║
+╚══════════════════════════════════════════════════════════╝
+
+Processed: 0/1 subjects
+Total time: 0.0 minutes
+
+Results locations:
+
+✓ Subject 77 completed
+
+Batch 24 completed in 0.2 minutes
+Progress: 71/71 (100.0%), Failed: 0
+
+
+╔══════════════════════════════════════════════════════════╗
+║              PROCESSING COMPLETE                         ║
+╚══════════════════════════════════════════════════════════╝
+
+Summary:
+  Total subjects: 71
+  Processed: 71
+  Failed: 0
+  Total time: 0.1 hours
+  Avg time/subject: 0.1 minutes
+
+Results location: sub-*/spm/first_level/
+

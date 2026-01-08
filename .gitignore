@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MATLAB
+*.asv
+*.m~
+*.mat
+spm*.log
+spm_*.ps
+SPM.mat
+*.ps
+mcrCache/
+
+# SPM Output and processed data files
+sub-*/spm/
+sub-*/func/r*.nii
+sub-*/func/w*.nii
+sub-*/func/s*.nii
+sub-*/func/mean*.nii
+sub-*/anat/r*.nii
+sub-*/anat/y*.nii
+sub-*/anat/m*.nii
+sub-*/anat/c*.nii
+
+# Uncompressed NIfTI files (keep .nii.gz originals)
+*.nii
+!sub-*/*/*.nii.gz
+

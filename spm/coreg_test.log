@@ -1,0 +1,23 @@
+Auto-detected SPM at: /Users/adrianecheverria/Documents/MATLAB/spm
+SPM initialized successfully!
+SPM version: SPM25 (25.01.02)
+Dataset root: /Users/adrianecheverria/DATASET/ds004302
+
+SPM setup complete. Variables SPM_PATH and DATASET_ROOT are now in workspace.
+╔══════════════════════════════════════════════════════════╗
+║ Testing Coregistration
+╚══════════════════════════════════════════════════════════╝
+
+Checking files...
+ Mean func: /Users/adrianecheverria/DATASET/ds004302/sub-01/func/meansub-01_task-speech_bold.nii
+ Mean func exists: 2
+ Anatomical: /Users/adrianecheverria/DATASET/ds004302/sub-01/anat/sub-01_T1w.nii
+ Anatomical exists: 2
+
+Setting up coregistration batch...
+Running coregistration...
+Item 'Fixed Image', field 'val': Value must be either empty, a cellstr or a cfg_dep object.
+Item 'Moved Image', field 'val': Value must be either empty, a cellstr or a cfg_dep object.
+
+✗ ERROR: No executable modules, but still unresolved dependencies or incomplete module inputs.
+Location: /Users/adrianecheverria/Documents/MATLAB/spm/spm_jobman.m, Line: 482
