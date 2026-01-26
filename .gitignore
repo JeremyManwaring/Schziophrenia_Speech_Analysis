@@ -70,3 +70,12 @@ sub-*/anat/c*.nii
 *.nii
 !sub-*/*/*.nii.gz
 
+
+# Large data directories (not for git)
+derivatives/
+results/vm_analysis/results/first_level/
+results/vm_analysis/results/second_level/
+nilearn_cache/
+work/
+*.nii.gz
+

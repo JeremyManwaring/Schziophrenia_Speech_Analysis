@@ -1,0 +1,164 @@
+
+======================================================================
+STATISTICAL TESTS FOR NORMALITY AND VARIANCE HOMOGENEITY
+======================================================================
+
+Dataset: ds004302-Edited
+
+Loading participants data...
+Total participants: 71
+Groups: {'HC': 25, 'AVH-': 23, 'AVH+': 23}
+
+======================================================================
+PART 1: LEVENE'S TEST (Homogeneity of Variances)
+======================================================================
+
+H0: Variances are equal across groups
+H1: Variances are not equal across groups
+
+======================================================================
+LEVENE'S TEST: AGE
+======================================================================
+Groups tested: HC, AVH-, AVH+
+
+Test statistic (W): 5.8845
+p-value: 0.004395
+
+Result: p < 0.05 → REJECT H0
+Interpretation: Variances are NOT equal across groups
+               (heterogeneity of variances)
+======================================================================
+
+======================================================================
+LEVENE'S TEST: IQ
+======================================================================
+Groups tested: HC, AVH-, AVH+
+
+Test statistic (W): 0.0095
+p-value: 0.990506
+
+Result: p >= 0.05 → FAIL TO REJECT H0
+Interpretation: Variances are equal across groups
+               (homogeneity of variances)
+======================================================================
+
+======================================================================
+LEVENE'S TEST: PSYRATS
+======================================================================
+Groups tested: AVH-, AVH+
+
+Test statistic (W): 47.0745
+p-value: 0.000000
+
+Result: p < 0.05 → REJECT H0
+Interpretation: Variances are NOT equal across groups
+               (heterogeneity of variances)
+======================================================================
+
+======================================================================
+PART 2: SHAPIRO-WILK TEST (Normality)
+======================================================================
+
+H0: Data are normally distributed
+H1: Data are not normally distributed
+
+
+Testing age...
+
+======================================================================
+SHAPIRO-WILK TEST: AGE
+======================================================================
+
+HC (N = 25)
+  Test statistic (W): 0.9308
+  p-value: 0.090677
+  Result: p >= 0.05 → FAIL TO REJECT H0 (normal)
+
+AVH- (N = 23)
+  Test statistic (W): 0.9801
+  p-value: 0.908579
+  Result: p >= 0.05 → FAIL TO REJECT H0 (normal)
+
+AVH+ (N = 23)
+  Test statistic (W): 0.9664
+  p-value: 0.604645
+  Result: p >= 0.05 → FAIL TO REJECT H0 (normal)
+======================================================================
+
+
+Testing iq...
+
+======================================================================
+SHAPIRO-WILK TEST: IQ
+======================================================================
+
+HC (N = 24)
+  Test statistic (W): 0.8576
+  p-value: 0.003038
+  Result: p < 0.05 → REJECT H0 (NOT normal)
+
+AVH- (N = 22)
+  Test statistic (W): 0.9261
+  p-value: 0.101882
+  Result: p >= 0.05 → FAIL TO REJECT H0 (normal)
+
+AVH+ (N = 23)
+  Test statistic (W): 0.9675
+  p-value: 0.630007
+  Result: p >= 0.05 → FAIL TO REJECT H0 (normal)
+======================================================================
+
+
+Testing psyrats...
+
+======================================================================
+SHAPIRO-WILK TEST: PSYRATS
+======================================================================
+
+HC (N = 0)
+Note: Insufficient data
+  Cannot perform test: insufficient data
+
+AVH- (N = 23)
+  Test statistic (W): 1.0000
+  p-value: 1.000000
+  Result: p >= 0.05 → FAIL TO REJECT H0 (normal)
+
+AVH+ (N = 23)
+  Test statistic (W): 0.9793
+  p-value: 0.893826
+  Result: p >= 0.05 → FAIL TO REJECT H0 (normal)
+======================================================================
+
+
+======================================================================
+SUMMARY
+======================================================================
+
+Levene's Test Results (Homogeneity of Variances):
+----------------------------------------------------------------------
+age         : p = 0.004395 → Heterogeneous
+iq          : p = 0.990506 → Homogeneous
+psyrats     : p = 0.000000 → Heterogeneous
+
+Shapiro-Wilk Test Results (Normality) - By Group:
+----------------------------------------------------------------------
+
+age:
+  HC      : p = 0.090677 (N=25) → Normal
+  AVH-    : p = 0.908579 (N=23) → Normal
+  AVH+    : p = 0.604645 (N=23) → Normal
+
+iq:
+  HC      : p = 0.003038 (N=24) → Non-normal
+  AVH-    : p = 0.101882 (N=22) → Normal
+  AVH+    : p = 0.630007 (N=23) → Normal
+
+psyrats:
+  AVH-    : p = 1.000000 (N=23) → Normal
+  AVH+    : p = 0.893826 (N=23) → Normal
+
+======================================================================
+Note: p < 0.05 indicates violation of assumption
+======================================================================
+

@@ -136,3 +136,43 @@ results/vm_analysis/results/
 3. **Motion**: 4 subjects flagged for excessive motion but not excluded from current analysis
 
 4. **Next steps**: Consider excluding high-motion subjects for sensitivity analysis
+
+---
+
+## Advanced Analyses (January 2026)
+
+Five additional analyses were conducted to further characterize AVH- vs AVH+ differences:
+
+### 1. Cluster-Corrected Whole-Brain Analysis
+- Permutation-based testing (1000 permutations)
+- Cluster-forming threshold: z > 2.3
+- Results: `results/visualizations/01_cluster_corrected/`
+
+### 2. Raincloud Plot Visualizations
+- Publication-quality distribution plots
+- Individual data points with group summaries
+- Results: `results/visualizations/02_raincloud_plots/`
+
+### 3. MVPA Classification
+- SVM classification (leave-one-out CV)
+- Best accuracy: 60% (words_vs_reversed)
+- Not significantly above chance (p > 0.05)
+- Results: `results/visualizations/03_mvpa_classification/`
+
+### 4. Functional Connectivity
+- ROI-to-ROI correlation analysis
+- 12 speech/language ROIs
+- 2 significant connection differences (p < 0.05 uncorrected)
+- Results: `results/visualizations/04_connectivity/`
+
+### 5. Laterality Analysis
+- Hemisphere dominance comparison
+- LI = (L - R) / (|L| + |R|)
+- No significant laterality differences between groups
+- Results: `results/visualizations/05_laterality/`
+
+---
+
+## Files Generated
+
+See `results/visualizations/README.md` for complete documentation of visualization outputs.

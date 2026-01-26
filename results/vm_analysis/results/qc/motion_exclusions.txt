@@ -1,0 +1,8 @@
+Motion-based exclusion recommendations
+==================================================
+
+Flagged subjects (4):
+  sub-02: pct_high_motion=28.5%
+  sub-22: pct_high_motion=20.6%
+  sub-34: pct_high_motion=35.0%
+  sub-45: pct_high_motion=35.3%

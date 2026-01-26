@@ -1,0 +1,32 @@
+================================================================================
+COMPLETE ANALYSIS REPORT
+Generated: 2026-01-11 00:31:18
+================================================================================
+
+
+## QUALITY CONTROL SUMMARY
+
+Subjects processed: 71
+Mean framewise displacement: 0.189 mm
+
+
+## FIRST-LEVEL GLM SUMMARY
+
+Subjects processed: 71/71
+Contrasts computed: 9
+
+
+## ROI-BASED ANALYSIS SUMMARY
+
+ROIs analyzed: 12
+Contrasts: 7
+
+
+## EFFECT SIZE SUMMARY
+
+Large effects (|d| >= 0.8): 4
+
+
+================================================================================
+END OF REPORT
+================================================================================

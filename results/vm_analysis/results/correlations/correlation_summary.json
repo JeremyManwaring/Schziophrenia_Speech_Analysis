@@ -1,0 +1,982 @@
+{
+  "words_vs_baseline": {
+    "contrast": "words_vs_baseline",
+    "n_subjects": 23,
+    "correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "pearson_r": -0.03540583281001923,
+        "pearson_p": 0.8725809411868841,
+        "n": 23
+      },
+      {
+        "roi": "L_STG_anterior",
+        "pearson_r": -0.12983841696128817,
+        "pearson_p": 0.5548777659159306,
+        "n": 23
+      },
+      {
+        "roi": "L_MTG",
+        "pearson_r": -0.07181549284463942,
+        "pearson_p": 0.7447050999115625,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "pearson_r": -0.12824561155179123,
+        "pearson_p": 0.5597841665689559,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "pearson_r": -0.08310798390145978,
+        "pearson_p": 0.7061749250903396,
+        "n": 23
+      },
+      {
+        "roi": "L_STS",
+        "pearson_r": -0.12419176707981164,
+        "pearson_p": 0.5723585436504884,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_posterior",
+        "pearson_r": -0.05858184455532498,
+        "pearson_p": 0.7906174367619877,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_anterior",
+        "pearson_r": -0.1244588304895357,
+        "pearson_p": 0.5715263463135875,
+        "n": 23
+      },
+      {
+        "roi": "R_MTG",
+        "pearson_r": -0.22572486440519796,
+        "pearson_p": 0.30038321970469223,
+        "n": 23
+      },
+      {
+        "roi": "R_IFG",
+        "pearson_r": 0.3497571469113731,
+        "pearson_p": 0.10184324215250282,
+        "n": 23
+      },
+      {
+        "roi": "L_Heschl",
+        "pearson_r": 0.055515830719191105,
+        "pearson_p": 0.8013574035459224,
+        "n": 23
+      },
+      {
+        "roi": "R_Heschl",
+        "pearson_r": -0.06251646513040494,
+        "pearson_p": 0.7768888592355779,
+        "n": 23
+      }
+    ],
+    "partial_correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "partial_r": -0.06178242303970466,
+        "partial_p": 0.7794452974737516
+      },
+      {
+        "roi": "L_STG_anterior",
+        "partial_r": -0.12126071075310747,
+        "partial_p": 0.5815268485803557
+      },
+      {
+        "roi": "L_MTG",
+        "partial_r": -0.057328773647987594,
+        "partial_p": 0.7950024962943791
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "partial_r": -0.12144997927051923,
+        "partial_p": 0.5809329026910127
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "partial_r": -0.0491656055471716,
+        "partial_p": 0.8237105680603906
+      },
+      {
+        "roi": "L_STS",
+        "partial_r": -0.1090181622220186,
+        "partial_p": 0.6204897387151934
+      },
+      {
+        "roi": "R_STG_posterior",
+        "partial_r": -0.07554044904949518,
+        "partial_p": 0.7319248120599117
+      },
+      {
+        "roi": "R_STG_anterior",
+        "partial_r": -0.09216856699949652,
+        "partial_p": 0.6757518883107753
+      },
+      {
+        "roi": "R_MTG",
+        "partial_r": -0.2068126966108528,
+        "partial_p": 0.3437313230641426
+      },
+      {
+        "roi": "R_IFG",
+        "partial_r": 0.3550443973031365,
+        "partial_p": 0.09642275525467599
+      },
+      {
+        "roi": "L_Heschl",
+        "partial_r": 0.05447946337747024,
+        "partial_p": 0.8049956864957668
+      },
+      {
+        "roi": "R_Heschl",
+        "partial_r": -0.06971893552690817,
+        "partial_p": 0.7519273568831707
+      }
+    ]
+  },
+  "sentences_vs_baseline": {
+    "contrast": "sentences_vs_baseline",
+    "n_subjects": 23,
+    "correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "pearson_r": -0.22888258617267992,
+        "pearson_p": 0.2934906153076041,
+        "n": 23
+      },
+      {
+        "roi": "L_STG_anterior",
+        "pearson_r": -0.3165596783562507,
+        "pearson_p": 0.14111281334439157,
+        "n": 23
+      },
+      {
+        "roi": "L_MTG",
+        "pearson_r": -0.000774488482598111,
+        "pearson_p": 0.9972016912919365,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "pearson_r": -0.13854921110486476,
+        "pearson_p": 0.5283960233696308,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "pearson_r": -0.08127940425318786,
+        "pearson_p": 0.7123697165016926,
+        "n": 23
+      },
+      {
+        "roi": "L_STS",
+        "pearson_r": -0.10342827977126513,
+        "pearson_p": 0.638622246040944,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_posterior",
+        "pearson_r": -0.14896123445312676,
+        "pearson_p": 0.49754731703929184,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_anterior",
+        "pearson_r": -0.08664502569603227,
+        "pearson_p": 0.694243619511507,
+        "n": 23
+      },
+      {
+        "roi": "R_MTG",
+        "pearson_r": 0.026214173501346423,
+        "pearson_p": 0.9054909879390378,
+        "n": 23
+      },
+      {
+        "roi": "R_IFG",
+        "pearson_r": 0.2328344870651309,
+        "pearson_p": 0.28500421008081456,
+        "n": 23
+      },
+      {
+        "roi": "L_Heschl",
+        "pearson_r": -0.08297822977931577,
+        "pearson_p": 0.706613912368764,
+        "n": 23
+      },
+      {
+        "roi": "R_Heschl",
+        "pearson_r": -0.1268547399485376,
+        "pearson_p": 0.5640844119316831,
+        "n": 23
+      }
+    ],
+    "partial_correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "partial_r": -0.26555399614313097,
+        "partial_p": 0.22070076577606698
+      },
+      {
+        "roi": "L_STG_anterior",
+        "partial_r": -0.3494169413734446,
+        "partial_p": 0.10219955273730137
+      },
+      {
+        "roi": "L_MTG",
+        "partial_r": -0.011298439127798052,
+        "partial_p": 0.9591939650008513
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "partial_r": -0.14843598193021923,
+        "partial_p": 0.49908193132331513
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "partial_r": -0.08659422822609247,
+        "partial_p": 0.6944144837436624
+      },
+      {
+        "roi": "L_STS",
+        "partial_r": -0.09498831358404987,
+        "partial_p": 0.6663805675626491
+      },
+      {
+        "roi": "R_STG_posterior",
+        "partial_r": -0.16459632734257185,
+        "partial_p": 0.452955498745315
+      },
+      {
+        "roi": "R_STG_anterior",
+        "partial_r": -0.06292364927947007,
+        "partial_p": 0.7754717275692279
+      },
+      {
+        "roi": "R_MTG",
+        "partial_r": 0.028998133441790565,
+        "partial_p": 0.8955048774518041
+      },
+      {
+        "roi": "R_IFG",
+        "partial_r": 0.23601190860341056,
+        "partial_p": 0.27829365790172195
+      },
+      {
+        "roi": "L_Heschl",
+        "partial_r": -0.12480382920695815,
+        "partial_p": 0.5704520845574876
+      },
+      {
+        "roi": "R_Heschl",
+        "partial_r": -0.1528264080320101,
+        "partial_p": 0.48632658271206225
+      }
+    ]
+  },
+  "reversed_vs_baseline": {
+    "contrast": "reversed_vs_baseline",
+    "n_subjects": 23,
+    "correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "pearson_r": -0.16386365985481058,
+        "pearson_p": 0.4549971481802287,
+        "n": 23
+      },
+      {
+        "roi": "L_STG_anterior",
+        "pearson_r": -0.2654734059335291,
+        "pearson_p": 0.22084615894388512,
+        "n": 23
+      },
+      {
+        "roi": "L_MTG",
+        "pearson_r": -0.0833711232280211,
+        "pearson_p": 0.7052849439494187,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "pearson_r": -0.1942665006963178,
+        "pearson_p": 0.3744233146938861,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "pearson_r": -0.048221969137776724,
+        "pearson_p": 0.8270440004237196,
+        "n": 23
+      },
+      {
+        "roi": "L_STS",
+        "pearson_r": -0.22244648326721472,
+        "pearson_p": 0.30764400506049416,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_posterior",
+        "pearson_r": -0.4752687685105154,
+        "pearson_p": 0.021910521801771134,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_anterior",
+        "pearson_r": -0.1437583715646089,
+        "pearson_p": 0.5128503691314199,
+        "n": 23
+      },
+      {
+        "roi": "R_MTG",
+        "pearson_r": -0.41206405744726726,
+        "pearson_p": 0.05072557905295924,
+        "n": 23
+      },
+      {
+        "roi": "R_IFG",
+        "pearson_r": 0.11630185996206094,
+        "pearson_p": 0.5971810397213452,
+        "n": 23
+      },
+      {
+        "roi": "L_Heschl",
+        "pearson_r": -0.14549710617394862,
+        "pearson_p": 0.5077111317127054,
+        "n": 23
+      },
+      {
+        "roi": "R_Heschl",
+        "pearson_r": -0.35076101000352106,
+        "pearson_p": 0.1007971953568901,
+        "n": 23
+      }
+    ],
+    "partial_correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "partial_r": -0.2398646455065484,
+        "partial_p": 0.2702916721145367
+      },
+      {
+        "roi": "L_STG_anterior",
+        "partial_r": -0.3390007385810849,
+        "partial_p": 0.11355886854366248
+      },
+      {
+        "roi": "L_MTG",
+        "partial_r": -0.09384840074742194,
+        "partial_p": 0.6701633124359614
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "partial_r": -0.2001465481135669,
+        "partial_p": 0.3598485654842587
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "partial_r": -0.04796822814023999,
+        "partial_p": 0.8279408456701971
+      },
+      {
+        "roi": "L_STS",
+        "partial_r": -0.22560107920023006,
+        "partial_p": 0.30065543380124304
+      },
+      {
+        "roi": "R_STG_posterior",
+        "partial_r": -0.516029133944393,
+        "partial_p": 0.011715597245197114
+      },
+      {
+        "roi": "R_STG_anterior",
+        "partial_r": -0.1555026931807273,
+        "partial_p": 0.4786322365337988
+      },
+      {
+        "roi": "R_MTG",
+        "partial_r": -0.43840805973913244,
+        "partial_p": 0.03638921897746787
+      },
+      {
+        "roi": "R_IFG",
+        "partial_r": 0.11428180108988906,
+        "partial_p": 0.6036084455519114
+      },
+      {
+        "roi": "L_Heschl",
+        "partial_r": -0.1784762939973048,
+        "partial_p": 0.41519701544170207
+      },
+      {
+        "roi": "R_Heschl",
+        "partial_r": -0.4380413030989764,
+        "partial_p": 0.03656398575150604
+      }
+    ]
+  },
+  "words_vs_reversed": {
+    "contrast": "words_vs_reversed",
+    "n_subjects": 23,
+    "correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "pearson_r": 0.22553730616541603,
+        "pearson_p": 0.30079573549294425,
+        "n": 23
+      },
+      {
+        "roi": "L_STG_anterior",
+        "pearson_r": 0.21059434037518077,
+        "pearson_p": 0.3347813518425685,
+        "n": 23
+      },
+      {
+        "roi": "L_MTG",
+        "pearson_r": -0.030185773434980176,
+        "pearson_p": 0.8912493701083872,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "pearson_r": 0.024304000395072013,
+        "pearson_p": 0.9123509194875199,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "pearson_r": 0.0436445002624305,
+        "pearson_p": 0.8432541068293052,
+        "n": 23
+      },
+      {
+        "roi": "L_STS",
+        "pearson_r": 0.0576761143730411,
+        "pearson_p": 0.7937863873836076,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_posterior",
+        "pearson_r": 0.5343065929296189,
+        "pearson_p": 0.008630184841230145,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_anterior",
+        "pearson_r": 0.018939923928656052,
+        "pearson_p": 0.9316455882452638,
+        "n": 23
+      },
+      {
+        "roi": "R_MTG",
+        "pearson_r": 0.21373969995048825,
+        "pearson_p": 0.32744434410960144,
+        "n": 23
+      },
+      {
+        "roi": "R_IFG",
+        "pearson_r": 0.22199190292855428,
+        "pearson_p": 0.3086592063880394,
+        "n": 23
+      },
+      {
+        "roi": "L_Heschl",
+        "pearson_r": 0.25222403082904615,
+        "pearson_p": 0.245617813658355,
+        "n": 23
+      },
+      {
+        "roi": "R_Heschl",
+        "pearson_r": 0.41173646824386856,
+        "pearson_p": 0.05092794326791741,
+        "n": 23
+      }
+    ],
+    "partial_correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "partial_r": 0.2780731199225973,
+        "partial_p": 0.1988833399517166
+      },
+      {
+        "roi": "L_STG_anterior",
+        "partial_r": 0.32995608538538895,
+        "partial_p": 0.12414676535189574
+      },
+      {
+        "roi": "L_MTG",
+        "partial_r": -0.015993259370117863,
+        "partial_p": 0.9422613292922088
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "partial_r": 0.04280341434626103,
+        "partial_p": 0.8462395315831416
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "partial_r": 0.10519447289322909,
+        "partial_p": 0.6328707538534817
+      },
+      {
+        "roi": "L_STS",
+        "partial_r": 0.07116137142698047,
+        "partial_p": 0.7469562288542262
+      },
+      {
+        "roi": "R_STG_posterior",
+        "partial_r": 0.5892394720897147,
+        "partial_p": 0.003090629164070494
+      },
+      {
+        "roi": "R_STG_anterior",
+        "partial_r": 0.09815298682596436,
+        "partial_p": 0.6559201224268812
+      },
+      {
+        "roi": "R_MTG",
+        "partial_r": 0.31313488688446456,
+        "partial_p": 0.14570283932351485
+      },
+      {
+        "roi": "R_IFG",
+        "partial_r": 0.24101192054711335,
+        "partial_p": 0.2679373698296435
+      },
+      {
+        "roi": "L_Heschl",
+        "partial_r": 0.29387428074178035,
+        "partial_p": 0.17349651874739544
+      },
+      {
+        "roi": "R_Heschl",
+        "partial_r": 0.48474447125439574,
+        "partial_p": 0.019065137616012192
+      }
+    ]
+  },
+  "sentences_vs_reversed": {
+    "contrast": "sentences_vs_reversed",
+    "n_subjects": 23,
+    "correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "pearson_r": -0.19570773181089263,
+        "pearson_p": 0.3708200813801364,
+        "n": 23
+      },
+      {
+        "roi": "L_STG_anterior",
+        "pearson_r": -0.08888105226855153,
+        "pearson_p": 0.6867368067351616,
+        "n": 23
+      },
+      {
+        "roi": "L_MTG",
+        "pearson_r": 0.004092948064476871,
+        "pearson_p": 0.9852125026215609,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "pearson_r": 0.015565759900852323,
+        "pearson_p": 0.9438022829572784,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "pearson_r": -0.16446676586167602,
+        "pearson_p": 0.45331618522776107,
+        "n": 23
+      },
+      {
+        "roi": "L_STS",
+        "pearson_r": 0.007860203350069761,
+        "pearson_p": 0.9716057563828631,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_posterior",
+        "pearson_r": 0.5350217642297265,
+        "pearson_p": 0.008524697222245862,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_anterior",
+        "pearson_r": -0.02703984735325779,
+        "pearson_p": 0.902527770190698,
+        "n": 23
+      },
+      {
+        "roi": "R_MTG",
+        "pearson_r": 0.4245092690136634,
+        "pearson_p": 0.04348879280996444,
+        "n": 23
+      },
+      {
+        "roi": "R_IFG",
+        "pearson_r": -0.0078010280798145384,
+        "pearson_p": 0.9718194387756989,
+        "n": 23
+      },
+      {
+        "roi": "L_Heschl",
+        "pearson_r": -0.007730101092124599,
+        "pearson_p": 0.9720755591862611,
+        "n": 23
+      },
+      {
+        "roi": "R_Heschl",
+        "pearson_r": 0.27757773364083,
+        "pearson_p": 0.19971780054313712,
+        "n": 23
+      }
+    ],
+    "partial_correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "partial_r": -0.1826730548380151,
+        "partial_p": 0.4041302664499206
+      },
+      {
+        "roi": "L_STG_anterior",
+        "partial_r": -0.07736674631170179,
+        "partial_p": 0.7256836531278611
+      },
+      {
+        "roi": "L_MTG",
+        "partial_r": -0.02111128040392279,
+        "partial_p": 0.9238300998254945
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "partial_r": -0.00659853512548237,
+        "partial_p": 0.9761620370445112
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "partial_r": -0.18223679111143126,
+        "partial_p": 0.40527300117730203
+      },
+      {
+        "roi": "L_STS",
+        "partial_r": -0.0027679761880375665,
+        "partial_p": 0.9899992332546244
+      },
+      {
+        "roi": "R_STG_posterior",
+        "partial_r": 0.5566657694903874,
+        "partial_p": 0.0058009557475712905
+      },
+      {
+        "roi": "R_STG_anterior",
+        "partial_r": 0.0049599574973261465,
+        "partial_p": 0.9820805115460859
+      },
+      {
+        "roi": "R_MTG",
+        "partial_r": 0.4269324273143354,
+        "partial_p": 0.04217880632492789
+      },
+      {
+        "roi": "R_IFG",
+        "partial_r": -0.017328157361341415,
+        "partial_p": 0.9374509030490091
+      },
+      {
+        "roi": "L_Heschl",
+        "partial_r": -0.03678269667355816,
+        "partial_p": 0.8676674150332282
+      },
+      {
+        "roi": "R_Heschl",
+        "partial_r": 0.2890657553499145,
+        "partial_p": 0.18097137336535
+      }
+    ]
+  },
+  "speech_vs_reversed": {
+    "contrast": "speech_vs_reversed",
+    "n_subjects": 23,
+    "correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "pearson_r": 0.05248671921797594,
+        "pearson_p": 0.8120023815366583,
+        "n": 23
+      },
+      {
+        "roi": "L_STG_anterior",
+        "pearson_r": 0.055761227235800445,
+        "pearson_p": 0.800496492973886,
+        "n": 23
+      },
+      {
+        "roi": "L_MTG",
+        "pearson_r": 0.023370321468082045,
+        "pearson_p": 0.915706238041263,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "pearson_r": 0.04521052597997047,
+        "pearson_p": 0.8377011027101273,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "pearson_r": -0.08428748010493337,
+        "pearson_p": 0.7021885936463399,
+        "n": 23
+      },
+      {
+        "roi": "L_STS",
+        "pearson_r": 0.08968573230844434,
+        "pearson_p": 0.6840422716862491,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_posterior",
+        "pearson_r": 0.5855611190768902,
+        "pearson_p": 0.0033292110149603484,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_anterior",
+        "pearson_r": -0.01057447477782189,
+        "pearson_p": 0.9618067578938985,
+        "n": 23
+      },
+      {
+        "roi": "R_MTG",
+        "pearson_r": 0.3928181822531543,
+        "pearson_p": 0.06371491503525746,
+        "n": 23
+      },
+      {
+        "roi": "R_IFG",
+        "pearson_r": 0.13510162042305532,
+        "pearson_p": 0.5388053430756964,
+        "n": 23
+      },
+      {
+        "roi": "L_Heschl",
+        "pearson_r": 0.16484074759810255,
+        "pearson_p": 0.4522754656313255,
+        "n": 23
+      },
+      {
+        "roi": "R_Heschl",
+        "pearson_r": 0.40314461596707435,
+        "pearson_p": 0.05646246046569077,
+        "n": 23
+      }
+    ],
+    "partial_correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "partial_r": 0.11423770093411656,
+        "partial_p": 0.6037490837939564
+      },
+      {
+        "roi": "L_STG_anterior",
+        "partial_r": 0.120862082069398,
+        "partial_p": 0.582778649868744
+      },
+      {
+        "roi": "L_MTG",
+        "partial_r": 0.025673538110691237,
+        "partial_p": 0.9074319091919802
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "partial_r": 0.057136042070045245,
+        "partial_p": 0.7956774871950278
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "partial_r": -0.05816403275217283,
+        "partial_p": 0.7920788730434775
+      },
+      {
+        "roi": "L_STS",
+        "partial_r": 0.1036874587662564,
+        "partial_p": 0.6377769744093805
+      },
+      {
+        "roi": "R_STG_posterior",
+        "partial_r": 0.6472106116069659,
+        "partial_p": 0.000843523166327821
+      },
+      {
+        "roi": "R_STG_anterior",
+        "partial_r": 0.059575678703068256,
+        "partial_p": 0.7871439182431831
+      },
+      {
+        "roi": "R_MTG",
+        "partial_r": 0.46450209733561787,
+        "partial_p": 0.02554853062366158
+      },
+      {
+        "roi": "R_IFG",
+        "partial_r": 0.15456741448703556,
+        "partial_p": 0.4813141452345918
+      },
+      {
+        "roi": "L_Heschl",
+        "partial_r": 0.1707166057107226,
+        "partial_p": 0.4360894224043743
+      },
+      {
+        "roi": "R_Heschl",
+        "partial_r": 0.4834118976774499,
+        "partial_p": 0.019446170476159434
+      }
+    ]
+  },
+  "words_vs_sentences": {
+    "contrast": "words_vs_sentences",
+    "n_subjects": 23,
+    "correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "pearson_r": 0.4114430048830438,
+        "pearson_p": 0.051109757722782076,
+        "n": 23
+      },
+      {
+        "roi": "L_STG_anterior",
+        "pearson_r": 0.31232705449264875,
+        "pearson_p": 0.14680077464220306,
+        "n": 23
+      },
+      {
+        "roi": "L_MTG",
+        "pearson_r": -0.06921503809007575,
+        "pearson_p": 0.7536662210355701,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "pearson_r": -0.02342851992295704,
+        "pearson_p": 0.9154970517067381,
+        "n": 23
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "pearson_r": 0.04926320398813854,
+        "pearson_p": 0.8233659648481153,
+        "n": 23
+      },
+      {
+        "roi": "L_STS",
+        "pearson_r": 0.0480184755564806,
+        "pearson_p": 0.8277632300923491,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_posterior",
+        "pearson_r": 0.18961372648588293,
+        "pearson_p": 0.38619182811683694,
+        "n": 23
+      },
+      {
+        "roi": "R_STG_anterior",
+        "pearson_r": 0.010648263796183458,
+        "pearson_p": 0.961540434926983,
+        "n": 23
+      },
+      {
+        "roi": "R_MTG",
+        "pearson_r": -0.17910784055587078,
+        "pearson_p": 0.4135211272891511,
+        "n": 23
+      },
+      {
+        "roi": "R_IFG",
+        "pearson_r": 0.1412581241439931,
+        "pearson_p": 0.5202841774499869,
+        "n": 23
+      },
+      {
+        "roi": "L_Heschl",
+        "pearson_r": 0.2410193835433489,
+        "pearson_p": 0.2679220980216145,
+        "n": 23
+      },
+      {
+        "roi": "R_Heschl",
+        "pearson_r": 0.15098385989565283,
+        "pearson_p": 0.4916596924442785,
+        "n": 23
+      }
+    ],
+    "partial_correlations": [
+      {
+        "roi": "L_STG_posterior",
+        "partial_r": 0.42448621844033435,
+        "partial_p": 0.04350140518228509
+      },
+      {
+        "roi": "L_STG_anterior",
+        "partial_r": 0.3768581911990483,
+        "partial_p": 0.07629851343356431
+      },
+      {
+        "roi": "L_MTG",
+        "partial_r": -0.021976860210894046,
+        "partial_p": 0.9207164273703918
+      },
+      {
+        "roi": "L_IFG_triangularis",
+        "partial_r": 0.0051038730078718664,
+        "partial_p": 0.9815606536875159
+      },
+      {
+        "roi": "L_IFG_opercularis",
+        "partial_r": 0.06890571792477973,
+        "partial_p": 0.7547342063985732
+      },
+      {
+        "roi": "L_STS",
+        "partial_r": 0.07317026230881533,
+        "partial_p": 0.7400491620868759
+      },
+      {
+        "roi": "R_STG_posterior",
+        "partial_r": 0.21442876845771486,
+        "partial_p": 0.3258500088528618
+      },
+      {
+        "roi": "R_STG_anterior",
+        "partial_r": 0.04168057767619472,
+        "partial_p": 0.8502282103300007
+      },
+      {
+        "roi": "R_MTG",
+        "partial_r": -0.16740292091124362,
+        "partial_p": 0.4451791844178181
+      },
+      {
+        "roi": "R_IFG",
+        "partial_r": 0.16398452327710955,
+        "partial_p": 0.4546600201556665
+      },
+      {
+        "roi": "L_Heschl",
+        "partial_r": 0.33593003132132637,
+        "partial_p": 0.11707682060374722
+      },
+      {
+        "roi": "R_Heschl",
+        "partial_r": 0.19766461229324173,
+        "partial_p": 0.36595972906305185
+      }
+    ]
+  }
+}

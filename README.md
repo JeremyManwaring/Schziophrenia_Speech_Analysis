@@ -14,41 +14,45 @@ Brain correlates of speech perception in schizophrenia patients with and without
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 ds004302-Edited/
 │
 ├── code/                    # All analysis code
 │   ├── matlab/              # MATLAB/SPM preprocessing & GLM scripts
-│   └── python/              # Python analysis scripts (normality tests, ANOVA)
+│   └── python/              # Python analysis scripts
+│       ├── first_level_glm.py      # Subject-level GLM
+│       ├── second_level_glm.py     # Group-level analysis
+│       ├── roi_analysis.py         # ROI extraction & stats
+│       ├── mvpa_classification.py  # Machine learning classification
+│       ├── connectivity_analysis.py # Functional connectivity
+│       ├── laterality_analysis.py  # Hemisphere dominance
+│       └── run_advanced_analyses.py # Master analysis script
 │
-├── docs/                    # Documentation
-│   ├── guides/              # How-to guides, workflow docs, READMEs
-│   └── status/              # Analysis progress & status reports
+├── derivatives/             # Preprocessed data
+│   └── fmriprep/            # fMRIPrep outputs (71 subjects)
 │
 ├── results/                 # Analysis outputs
-│   ├── spm_logs/            # SPM processing logs
-│   └── GLM_Analysis_Plan.txt
+│   ├── vm_analysis/         # GLM results (first/second level, ROI, effects)
+│   ├── visualizations/      # Publication-ready figures
+│   │   ├── 01_cluster_corrected/  # Whole-brain statistical maps
+│   │   ├── 02_raincloud_plots/    # Distribution visualizations
+│   │   ├── 03_mvpa_classification/ # SVM classification results
+│   │   ├── 04_connectivity/       # Functional connectivity matrices
+│   │   └── 05_laterality/         # Hemisphere dominance analysis
+│   ├── figures/             # Legacy figures
+│   └── demographics/        # Demographic analyses
+│
+├── docs/                    # Documentation
+│   ├── guides/              # How-to guides, workflow docs
+│   └── status/              # Analysis progress reports
 │
 ├── utils/                   # Utility shell scripts
-│   ├── setup_env.sh         # Python environment setup
-│   ├── retrieve_files.sh    # Download data files
-│   ├── install_git_annex.sh # Install git-annex
-│   └── ...                  # Other utility scripts
 │
 ├── sub-*/                   # BIDS subject data (71 subjects)
-│   ├── anat/                # T1-weighted anatomical images
-│   └── func/                # Functional BOLD images
 │
-└── [BIDS metadata files]    # Dataset description, participants, task info
-    ├── dataset_description.json
-    ├── participants.tsv
-    ├── participants.json
-    ├── task-speech_bold.json
-    ├── task-speech_events.json
-    ├── task-speech_events.tsv
-    └── requirements.txt
+└── [BIDS metadata files]    # participants.tsv, task JSONs, etc.
 ```
 
 ---
@@ -130,7 +134,38 @@ show_glm_results('01', 1)  % View subject 01, contrast 1
 
 ---
 
-## 📚 Citation
+## AVH- vs AVH+ Advanced Analyses
+
+Five advanced analyses comparing patients with and without auditory hallucinations:
+
+| Analysis | Method | Key Finding |
+|----------|--------|-------------|
+| **Cluster Correction** | Permutation testing (1000 perm) | Whole-brain maps with FWE correction |
+| **Raincloud Plots** | Distribution + individual data | Large effects in L_MTG, L_STS (d > 0.8) |
+| **MVPA Classification** | SVM with LOO-CV | 60% accuracy (not significant) |
+| **Connectivity** | ROI-to-ROI correlations | 2 significant connection differences |
+| **Laterality** | LI = (L-R)/(|L|+|R|) | No significant laterality differences |
+
+### Run Advanced Analyses
+
+```bash
+source venv/bin/activate
+python code/python/run_advanced_analyses.py
+```
+
+Results saved to `results/visualizations/`
+
+---
+
+## Key Findings
+
+1. **L_MTG and L_STS** show large effect sizes between AVH- and AVH+ during speech processing
+2. **R_STG posterior** activation correlates with hallucination severity (r = 0.59, p = 0.003)
+3. Classification accuracy suggests distributed rather than focal group differences
+
+---
+
+## Citation
 
 ```bibtex
 @article{soler2022brain,

@@ -1,0 +1,24 @@
+{
+  "analysis": "Laterality Index Analysis",
+  "comparison": "AVH- vs AVH+",
+  "formula": "LI = (L - R) / (|L| + |R|)",
+  "interpretation": {
+    "LI > 0": "Left hemisphere dominant",
+    "LI < 0": "Right hemisphere dominant",
+    "LI \u2248 0": "Bilateral/symmetric"
+  },
+  "roi_pairs_analyzed": [
+    "STG_posterior",
+    "STG_anterior",
+    "MTG",
+    "Heschl",
+    "IFG"
+  ],
+  "contrasts_analyzed": [
+    "sentences_vs_reversed",
+    "speech_vs_reversed",
+    "words_vs_sentences",
+    "words_vs_reversed"
+  ],
+  "n_significant_differences": 0
+}

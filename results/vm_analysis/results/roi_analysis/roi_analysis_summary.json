@@ -1,0 +1,27 @@
+{
+  "n_rois": 12,
+  "n_contrasts": 7,
+  "roi_names": [
+    "L_STG_posterior",
+    "L_STG_anterior",
+    "L_MTG",
+    "L_IFG_triangularis",
+    "L_IFG_opercularis",
+    "L_STS",
+    "R_STG_posterior",
+    "R_STG_anterior",
+    "R_MTG",
+    "R_IFG",
+    "L_Heschl",
+    "R_Heschl"
+  ],
+  "contrasts": [
+    "words_vs_baseline",
+    "sentences_vs_baseline",
+    "reversed_vs_baseline",
+    "words_vs_reversed",
+    "sentences_vs_reversed",
+    "speech_vs_reversed",
+    "words_vs_sentences"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "analysis": "Cluster-corrected permutation analysis",
+  "comparison": "AVH- vs AVH+",
+  "n_permutations": 1000,
+  "cluster_threshold": "z > 2.3",
+  "contrasts_analyzed": [
+    "sentences_vs_reversed",
+    "speech_vs_reversed",
+    "words_vs_sentences"
+  ],
+  "outputs": {
+    "sentences_vs_reversed": "/Users/jeremy/Desktop/Research/ULAB/Schizophrenia/ds004302-Edited/results/visualizations/01_cluster_corrected/sentences_vs_reversed",
+    "speech_vs_reversed": "/Users/jeremy/Desktop/Research/ULAB/Schizophrenia/ds004302-Edited/results/visualizations/01_cluster_corrected/speech_vs_reversed",
+    "words_vs_sentences": "/Users/jeremy/Desktop/Research/ULAB/Schizophrenia/ds004302-Edited/results/visualizations/01_cluster_corrected/words_vs_sentences"
+  }
+}

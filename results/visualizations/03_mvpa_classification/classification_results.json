@@ -1,0 +1,43 @@
+{
+  "analysis": "MVPA SVM Classification",
+  "comparison": "AVH- vs AVH+",
+  "method": "Leave-One-Out Cross-Validation",
+  "results": [
+    {
+      "contrast": "sentences_vs_reversed",
+      "accuracy": 0.525,
+      "auc": 0.23875000000000005,
+      "p_value": 0.801980198019802,
+      "n_subjects": 40,
+      "n_avh_minus": 20,
+      "n_avh_plus": 20
+    },
+    {
+      "contrast": "speech_vs_reversed",
+      "accuracy": 0.45,
+      "auc": 0.24624999999999997,
+      "p_value": 0.5742574257425742,
+      "n_subjects": 40,
+      "n_avh_minus": 20,
+      "n_avh_plus": 20
+    },
+    {
+      "contrast": "words_vs_sentences",
+      "accuracy": 0.525,
+      "auc": 0.23500000000000001,
+      "p_value": 0.21782178217821782,
+      "n_subjects": 40,
+      "n_avh_minus": 20,
+      "n_avh_plus": 20
+    },
+    {
+      "contrast": "words_vs_reversed",
+      "accuracy": 0.6,
+      "auc": 0.22249999999999998,
+      "p_value": 0.6633663366336634,
+      "n_subjects": 40,
+      "n_avh_minus": 20,
+      "n_avh_plus": 20
+    }
+  ]
+}
