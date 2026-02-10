@@ -13,7 +13,8 @@ import pandas as pd
 from pathlib import Path
 import nibabel as nib
 from nilearn.maskers import NiftiMasker
-from nilearn.image import load_img, mean_img
+from nilearn.image import load_img, mean_img, math_img
+from nilearn.masking import compute_brain_mask
 from nilearn.plotting import plot_stat_map, plot_glass_brain
 from sklearn.svm import SVC
 from sklearn.model_selection import KFold, cross_val_score, permutation_test_score
@@ -268,42 +269,54 @@ def create_confusion_matrices(all_results):
     plt.close()
 
 
+def _format_contrast_title(name):
+    """Publication-style title: underscores to spaces, title case."""
+    return name.replace('_', ' ').title()
+
+
 def create_weight_maps(all_results):
     """Create brain maps showing discriminative features."""
     for result in all_results:
         contrast = result['contrast']
         weight_img = result['weight_img']
-        
+
+        # Mask to brain so weights are not shown outside the brain
+        brain_mask = compute_brain_mask(weight_img)
+        weight_masked = math_img('img * mask', img=weight_img, mask=brain_mask)
+
+        title_base = _format_contrast_title(contrast)
+
         # Glass brain
         fig = plt.figure(figsize=(12, 5))
-        
         plot_glass_brain(
-            weight_img,
+            weight_masked,
             threshold='auto',
-            title=f'{contrast}\nSVM Weights (AVH- vs AVH+)',
+            title=f'{title_base}\nSVM Weights (AVH- vs AVH+)',
             display_mode='lyrz',
             colorbar=True,
-            cmap='RdBu_r'
+            cmap='cold_hot',
+            black_bg=True,
         )
-        
         plt.savefig(OUTPUT_DIR / f'{contrast}_svm_weights_glass.png', dpi=150, bbox_inches='tight')
         plt.close()
-        
+
         # Axial slices
         fig = plt.figure(figsize=(15, 4))
         plot_stat_map(
-            weight_img,
+            weight_masked,
             threshold='auto',
             cut_coords=[-20, 0, 20, 40, 60],
             display_mode='z',
-            title=f'{contrast}: SVM Weights',
+            title=f'{title_base}: SVM Weights',
             colorbar=True,
-            cmap='RdBu_r'
+            cmap='cold_hot',
+            black_bg=True,
+            annotate=True,
         )
         plt.savefig(OUTPUT_DIR / f'{contrast}_svm_weights_axial.png', dpi=150, bbox_inches='tight')
         plt.close()
-        
-        # Save weight map
+
+        # Save weight map (unmasked for downstream use)
         nib.save(weight_img, OUTPUT_DIR / f'{contrast}_svm_weights.nii.gz')
 
 
