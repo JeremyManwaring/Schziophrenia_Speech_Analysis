@@ -10,7 +10,7 @@ import pandas as pd
 from pathlib import Path
 import nibabel as nib
 from nilearn.glm.second_level import SecondLevelModel, non_parametric_inference
-from nilearn.image import load_img, concat_imgs, smooth_img, threshold_img
+from nilearn.image import load_img, concat_imgs, smooth_img, threshold_img, math_img
 from nilearn.plotting import plot_stat_map, plot_glass_brain, view_img
 from nilearn.reporting import get_clusters_table
 from nilearn.masking import compute_brain_mask
@@ -175,98 +175,124 @@ def run_cluster_corrected_analysis(contrast_name, n_perm=1000):
         }
 
 
+def _format_contrast_title(name):
+    """Publication-style title: underscores to spaces, title case (e.g. 'vs' kept)."""
+    return name.replace('_', ' ').title()
+
+
 def create_visualizations(results, contrast_name):
     """Create publication-quality visualizations."""
     output_dir = results['output_dir']
     z_map = results['z_map']
-    
+
+    # Mask to brain so activation is not shown outside the brain
+    brain_mask = compute_brain_mask(z_map)
+    z_map_masked = math_img('img * mask', img=z_map, mask=brain_mask)
+
+    title_base = _format_contrast_title(contrast_name)
+    vmax = 5.0  # Consistent colorbar across contrasts
+
     # 1. Glass brain view
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-    
+
     # Positive effects (AVH- > AVH+)
     plot_glass_brain(
-        z_map, threshold=2.3,
-        title=f'{contrast_name}\nAVH- > AVH+ (z > 2.3)',
+        z_map_masked, threshold=2.3,
+        title=f'{title_base}\nAVH- > AVH+ (z > 2.3)',
         axes=axes[0],
         display_mode='lyrz',
         colorbar=True,
-        cmap='RdBu_r'
+        cmap='cold_hot',
+        black_bg=True,
+        vmax=vmax,
     )
-    
+
     # Negative effects (AVH+ > AVH-)
     plot_glass_brain(
-        z_map, threshold=2.3,
-        title=f'{contrast_name}\nAVH+ > AVH- (z > 2.3)',
+        z_map_masked, threshold=2.3,
+        title=f'{title_base}\nAVH+ > AVH- (z > 2.3)',
         axes=axes[1],
         display_mode='lyrz',
         colorbar=True,
-        cmap='RdBu_r',
-        plot_abs=False
+        cmap='cold_hot',
+        plot_abs=False,
+        black_bg=True,
+        vmax=vmax,
     )
-    
+
     plt.tight_layout()
     plt.savefig(output_dir / f'{contrast_name}_glass_brain_corrected.png', dpi=150, bbox_inches='tight')
     plt.savefig(output_dir / f'{contrast_name}_glass_brain_corrected.svg', bbox_inches='tight')
     plt.close()
-    
+
     # 2. Axial slices montage
     fig, axes = plt.subplots(2, 5, figsize=(20, 8))
     slices = [-30, -20, -10, 0, 10, 20, 30, 40, 50, 60]
-    
+
     for i, z_coord in enumerate(slices):
         row, col = i // 5, i % 5
         try:
             plot_stat_map(
-                z_map,
+                z_map_masked,
                 threshold=2.3,
                 cut_coords=[z_coord],
                 display_mode='z',
                 axes=axes[row, col],
                 colorbar=False,
-                title=f'z = {z_coord}'
+                title=f'z = {z_coord}',
+                cmap='cold_hot',
+                black_bg=True,
+                annotate=True,
+                vmax=vmax,
             )
-        except:
+        except Exception:
             axes[row, col].set_visible(False)
-    
-    plt.suptitle(f'{contrast_name}: AVH- vs AVH+ (z > 2.3)', fontsize=14, y=1.02)
+
+    plt.suptitle(f'{title_base}: AVH- vs AVH+ (z > 2.3)', fontsize=14, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.savefig(output_dir / f'{contrast_name}_axial_slices.png', dpi=150, bbox_inches='tight')
     plt.close()
-    
+
     # 3. Sagittal view highlighting temporal regions
     fig = plt.figure(figsize=(12, 5))
-    
+
     # Left hemisphere (x = -55, near L_MTG/L_STS)
     ax1 = fig.add_subplot(121)
     plot_stat_map(
-        z_map,
+        z_map_masked,
         threshold=2.3,
         cut_coords=[-55],
         display_mode='x',
         axes=ax1,
         title='Left Hemisphere (x = -55)',
         colorbar=True,
-        cmap='RdBu_r'
+        cmap='cold_hot',
+        black_bg=True,
+        annotate=True,
+        vmax=vmax,
     )
-    
+
     # Right hemisphere
     ax2 = fig.add_subplot(122)
     plot_stat_map(
-        z_map,
+        z_map_masked,
         threshold=2.3,
         cut_coords=[55],
         display_mode='x',
         axes=ax2,
         title='Right Hemisphere (x = 55)',
         colorbar=True,
-        cmap='RdBu_r'
+        cmap='cold_hot',
+        black_bg=True,
+        annotate=True,
+        vmax=vmax,
     )
-    
-    plt.suptitle(f'{contrast_name}: Sagittal Views', fontsize=14, y=1.02)
+
+    plt.suptitle(f'{title_base}: Sagittal Views', fontsize=14, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.savefig(output_dir / f'{contrast_name}_sagittal_temporal.png', dpi=150, bbox_inches='tight')
     plt.close()
-    
+
     print(f"  ✓ Visualizations saved to {output_dir}")
 
 

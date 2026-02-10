@@ -14,15 +14,15 @@ hallucinations (AVH+) from those without (AVH-).
 ## Results Summary
 | Contrast | Accuracy | AUC | p-value |
 |----------|----------|-----|---------|
-| sentences_vs_reversed | 52.5% | 0.239 | 0.802 |
-| speech_vs_reversed | 45.0% | 0.246 | 0.574 |
-| words_vs_sentences | 52.5% | 0.235 | 0.218 |
-| words_vs_reversed | 60.0% | 0.222 | 0.663 |
+| sentences_vs_reversed | 50.0% | 0.319 | 0.347 |
+| speech_vs_reversed | 47.5% | 0.360 | 0.455 |
+| words_vs_sentences | 42.5% | 0.357 | 0.663 |
+| words_vs_reversed | 42.5% | 0.328 | 0.663 |
 
 ## Best Performance
-- Contrast: words_vs_reversed
-- Accuracy: 60.0%
-- p-value: 0.663
+- Contrast: sentences_vs_reversed
+- Accuracy: 50.0%
+- p-value: 0.347
 
 ## Files
 - `classification_accuracy.png/svg` - Bar plot of accuracies
