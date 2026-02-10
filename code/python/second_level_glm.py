@@ -161,12 +161,9 @@ def run_group_anova(maps, design_matrix, output_dir, contrast_name,
     contrast_output = output_dir / contrast_name
     contrast_output.mkdir(parents=True, exist_ok=True)
     
-    # Create design matrix for ANOVA (group means + covariates)
+    # Create design matrix for ANOVA (cell-means: no intercept to avoid multicollinearity)
     dm = design_matrix[['HC', 'AVH-', 'AVH+', 'age', 'iq', 'sex']].copy()
-    dm['intercept'] = 1
-    
-    # Reorder columns
-    dm = dm[['intercept', 'HC', 'AVH-', 'AVH+', 'age', 'iq', 'sex']]
+    dm = dm[['HC', 'AVH-', 'AVH+', 'age', 'iq', 'sex']]
     
     print(f"\n    Design matrix shape: {dm.shape}")
     print(f"    Subjects per group: HC={int(dm['HC'].sum())}, AVH-={int(dm['AVH-'].sum())}, AVH+={int(dm['AVH+'].sum())}")
@@ -180,12 +177,10 @@ def run_group_anova(maps, design_matrix, output_dir, contrast_name,
     # 1. Main effect of group (F-test)
     print("    Computing main effect of group (F-test)...")
     
-    # F-test for group effect
-    # Test if any group differs from others
+    # F-test: test if any group mean differs (columns: HC, AVH-, AVH+, age, iq, sex)
     f_contrast = np.array([
-        [0, 1, -1, 0, 0, 0, 0],   # HC vs AVH-
-        [0, 1, 0, -1, 0, 0, 0],   # HC vs AVH+
-        [0, 0, 1, -1, 0, 0, 0],   # AVH- vs AVH+
+        [1, -1, 0, 0, 0, 0],   # HC vs AVH-
+        [1, 0, -1, 0, 0, 0],   # HC vs AVH+
     ])
     
     try:
@@ -199,11 +194,11 @@ def run_group_anova(maps, design_matrix, output_dir, contrast_name,
     except Exception as e:
         print(f"    Warning: Could not compute F-test: {e}")
     
-    # 2. Pairwise comparisons (T-tests)
+    # 2. Pairwise comparisons (T-tests) (columns: HC, AVH-, AVH+, age, iq, sex)
     pairwise_contrasts = {
-        'HC_vs_AVH-': [0, 1, -1, 0, 0, 0, 0],
-        'HC_vs_AVH+': [0, 1, 0, -1, 0, 0, 0],
-        'AVH-_vs_AVH+': [0, 0, 1, -1, 0, 0, 0],
+        'HC_vs_AVH-': [1, -1, 0, 0, 0, 0],
+        'HC_vs_AVH+': [1, 0, -1, 0, 0, 0],
+        'AVH-_vs_AVH+': [0, 1, -1, 0, 0, 0],
     }
     
     for name, contrast_weights in pairwise_contrasts.items():
@@ -241,7 +236,7 @@ def run_group_anova(maps, design_matrix, output_dir, contrast_name,
     # 3. Overall mean (one-sample t-test across all subjects)
     print("    Computing overall mean...")
     try:
-        mean_contrast = [1, 0, 0, 0, 0, 0, 0]  # Just intercept
+        mean_contrast = [1/3, 1/3, 1/3, 0, 0, 0]  # Average of three group means (cell-means model)
         mean_map = second_level_model.compute_contrast(
             mean_contrast,
             output_type='z_score'

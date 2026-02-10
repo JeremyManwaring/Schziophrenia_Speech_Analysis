@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from scipy import stats
+from statsmodels.stats.multitest import multipletests
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
@@ -286,21 +287,25 @@ def create_summary_heatmap(all_results, output_dir):
 
 
 def create_statistical_summary(all_results, output_dir):
-    """Create table of statistical comparisons."""
+    """Create table of statistical comparisons (uses FDR-corrected p when available)."""
     stat_data = [r for r in all_results if 'p_value' in r]
     
     if not stat_data:
         return
     
     df = pd.DataFrame(stat_data)
-    df = df.sort_values('p_value')
+    sort_col = 'p_fdr' if 'p_fdr' in df.columns else 'p_value'
+    df = df.sort_values(sort_col)
     df.to_csv(output_dir / 'laterality_stats.csv', index=False)
+    
+    p_col = 'p_fdr' if 'p_fdr' in df.columns else 'p_value'
+    p_vals = df[p_col].values
     
     # Create visualization of significant results
     fig, ax = plt.subplots(figsize=(10, 6))
     
-    # Color by significance
-    colors = ['#e74c3c' if p < 0.05 else '#3498db' for p in df['p_value']]
+    # Color by significance (FDR-corrected when available)
+    colors = ['#e74c3c' if p < 0.05 else '#3498db' for p in p_vals]
     
     y_pos = np.arange(len(df))
     
@@ -313,19 +318,20 @@ def create_statistical_summary(all_results, output_dir):
     ax.set_yticklabels(labels, fontsize=9)
     
     ax.set_xlabel("Cohen's d (AVH- minus AVH+)", fontsize=11)
-    ax.set_title('Laterality Differences: Effect Sizes', fontsize=12, fontweight='bold')
+    ax.set_title('Laterality Differences: Effect Sizes (FDR-corrected)', fontsize=12, fontweight='bold')
     ax.axvline(x=0, color='gray', linestyle='-', linewidth=1)
     
     # Add p-values
     for i, (_, row) in enumerate(df.iterrows()):
-        sig = '*' if row['p_value'] < 0.05 else ''
-        ax.text(row['cohens_d'] + 0.02, i, f"p={row['p_value']:.3f}{sig}", 
+        p = row[p_col]
+        sig = '*' if p < 0.05 else ''
+        ax.text(row['cohens_d'] + 0.02, i, f"p={p:.3f}{sig}", 
                 va='center', fontsize=8)
     
     # Legend
     from matplotlib.patches import Patch
     legend_elements = [
-        Patch(facecolor='#e74c3c', alpha=0.7, label='p < 0.05'),
+        Patch(facecolor='#e74c3c', alpha=0.7, label='p < 0.05 (FDR)'),
         Patch(facecolor='#3498db', alpha=0.7, label='p ≥ 0.05')
     ]
     ax.legend(handles=legend_elements, loc='lower right')
@@ -356,6 +362,14 @@ def main():
         print("\nNo results generated. Check ROI data files.")
         return
     
+    # FDR correction across all ROI-pair x contrast comparisons
+    stat_data = [r for r in all_results if 'p_value' in r]
+    if stat_data:
+        p_vals = [r['p_value'] for r in stat_data]
+        _, p_fdr, _, _ = multipletests(p_vals, alpha=0.05, method='fdr_bh')
+        for r, q in zip(stat_data, p_fdr):
+            r['p_fdr'] = float(q)
+    
     # Create visualizations
     print("\nCreating visualizations...")
     create_laterality_barplot(all_results, OUTPUT_DIR)
@@ -366,8 +380,8 @@ def main():
     df = pd.DataFrame(all_results)
     df.to_csv(OUTPUT_DIR / 'laterality_all_results.csv', index=False)
     
-    # Find significant differences
-    sig_results = [r for r in all_results if 'p_value' in r and r['p_value'] < 0.05]
+    # Find significant differences (FDR-corrected)
+    sig_results = [r for r in all_results if r.get('p_fdr') is not None and r['p_fdr'] < 0.05]
     
     # Summary statistics
     summary = {
@@ -415,7 +429,7 @@ Laterality Index (LI) = (Left - Right) / (|Left| + |Right|)
 - words_vs_reversed
 
 ## Results
-- {len(sig_results)} significant laterality differences between AVH- and AVH+ (p < 0.05)
+- {len(sig_results)} significant laterality differences between AVH- and AVH+ (p < 0.05 FDR-corrected)
 
 ## Files
 - `*_laterality_barplot.png/svg` - Bar plots for each contrast

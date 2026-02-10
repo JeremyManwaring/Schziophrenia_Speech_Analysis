@@ -4,7 +4,30 @@ This folder contains comprehensive visualizations from advanced analyses compari
 
 ---
 
+## Quick Navigation
+
+| Folder | Description |
+|--------|-------------|
+| **significant_findings/** | ROI effects (L_MTG, L_STS), surface brain maps, PSYRATS correlation |
+| **non_significant_findings/** | MVPA, connectivity, laterality (p >= 0.05 or FDR-corrected null) |
+| **supplementary/** | All ROI plots, demographics, QC, effect sizes |
+| **brain_maps_surface/** | fsaverage5 surface projections (replaces volume glass brains) |
+
+---
+
 ## Folder Structure
+
+### significant_findings/
+**Statistically significant or large effect size (d >= 0.8)**
+- `roi_effects/` - L_MTG, L_STS rainclouds; key_findings_summary
+- `brain_maps/` - Surface plots (sentences, speech, summary)
+- `psyrats_correlation/` - PSYRATS vs R_STG_posterior (r=0.59, p=0.003)
+
+### non_significant_findings/
+**Null or non-significant results**
+- `mvpa_classification/` - Classification accuracy, confusion matrices, SVM weights
+- `connectivity/` - ROI connectivity matrices (FDR: no significant connections)
+- `laterality/` - Laterality indices (no significant group differences)
 
 ### 01_cluster_corrected/
 **Whole-Brain Statistical Maps with Cluster Correction**
@@ -93,8 +116,7 @@ Laterality indices comparing left vs right hemisphere activation between groups.
 - Suggests distributed rather than focal differences
 
 ### 3. Connectivity
-- **2 significant connections** differ between groups (p < 0.05 uncorrected)
-- Check `significant_connections.csv` for details
+- FDR correction applied; check `significant_connections.csv` for any surviving connections
 
 ### 4. Laterality
 - No significant laterality differences between groups
@@ -107,7 +129,7 @@ Laterality indices comparing left vs right hemisphere activation between groups.
 | Analysis | Method | Subjects |
 |----------|--------|----------|
 | Cluster | Permutation test (1000 perm) | 40 (20 AVH-, 20 AVH+) |
-| MVPA | Linear SVM, LOO-CV | 40 (20 AVH-, 20 AVH+) |
+| MVPA | Linear SVM, 5-fold CV | 40 (20 AVH-, 20 AVH+) |
 | Connectivity | Pearson correlation, Fisher z | 46 (23 AVH-, 23 AVH+) |
 | Laterality | LI = (L-R)/(|L|+|R|) | 71 (all subjects) |
 

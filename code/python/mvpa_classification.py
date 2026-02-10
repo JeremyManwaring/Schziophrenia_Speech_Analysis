@@ -3,6 +3,9 @@ MVPA Classification: AVH- vs AVH+
 
 Multivariate Pattern Analysis using SVM to classify patients
 with and without auditory hallucinations based on brain activation patterns.
+
+Uses 5-fold CV for accuracy and permutation test (aligns both for valid p-value).
+For publication, increase n_permutations to 1000+ in permutation_test_score.
 """
 
 import numpy as np
@@ -13,7 +16,7 @@ from nilearn.maskers import NiftiMasker
 from nilearn.image import load_img, mean_img
 from nilearn.plotting import plot_stat_map, plot_glass_brain
 from sklearn.svm import SVC
-from sklearn.model_selection import LeaveOneOut, cross_val_score, permutation_test_score
+from sklearn.model_selection import KFold, cross_val_score, permutation_test_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, classification_report
 from sklearn.pipeline import Pipeline
@@ -118,22 +121,18 @@ def run_svm_classification(contrast_name, participants_df):
         ('svm', SVC(kernel='linear', C=1.0, probability=True))
     ])
     
-    # Leave-one-out cross-validation
-    print("    Running LOO cross-validation...")
-    loo = LeaveOneOut()
+    # 5-fold cross-validation (aligned with permutation test for consistent p-value)
+    print("    Running 5-fold cross-validation...")
+    cv = KFold(n_splits=5, shuffle=True, random_state=42)
+    predictions = np.zeros_like(y, dtype=float)
+    probabilities = np.zeros_like(y, dtype=float)
     
-    predictions = []
-    probabilities = []
-    
-    for train_idx, test_idx in loo.split(X):
+    for train_idx, test_idx in cv.split(X):
         clf.fit(X[train_idx], y[train_idx])
         pred = clf.predict(X[test_idx])
         prob = clf.predict_proba(X[test_idx])[:, 1]
-        predictions.append(pred[0])
-        probabilities.append(prob[0])
-    
-    predictions = np.array(predictions)
-    probabilities = np.array(probabilities)
+        predictions[test_idx] = pred
+        probabilities[test_idx] = prob
     
     # Calculate metrics
     accuracy = accuracy_score(y, predictions)
@@ -145,7 +144,7 @@ def run_svm_classification(contrast_name, participants_df):
     
     cm = confusion_matrix(y, predictions)
     
-    # Permutation test for significance
+    # Permutation test (same 5-fold CV; use 1000+ permutations for publication)
     print("    Running permutation test (100 permutations)...")
     try:
         clf_perm = Pipeline([
@@ -153,7 +152,7 @@ def run_svm_classification(contrast_name, participants_df):
             ('svm', SVC(kernel='linear', C=1.0))
         ])
         score, perm_scores, p_value = permutation_test_score(
-            clf_perm, X, y, scoring='accuracy', cv=5, n_permutations=100, n_jobs=-1
+            clf_perm, X, y, scoring='accuracy', cv=cv, n_permutations=100, n_jobs=-1
         )
     except:
         p_value = 1.0

@@ -12,6 +12,7 @@ import pandas as pd
 from pathlib import Path
 from scipy import stats
 from scipy.stats import pearsonr, spearmanr
+from statsmodels.stats.multitest import multipletests
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
@@ -488,6 +489,19 @@ def run_correlation_analysis(roi_dir, participants_path, output_dir):
         except Exception as e:
             print(f"  ERROR: {e}")
             all_results[contrast_name] = {'error': str(e)}
+    
+    # FDR correction across all (contrast x ROI) correlation tests
+    all_corr_entries = []
+    for cname, res in all_results.items():
+        if isinstance(res, dict) and 'correlations' in res:
+            for c in res['correlations']:
+                if 'pearson_p' in c and not np.isnan(c['pearson_p']):
+                    all_corr_entries.append((cname, c))
+    if all_corr_entries:
+        p_vals = [c['pearson_p'] for _, c in all_corr_entries]
+        _, p_fdr, _, _ = multipletests(p_vals, alpha=0.05, method='fdr_bh')
+        for (_, c), q in zip(all_corr_entries, p_fdr):
+            c['pearson_p_fdr'] = float(q)
     
     # Save summary
     with open(output_dir / 'correlation_summary.json', 'w') as f:
