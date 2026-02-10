@@ -103,18 +103,17 @@ def run_cluster_corrected_analysis(contrast_name, n_perm=1000):
         print("  ERROR: Not enough subjects for analysis")
         return None
     
-    # Create design matrix for second-level
+    # Create design matrix for second-level (cell-means: no intercept to avoid multicollinearity)
     dm = design_matrix[['AVH-', 'AVH+', 'age', 'iq', 'sex']].copy()
-    dm['intercept'] = 1
-    dm = dm[['intercept', 'AVH-', 'AVH+', 'age', 'iq', 'sex']]
+    dm = dm[['AVH-', 'AVH+', 'age', 'iq', 'sex']]
     
     # Fit second-level model
     print("  Fitting second-level model...")
     model = SecondLevelModel(n_jobs=-1, smoothing_fwhm=None)  # Already smoothed
     model.fit(maps, design_matrix=dm)
     
-    # Compute AVH- > AVH+ contrast
-    contrast_weights = [0, 1, -1, 0, 0, 0]  # AVH- minus AVH+
+    # Compute AVH- > AVH+ contrast (columns: AVH-, AVH+, age, iq, sex)
+    contrast_weights = [1, -1, 0, 0, 0]  # AVH- minus AVH+
     
     print("  Computing parametric statistics...")
     z_map = model.compute_contrast(contrast_weights, output_type='z_score')

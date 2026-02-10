@@ -68,6 +68,7 @@ def half_violinplot(data, x, y, hue, ax, palette, width=0.6, offset=0.15):
 
 def create_raincloud(data, x, y, hue, ax, palette, title=''):
     """Create raincloud plot with violin, box, and points."""
+    np.random.seed(42)  # Reproducible jitter
     groups = sorted(data[hue].unique())
     categories = sorted(data[x].unique())
     n_groups = len(groups)
@@ -211,6 +212,7 @@ def create_all_rois_raincloud(contrast_name):
 
 def create_key_roi_comparison(contrast_name, roi_name):
     """Create detailed raincloud for a single key ROI."""
+    np.random.seed(42)  # Reproducible jitter
     data = load_roi_data(contrast_name)
     
     if data is None:
@@ -333,6 +335,7 @@ def create_key_roi_comparison(contrast_name, roi_name):
 
 def create_summary_figure():
     """Create summary figure with key findings."""
+    np.random.seed(42)  # Reproducible jitter
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
     
     key_comparisons = [

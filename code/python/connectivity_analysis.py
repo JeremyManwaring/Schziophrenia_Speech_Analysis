@@ -97,7 +97,7 @@ def extract_roi_timeseries(bold_path, confound_path):
         allow_overlap=True,  # Allow overlapping spheres
         standardize=True,
         detrend=True,
-        high_pass=0.01,
+        high_pass=0.01,  # For task data consider wider band; 0.01-0.1 Hz is typical for resting-state
         low_pass=0.1,
         t_r=2.0,  # TR in seconds
         memory='nilearn_cache'
@@ -239,11 +239,11 @@ def create_difference_heatmap(diff_matrix, t_matrix, p_matrix, roi_names, output
     axes[0].set_xticklabels(roi_names, rotation=45, ha='right', fontsize=8)
     axes[0].set_yticklabels(roi_names, fontsize=8)
     
-    # Significance matrix (show -log10 p-values)
+    # Significance matrix (show -log10 FDR-corrected p-values)
     sig_matrix = -np.log10(p_matrix + 1e-10)
     sig_matrix[mask] = 0
     
-    # Threshold for significance
+    # Threshold for significance (FDR-corrected)
     sig_thresh = -np.log10(0.05)
     
     sns.heatmap(
@@ -256,12 +256,12 @@ def create_difference_heatmap(diff_matrix, t_matrix, p_matrix, roi_names, output
         vmax=3,
         square=True,
         linewidths=0.5,
-        cbar_kws={'shrink': 0.8, 'label': '-log10(p-value)'},
+        cbar_kws={'shrink': 0.8, 'label': '-log10(p-FDR)'},
         ax=axes[1]
     )
     
     # Add significance threshold line to colorbar
-    axes[1].set_title(f'Statistical Significance\n(threshold: -log10(0.05) = {sig_thresh:.2f})', 
+    axes[1].set_title(f'Statistical Significance (FDR)\n(threshold: -log10(0.05) = {sig_thresh:.2f})', 
                       fontsize=12, fontweight='bold')
     axes[1].set_xticklabels(roi_names, rotation=45, ha='right', fontsize=8)
     axes[1].set_yticklabels(roi_names, fontsize=8)
@@ -338,23 +338,35 @@ def main():
         avh_minus_matrices, avh_plus_matrices, roi_names
     )
     
+    # FDR correction across all 66 unique connections
+    n_rois = len(roi_names)
+    p_flat = [p_values[i, j] for i in range(n_rois) for j in range(i + 1, n_rois)]
+    _, p_fdr, _, _ = multipletests(p_flat, alpha=0.05, method='fdr_bh')
+    p_corrected = np.ones_like(p_values)
+    idx = 0
+    for i in range(n_rois):
+        for j in range(i + 1, n_rois):
+            p_corrected[i, j] = p_corrected[j, i] = p_fdr[idx]
+            idx += 1
+    
     # Difference matrix
     diff_matrix = avh_minus_mean - avh_plus_mean
     
-    # Find significant connections
+    # Find significant connections (FDR-corrected)
     sig_connections = []
     for i in range(len(roi_names)):
         for j in range(i + 1, len(roi_names)):
-            if p_values[i, j] < 0.05:
+            if p_corrected[i, j] < 0.05:
                 sig_connections.append({
                     'roi1': roi_names[i],
                     'roi2': roi_names[j],
                     'diff': diff_matrix[i, j],
                     't_stat': t_stats[i, j],
-                    'p_value': p_values[i, j]
+                    'p_value': p_values[i, j],
+                    'p_fdr': p_corrected[i, j]
                 })
     
-    print(f"  Found {len(sig_connections)} significant differences (p < 0.05 uncorrected)")
+    print(f"  Found {len(sig_connections)} significant differences (p < 0.05 FDR-corrected)")
     
     # Create visualizations
     print("\nCreating visualizations...")
@@ -370,15 +382,15 @@ def main():
         OUTPUT_DIR / 'connectivity_matrix_AVH+.png', roi_names
     )
     
-    # Difference heatmap with significance
+    # Difference heatmap with significance (FDR-corrected)
     create_difference_heatmap(
-        diff_matrix, t_stats, p_values, roi_names,
+        diff_matrix, t_stats, p_corrected, roi_names,
         OUTPUT_DIR / 'connectivity_difference.png'
     )
     
-    # Network graph
+    # Network graph (FDR-corrected)
     create_network_graph(
-        diff_matrix, p_values, roi_names,
+        diff_matrix, p_corrected, roi_names,
         OUTPUT_DIR / 'network_differences.png'
     )
     
@@ -391,7 +403,7 @@ def main():
     # Save significant connections
     if sig_connections:
         sig_df = pd.DataFrame(sig_connections)
-        sig_df = sig_df.sort_values('p_value')
+        sig_df = sig_df.sort_values('p_fdr' if 'p_fdr' in sig_df.columns else 'p_value')
         sig_df.to_csv(OUTPUT_DIR / 'significant_connections.csv', index=False)
     
     # Save summary
@@ -421,7 +433,7 @@ with and without auditory hallucinations.
 - Extracted timeseries from 12 speech/language ROIs (6mm spheres)
 - Computed Pearson correlations between all ROI pairs
 - Applied Fisher z-transformation for statistical comparison
-- Compared connectivity between AVH- and AVH+ groups (independent t-tests)
+- Compared connectivity between AVH- and AVH+ groups (independent t-tests, FDR correction)
 
 ## ROIs Analyzed
 """
