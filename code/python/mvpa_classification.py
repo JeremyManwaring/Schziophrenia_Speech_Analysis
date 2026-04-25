@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).parent.parent.parent
 FIRST_LEVEL_DIR = BASE_DIR / 'results' / 'vm_analysis' / 'results' / 'first_level'
 FMRIPREP_DIR = BASE_DIR / 'derivatives' / 'fmriprep'
 PARTICIPANTS_PATH = BASE_DIR / 'participants.tsv'
-OUTPUT_DIR = BASE_DIR / 'results' / 'visualizations' / '03_mvpa_classification'
+OUTPUT_DIR = BASE_DIR / 'results' / 'data' / 'svm_weights'
 
 # Contrasts to test
 CONTRASTS = [
@@ -367,13 +367,9 @@ def main():
         print("\nNo results generated. Check that contrast maps exist.")
         return
     
-    # Create visualizations
-    print("\nCreating visualizations...")
-    create_accuracy_plot(all_results)
-    create_confusion_matrices(all_results)
-    create_weight_maps(all_results)
-    create_permutation_plot(all_results)
-    
+    # Plotting is delegated to poster_visualizations.make_classification()
+    # so all figures share the project-wide poster style.
+
     # Save summary
     summary = {
         'analysis': 'MVPA SVM Classification',

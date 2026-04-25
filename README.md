@@ -19,40 +19,56 @@ Brain correlates of speech perception in schizophrenia patients with and without
 ```
 ds004302-Edited/
 │
-├── code/                    # All analysis code
-│   ├── matlab/              # MATLAB/SPM preprocessing & GLM scripts
-│   └── python/              # Python analysis scripts
-│       ├── first_level_glm.py      # Subject-level GLM
-│       ├── second_level_glm.py     # Group-level analysis
-│       ├── roi_analysis.py         # ROI extraction & stats
-│       ├── mvpa_classification.py  # Machine learning classification
-│       ├── connectivity_analysis.py # Functional connectivity
-│       ├── laterality_analysis.py  # Hemisphere dominance
-│       └── run_advanced_analyses.py # Master analysis script
+├── code/                              # All analysis code
+│   ├── matlab/                        # MATLAB/SPM preprocessing & GLM scripts
+│   └── python/                        # Python analysis scripts
+│       ├── poster_style.py            # Shared rcParams, palette, formatters
+│       ├── poster_visualizations.py   # Orchestrator: builds results/poster/
+│       ├── surface_brain_plots.py     # Cluster + SVM brain map utilities
+│       ├── advanced_cluster_analysis.py
+│       ├── mvpa_classification.py
+│       ├── connectivity_analysis.py
+│       ├── laterality_analysis.py
+│       ├── first_level_glm.py / second_level_glm.py
+│       ├── roi_analysis.py / correlation_analysis.py / effect_size_analysis.py
+│       └── run_advanced_analyses.py   # One-shot pipeline driver
 │
-├── derivatives/             # Preprocessed data
-│   └── fmriprep/            # fMRIPrep outputs (71 subjects)
+├── derivatives/                       # fMRIPrep preprocessed data (71 subjects)
 │
-├── results/                 # Analysis outputs
-│   ├── vm_analysis/         # GLM results (first/second level, ROI, effects)
-│   ├── visualizations/      # Publication-ready figures
-│   │   ├── 01_cluster_corrected/  # Whole-brain statistical maps
-│   │   ├── 02_raincloud_plots/    # Distribution visualizations
-│   │   ├── 03_mvpa_classification/ # SVM classification results
-│   │   ├── 04_connectivity/       # Functional connectivity matrices
-│   │   └── 05_laterality/         # Hemisphere dominance analysis
-│   ├── figures/             # Legacy figures
-│   └── demographics/        # Demographic analyses
+├── results/
+│   ├── data/                          # SINGLE source of truth for stats
+│   │   ├── roi_values/                # one CSV per contrast
+│   │   ├── effect_sizes/              # per-contrast + combined CSV
+│   │   ├── correlations/              # PSYRATS Pearson + partial
+│   │   ├── cluster_maps/              # FWE-corrected NIfTI
+│   │   ├── svm_weights/               # SVM weight maps
+│   │   ├── connectivity*.{json,csv}   # ROI-ROI connectivity
+│   │   ├── laterality*.{csv,json}     # Laterality indices
+│   │   ├── qc.csv                     # Per-subject motion summary
+│   │   └── demographics/              # Statistical tests
+│   ├── poster/                        # 300 dpi poster-ready figures
+│   │   ├── 01_brain_maps/             # Glass + inflated fsaverage surfaces
+│   │   ├── 02_roi_effects/            # Raincloud + grouped bar + forest
+│   │   ├── 03_correlations/           # PSYRATS scatter
+│   │   ├── 04_classification/         # MVPA SVM
+│   │   ├── 05_connectivity/           # Connectivity matrix + sig diffs
+│   │   ├── 06_laterality/             # Heatmap + bars + effect sizes
+│   │   ├── 07_demographics_qc/        # Age, IQ, sex, motion
+│   │   ├── summary/                   # Hero key-findings figure
+│   │   └── README.md                  # Index + key findings
+│   ├── demographics/                  # Demographic stats
+│   └── vm_analysis/                   # First-/second-level GLM (Nilearn)
 │
-├── docs/                    # Documentation
-│   ├── guides/              # How-to guides, workflow docs
-│   └── status/              # Analysis progress reports
+├── docs/                              # Documentation
+│   ├── ANALYSIS_SUMMARY.md / GLM_Analysis_Plan.txt
+│   ├── guides/                        # How-to & workflow docs
+│   └── status/                        # FINAL_STATUS.md (single canonical)
 │
-├── utils/                   # Utility shell scripts
+├── utils/                             # Utility shell scripts
 │
-├── sub-*/                   # BIDS subject data (71 subjects)
+├── sub-*/                             # BIDS subject data (71 subjects)
 │
-└── [BIDS metadata files]    # participants.tsv, task JSONs, etc.
+└── [BIDS metadata files]              # participants.tsv, task JSONs, etc.
 ```
 
 ---
@@ -136,24 +152,32 @@ show_glm_results('01', 1)  % View subject 01, contrast 1
 
 ## AVH- vs AVH+ Advanced Analyses
 
-Five advanced analyses comparing patients with and without auditory hallucinations:
+Advanced analyses comparing schizophrenia patients with and without auditory hallucinations.
+All analyses write to `results/data/`; `poster_visualizations.py` then renders the
+poster-ready figures into `results/poster/`.
 
-| Analysis | Method | Key Finding |
-|----------|--------|-------------|
-| **Cluster Correction** | Permutation testing (1000 perm) | Whole-brain maps with FWE correction |
-| **Raincloud Plots** | Distribution + individual data | Large effects in L_MTG, L_STS (d > 0.8) |
-| **MVPA Classification** | SVM with LOO-CV | 60% accuracy (not significant) |
-| **Connectivity** | ROI-to-ROI correlations | 2 significant connection differences |
-| **Laterality** | LI = (L-R)/(|L|+|R|) | No significant laterality differences |
+| Analysis | Method | Output (data) | Output (figures) |
+|----------|--------|---------------|------------------|
+| **Cluster correction** | Permutation testing (1000 perm) | `results/data/cluster_maps/` | `results/poster/01_brain_maps/` |
+| **ROI activation**     | Raincloud + grouped bars + forest | `results/data/roi_values/` & `effect_sizes/` | `results/poster/02_roi_effects/` |
+| **PSYRATS correlations** | Pearson r in AVH+ | `results/data/correlations/` | `results/poster/03_correlations/` |
+| **MVPA classification** | Linear SVM, LOO-CV, permutation | `results/data/svm_weights/` | `results/poster/04_classification/` |
+| **Connectivity** | ROI-to-ROI Fisher-z | `results/data/connectivity*.{json,csv}` | `results/poster/05_connectivity/` |
+| **Laterality** | LI = (L-R)/(\|L\|+\|R\|) | `results/data/laterality*.{csv,json}` | `results/poster/06_laterality/` |
 
 ### Run Advanced Analyses
 
 ```bash
 source venv/bin/activate
+
+# Heavy compute pipeline (cluster perm tests, MVPA, connectivity, laterality)
 python code/python/run_advanced_analyses.py
+
+# Re-render poster figures only (fast, reads from results/data/)
+python code/python/poster_visualizations.py
 ```
 
-Results saved to `results/visualizations/`
+Data sources -> `results/data/`. Figures -> `results/poster/` (300 dpi PNGs).
 
 ---
 
