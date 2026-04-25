@@ -1,98 +1,269 @@
 """
-Surface brain plots using fsaverage (FreeSurfer) template.
+Brain map plotting utilities (poster-ready).
 
-Uses plot_img_on_surf to project volume statistical maps onto the cortical
-surface for accurate visualization that stays within the brain.
+Provides:
+- `plot_cluster_glass(...)` -> single-panel cleaned glass brain for cluster maps
+- `plot_cluster_surface(...)` -> fsaverage surface projection of a stat map
+- `plot_svm_surface(...)` -> smoothed/thresholded SVM weight surface projection
+- `plot_roi_locations(...)` -> labeled ROI sphere reference figure
+- `main()` -> generates all brain maps for the poster from `results/data/`
+
+The functions are designed to be importable from `poster_visualizations.py`.
 """
 
-from pathlib import Path
-from nilearn.plotting import plot_img_on_surf
+from __future__ import annotations
+
+import sys
 import warnings
+from pathlib import Path
 
-warnings.filterwarnings('ignore')
+import matplotlib.pyplot as plt
+import numpy as np
+from nilearn.image import load_img, math_img, smooth_img
+from nilearn.masking import compute_brain_mask
+from nilearn.plotting import (
+    plot_glass_brain,
+    plot_img_on_surf,
+    plot_markers,
+)
 
+sys.path.insert(0, str(Path(__file__).parent))
+from poster_style import apply_style, format_contrast  # noqa: E402
+
+warnings.filterwarnings("ignore")
+apply_style()
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).parent.parent.parent
-CLUSTER_DIR = BASE_DIR / 'results' / 'visualizations' / '01_cluster_corrected'
-MVPA_DIR = BASE_DIR / 'results' / 'visualizations' / '03_mvpa_classification'
-OUTPUT_DIR = BASE_DIR / 'results' / 'visualizations' / 'brain_maps_surface'
+DATA_CLUSTER = BASE_DIR / "results" / "data" / "cluster_maps"
+DATA_SVM = BASE_DIR / "results" / "data" / "svm_weights"
+POSTER_BRAIN = BASE_DIR / "results" / "poster" / "01_brain_maps"
+
+KEY_CONTRASTS = ["sentences_vs_reversed", "speech_vs_reversed", "words_vs_sentences"]
+SVM_CONTRASTS = KEY_CONTRASTS + ["words_vs_reversed"]
+
+# ROI coordinates (MNI) used for the reference figure
+ROIS = {
+    "L_STG_post": (-58, -22, 4),
+    "L_STG_ant": (-54, 4, -8),
+    "L_MTG": (-60, -12, -12),
+    "L_IFG_tri": (-48, 26, 14),
+    "L_IFG_oper": (-48, 14, 8),
+    "L_STS": (-54, -40, 4),
+    "L_Heschl": (-42, -22, 10),
+    "R_STG_post": (58, -22, 4),
+    "R_STG_ant": (54, 4, -8),
+    "R_MTG": (60, -12, -12),
+    "R_IFG": (48, 20, 10),
+    "R_Heschl": (42, -22, 10),
+}
 
 
-def _format_title(name):
-    """Convert contrast name to publication-style title (underscores to spaces, title case)."""
-    return name.replace('_', ' ').title()
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+def _resolve_cluster_map(contrast: str) -> Path | None:
+    """Prefer the corrected map, fall back to the uncorrected z-stat."""
+    candidates = [
+        DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_p05_corrected.nii.gz",
+        DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_neglogp_corrected.nii.gz",
+        DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_zstat_uncorrected.nii.gz",
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    return None
 
 
-def create_cluster_surface_plots():
-    """Generate surface plots for cluster-corrected contrast maps."""
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    contrasts = ['sentences_vs_reversed', 'speech_vs_reversed', 'words_vs_sentences']
-
-    for contrast_name in contrasts:
-        z_path = CLUSTER_DIR / contrast_name / f'{contrast_name}_AVH-_vs_AVH+_zstat_uncorrected.nii.gz'
-        if not z_path.exists():
-            continue
-        try:
-            out_path = OUTPUT_DIR / f'{contrast_name}_surface.png'
-            title = f"{_format_title(contrast_name)}: AVH- vs AVH+ (z-stat)"
-            plot_img_on_surf(
-                stat_map=str(z_path),
-                surf_mesh='fsaverage5',
-                threshold=2.3,
-                cmap='cold_hot',
-                views=['lateral', 'medial'],
-                hemispheres=['left', 'right'],
-                colorbar=True,
-                symmetric_cbar=True,
-                title=title,
-                output_file=str(out_path),
-            )
-            print(f"  Saved {out_path}")
-        except Exception as e:
-            print(f"  Failed {contrast_name}: {e}")
+def _smooth_and_mask(stat_path: Path, fwhm: float = 6.0):
+    """Smooth a stat map and mask it to the brain to reduce speckle."""
+    img = load_img(str(stat_path))
+    img = smooth_img(img, fwhm=fwhm)
+    brain = compute_brain_mask(img)
+    return math_img("img * mask", img=img, mask=brain)
 
 
-def create_mvpa_surface_plots():
-    """Generate surface plots for SVM weight maps."""
-    contrasts = ['sentences_vs_reversed', 'speech_vs_reversed', 'words_vs_sentences', 'words_vs_reversed']
-
-    for contrast_name in contrasts:
-        w_path = MVPA_DIR / f'{contrast_name}_svm_weights.nii.gz'
-        if not w_path.exists():
-            continue
-        try:
-            out_path = OUTPUT_DIR / f'{contrast_name}_svm_weights_surface.png'
-            title = f"{_format_title(contrast_name)}: SVM Weights (AVH- vs AVH+)"
-            plot_img_on_surf(
-                stat_map=str(w_path),
-                surf_mesh='fsaverage5',
-                threshold=None,
-                cmap='cold_hot',
-                views=['lateral', 'medial'],
-                hemispheres=['left', 'right'],
-                colorbar=True,
-                symmetric_cbar=True,
-                title=title,
-                output_file=str(out_path),
-            )
-            print(f"  Saved {out_path}")
-        except Exception as e:
-            print(f"  Failed {contrast_name}: {e}")
+def _abs_threshold(img, percentile: float = 90.0) -> float:
+    """Pick a threshold equal to the given percentile of the absolute voxel values."""
+    data = np.abs(img.get_fdata())
+    data = data[np.isfinite(data) & (data > 0)]
+    if data.size == 0:
+        return 0.0
+    return float(np.percentile(data, percentile))
 
 
-def main():
-    """Generate all surface brain plots."""
-    print("\n" + "="*70)
-    print("SURFACE BRAIN PLOTS (fsaverage5)")
-    print("="*70)
+# ---------------------------------------------------------------------------
+# Plot: cluster glass brain (single clean panel)
+# ---------------------------------------------------------------------------
+def plot_cluster_glass(contrast: str, out_path: Path, threshold: float = 2.3) -> bool:
+    """Render a single-panel cleaned glass brain for the cluster map."""
+    stat_path = _resolve_cluster_map(contrast)
+    if stat_path is None:
+        return False
 
-    print("\nCluster-corrected maps...")
-    create_cluster_surface_plots()
+    img = _smooth_and_mask(stat_path, fwhm=6.0)
 
-    print("\nMVPA SVM weight maps...")
-    create_mvpa_surface_plots()
+    fig = plt.figure(figsize=(14, 5))
+    plot_glass_brain(
+        img,
+        threshold=threshold,
+        display_mode="lyrz",
+        colorbar=True,
+        cmap="cold_hot",
+        plot_abs=False,
+        symmetric_cbar=True,
+        title=f"{format_contrast(contrast)}  -  AVH- vs AVH+  (|z| > {threshold})",
+        figure=fig,
+    )
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=300, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    return True
 
-    print(f"\nSurface plots saved to: {OUTPUT_DIR}")
-    print("="*70 + "\n")
+
+# ---------------------------------------------------------------------------
+# Plot: cluster surface (fsaverage, inflated)
+# ---------------------------------------------------------------------------
+def plot_cluster_surface(contrast: str, out_path: Path, threshold: float = 2.0) -> bool:
+    """Project the cluster map onto an inflated fsaverage surface."""
+    stat_path = _resolve_cluster_map(contrast)
+    if stat_path is None:
+        return False
+
+    img = _smooth_and_mask(stat_path, fwhm=6.0)
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    title = f"{format_contrast(contrast)}: AVH- vs AVH+  (|z| > {threshold})"
+    plot_img_on_surf(
+        stat_map=img,
+        surf_mesh="fsaverage",
+        threshold=threshold,
+        cmap="cold_hot",
+        views=["lateral", "medial"],
+        hemispheres=["left", "right"],
+        colorbar=True,
+        symmetric_cbar=True,
+        inflate=True,
+        title=title,
+        output_file=str(out_path),
+    )
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Plot: SVM weight surface (smoothed + percentile-thresholded)
+# ---------------------------------------------------------------------------
+def plot_svm_surface(contrast: str, out_path: Path, percentile: float = 92.0) -> bool:
+    """Project SVM weights onto fsaverage after smoothing + abs-percentile thresholding."""
+    weight_path = DATA_SVM / f"{contrast}_svm_weights.nii.gz"
+    if not weight_path.exists():
+        return False
+
+    img = _smooth_and_mask(weight_path, fwhm=8.0)
+    thr = _abs_threshold(img, percentile=percentile)
+    if thr <= 0:
+        return False
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    title = f"{format_contrast(contrast)}: SVM Weights (top {100 - percentile:.0f}%)"
+    plot_img_on_surf(
+        stat_map=img,
+        surf_mesh="fsaverage",
+        threshold=thr,
+        cmap="cold_hot",
+        views=["lateral", "medial"],
+        hemispheres=["left", "right"],
+        colorbar=True,
+        symmetric_cbar=True,
+        inflate=True,
+        title=title,
+        output_file=str(out_path),
+    )
+    return True
+
+
+def plot_svm_glass(contrast: str, out_path: Path, percentile: float = 92.0) -> bool:
+    """Single-panel glass brain of SVM weights, smoothed + thresholded."""
+    weight_path = DATA_SVM / f"{contrast}_svm_weights.nii.gz"
+    if not weight_path.exists():
+        return False
+
+    img = _smooth_and_mask(weight_path, fwhm=8.0)
+    thr = _abs_threshold(img, percentile=percentile)
+    if thr <= 0:
+        return False
+
+    fig = plt.figure(figsize=(14, 5))
+    plot_glass_brain(
+        img,
+        threshold=thr,
+        display_mode="lyrz",
+        colorbar=True,
+        cmap="cold_hot",
+        plot_abs=False,
+        symmetric_cbar=True,
+        title=f"{format_contrast(contrast)}: SVM Weights (top {100 - percentile:.0f}%)",
+        figure=fig,
+    )
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=300, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Plot: ROI reference figure
+# ---------------------------------------------------------------------------
+def plot_roi_locations(out_path: Path) -> None:
+    """Reference figure: 12 speech/language ROIs plotted as colored spheres."""
+    coords = list(ROIS.values())
+    labels = list(ROIS.keys())
+    node_values = np.array([1.0 if k.startswith("L_") else 2.0 for k in labels])
+
+    fig = plt.figure(figsize=(14, 5))
+    plot_markers(
+        node_values=node_values,
+        node_coords=coords,
+        node_size=180,
+        node_cmap="coolwarm",
+        node_vmin=0,
+        node_vmax=3,
+        display_mode="lyrz",
+        colorbar=False,
+        title="Speech / Language ROIs (MNI)   |   Blue: Left   Red: Right",
+        figure=fig,
+    )
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=300, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+def main() -> None:
+    POSTER_BRAIN.mkdir(parents=True, exist_ok=True)
+
+    print("\n" + "=" * 70)
+    print("BRAIN MAPS (poster-ready)")
+    print("=" * 70)
+
+    plot_roi_locations(POSTER_BRAIN / "roi_locations.png")
+    print("  ROI reference saved")
+
+    for contrast in KEY_CONTRASTS:
+        ok_g = plot_cluster_glass(contrast, POSTER_BRAIN / f"{contrast}_glass.png")
+        ok_s = plot_cluster_surface(contrast, POSTER_BRAIN / f"{contrast}_surface.png")
+        print(f"  {contrast}: glass={ok_g} surface={ok_s}")
+
+    for contrast in SVM_CONTRASTS:
+        ok_g = plot_svm_glass(contrast, POSTER_BRAIN / f"{contrast}_svm_glass.png")
+        ok_s = plot_svm_surface(contrast, POSTER_BRAIN / f"{contrast}_svm_surface.png")
+        print(f"  SVM {contrast}: glass={ok_g} surface={ok_s}")
+
+    print(f"\nBrain maps saved to: {POSTER_BRAIN}\n")
 
 
 if __name__ == "__main__":

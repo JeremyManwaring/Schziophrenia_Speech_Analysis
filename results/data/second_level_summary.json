@@ -1,0 +1,58 @@
+{
+  "words_vs_baseline": {
+    "contrast_name": "words_vs_baseline",
+    "tests": {
+      "HC_vs_AVH-": "/data/analysis/results/second_level/words_vs_baseline/words_vs_baseline_HC_vs_AVH-_zstat.nii.gz",
+      "HC_vs_AVH+": "/data/analysis/results/second_level/words_vs_baseline/words_vs_baseline_HC_vs_AVH+_zstat.nii.gz",
+      "AVH-_vs_AVH+": "/data/analysis/results/second_level/words_vs_baseline/words_vs_baseline_AVH-_vs_AVH+_zstat.nii.gz"
+    }
+  },
+  "sentences_vs_baseline": {
+    "contrast_name": "sentences_vs_baseline",
+    "tests": {
+      "HC_vs_AVH-": "/data/analysis/results/second_level/sentences_vs_baseline/sentences_vs_baseline_HC_vs_AVH-_zstat.nii.gz",
+      "HC_vs_AVH+": "/data/analysis/results/second_level/sentences_vs_baseline/sentences_vs_baseline_HC_vs_AVH+_zstat.nii.gz",
+      "AVH-_vs_AVH+": "/data/analysis/results/second_level/sentences_vs_baseline/sentences_vs_baseline_AVH-_vs_AVH+_zstat.nii.gz"
+    }
+  },
+  "reversed_vs_baseline": {
+    "contrast_name": "reversed_vs_baseline",
+    "tests": {
+      "HC_vs_AVH-": "/data/analysis/results/second_level/reversed_vs_baseline/reversed_vs_baseline_HC_vs_AVH-_zstat.nii.gz",
+      "HC_vs_AVH+": "/data/analysis/results/second_level/reversed_vs_baseline/reversed_vs_baseline_HC_vs_AVH+_zstat.nii.gz",
+      "AVH-_vs_AVH+": "/data/analysis/results/second_level/reversed_vs_baseline/reversed_vs_baseline_AVH-_vs_AVH+_zstat.nii.gz"
+    }
+  },
+  "words_vs_reversed": {
+    "contrast_name": "words_vs_reversed",
+    "tests": {
+      "HC_vs_AVH-": "/data/analysis/results/second_level/words_vs_reversed/words_vs_reversed_HC_vs_AVH-_zstat.nii.gz",
+      "HC_vs_AVH+": "/data/analysis/results/second_level/words_vs_reversed/words_vs_reversed_HC_vs_AVH+_zstat.nii.gz",
+      "AVH-_vs_AVH+": "/data/analysis/results/second_level/words_vs_reversed/words_vs_reversed_AVH-_vs_AVH+_zstat.nii.gz"
+    }
+  },
+  "sentences_vs_reversed": {
+    "contrast_name": "sentences_vs_reversed",
+    "tests": {
+      "HC_vs_AVH-": "/data/analysis/results/second_level/sentences_vs_reversed/sentences_vs_reversed_HC_vs_AVH-_zstat.nii.gz",
+      "HC_vs_AVH+": "/data/analysis/results/second_level/sentences_vs_reversed/sentences_vs_reversed_HC_vs_AVH+_zstat.nii.gz",
+      "AVH-_vs_AVH+": "/data/analysis/results/second_level/sentences_vs_reversed/sentences_vs_reversed_AVH-_vs_AVH+_zstat.nii.gz"
+    }
+  },
+  "speech_vs_reversed": {
+    "contrast_name": "speech_vs_reversed",
+    "tests": {
+      "HC_vs_AVH-": "/data/analysis/results/second_level/speech_vs_reversed/speech_vs_reversed_HC_vs_AVH-_zstat.nii.gz",
+      "HC_vs_AVH+": "/data/analysis/results/second_level/speech_vs_reversed/speech_vs_reversed_HC_vs_AVH+_zstat.nii.gz",
+      "AVH-_vs_AVH+": "/data/analysis/results/second_level/speech_vs_reversed/speech_vs_reversed_AVH-_vs_AVH+_zstat.nii.gz"
+    }
+  },
+  "words_vs_sentences": {
+    "contrast_name": "words_vs_sentences",
+    "tests": {
+      "HC_vs_AVH-": "/data/analysis/results/second_level/words_vs_sentences/words_vs_sentences_HC_vs_AVH-_zstat.nii.gz",
+      "HC_vs_AVH+": "/data/analysis/results/second_level/words_vs_sentences/words_vs_sentences_HC_vs_AVH+_zstat.nii.gz",
+      "AVH-_vs_AVH+": "/data/analysis/results/second_level/words_vs_sentences/words_vs_sentences_AVH-_vs_AVH+_zstat.nii.gz"
+    }
+  }
+}
