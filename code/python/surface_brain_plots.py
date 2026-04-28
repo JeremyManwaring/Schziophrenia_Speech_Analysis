@@ -19,12 +19,14 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from nilearn import datasets
 from nilearn.image import load_img, math_img, smooth_img
 from nilearn.masking import compute_brain_mask
 from nilearn.plotting import (
     plot_glass_brain,
     plot_img_on_surf,
     plot_markers,
+    plot_stat_map,
 )
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -153,6 +155,60 @@ def plot_cluster_surface(contrast: str, out_path: Path, threshold: float = 2.0) 
 
 
 # ---------------------------------------------------------------------------
+# Plot: cluster anatomical slices
+# ---------------------------------------------------------------------------
+def plot_cluster_stat_slices_grid(
+    contrasts: list[str],
+    out_path: Path,
+    threshold: float = 2.0,
+) -> bool:
+    """Render AVH- vs AVH+ anatomical slices side by side."""
+    maps = []
+    for contrast in contrasts:
+        stat_path = _resolve_cluster_map(contrast)
+        if stat_path is None:
+            continue
+        maps.append((contrast, _smooth_and_mask(stat_path, fwhm=6.0)))
+
+    if not maps:
+        return False
+
+    mni_bg = datasets.load_mni152_template()
+    fig = plt.figure(figsize=(18, 5.5), facecolor="white")
+    displays = []
+    panel_width = 0.30
+
+    for idx, (contrast, img) in enumerate(maps):
+        left = 0.02 + idx * 0.32
+        display = plot_stat_map(
+            stat_map_img=img,
+            bg_img=mni_bg,
+            threshold=threshold,
+            display_mode="ortho",
+            cut_coords=(-52, -24, 6),
+            cmap="cold_hot",
+            symmetric_cbar=True,
+            black_bg=False,
+            dim=0.25,
+            annotate=True,
+            colorbar=True,
+            draw_cross=False,
+            vmax=3.0,
+            title=f"{format_contrast(contrast)}\nAVH- vs AVH+ (|z| > {threshold})",
+            figure=fig,
+            axes=(left, 0.12, panel_width, 0.78),
+        )
+        displays.append(display)
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=300, bbox_inches="tight", facecolor="white")
+    for display in displays:
+        display.close()
+    plt.close(fig)
+    return True
+
+
+# ---------------------------------------------------------------------------
 # Plot: SVM weight surface (smoothed + percentile-thresholded)
 # ---------------------------------------------------------------------------
 def plot_svm_surface(contrast: str, out_path: Path, percentile: float = 92.0) -> bool:
@@ -252,6 +308,12 @@ def main() -> None:
 
     plot_roi_locations(POSTER_BRAIN / "roi_locations.png")
     print("  ROI reference saved")
+
+    ok_a = plot_cluster_stat_slices_grid(
+        KEY_CONTRASTS,
+        POSTER_BRAIN / "avh_group_stat_slices.png",
+    )
+    print(f"  anatomical stat slices: combined={ok_a}")
 
     for contrast in KEY_CONTRASTS:
         ok_g = plot_cluster_glass(contrast, POSTER_BRAIN / f"{contrast}_glass.png")
