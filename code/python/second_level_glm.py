@@ -177,7 +177,11 @@ def run_group_anova(maps, design_matrix, output_dir, contrast_name,
     # 1. Main effect of group (F-test)
     print("    Computing main effect of group (F-test)...")
     
-    # F-test: test if any group mean differs (columns: HC, AVH-, AVH+, age, iq, sex)
+    # F-test: omnibus test for any group mean difference (df_numerator = 2).
+    # Two linearly independent contrasts span the full 3-group difference subspace;
+    # the third (AVH- vs AVH+) is redundant (equals row2 - row1) and would not
+    # change the F-statistic or degrees of freedom.
+    # Columns: HC, AVH-, AVH+, age, iq, sex
     f_contrast = np.array([
         [1, -1, 0, 0, 0, 0],   # HC vs AVH-
         [1, 0, -1, 0, 0, 0],   # HC vs AVH+
