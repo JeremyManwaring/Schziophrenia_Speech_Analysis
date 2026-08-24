@@ -470,25 +470,28 @@ def run_correlation_analysis(roi_dir, participants_path, output_dir):
             )
             
             all_results[contrast_name] = results
-            
-            # Create visualizations
+        except Exception as e:
+            print(f"  ERROR: {e}")
+            all_results[contrast_name] = {'error': str(e)}
+            continue
+
+        # Figures are best-effort: a plotting failure must NOT discard the
+        # computed statistics above.
+        try:
             create_correlation_plot(
                 roi_df=roi_df,
                 participants_df=participants_df,
                 output_dir=output_dir,
                 contrast_name=contrast_name
             )
-            
             create_correlation_heatmap(
                 roi_df=roi_df,
                 participants_df=participants_df,
                 output_dir=output_dir,
                 contrast_name=contrast_name
             )
-            
         except Exception as e:
-            print(f"  ERROR: {e}")
-            all_results[contrast_name] = {'error': str(e)}
+            print(f"  WARNING: figure generation failed for {contrast_name}: {e}")
     
     # FDR correction across all (contrast x ROI) correlation tests
     all_corr_entries = []
@@ -502,7 +505,54 @@ def run_correlation_analysis(roi_dir, participants_path, output_dir):
         _, p_fdr, _, _ = multipletests(p_vals, alpha=0.05, method='fdr_bh')
         for (_, c), q in zip(all_corr_entries, p_fdr):
             c['pearson_p_fdr'] = float(q)
-    
+
+    # Within-contrast FDR (12 ROIs) for BOTH raw and partial correlations.
+    # This is the appropriate correction for a single pre-specified contrast,
+    # rather than diluting power across all 7 contrasts.
+    for cname, res in all_results.items():
+        if not (isinstance(res, dict) and 'correlations' in res):
+            continue
+        raw = [c for c in res['correlations'] if not np.isnan(c.get('pearson_p', np.nan))]
+        if raw:
+            _, q_raw, _, _ = multipletests([c['pearson_p'] for c in raw],
+                                           alpha=0.05, method='fdr_bh')
+            for c, q in zip(raw, q_raw):
+                c['pearson_p_fdr_within_contrast'] = float(q)
+        partial = [c for c in res.get('partial_correlations', [])
+                   if c.get('partial_p') is not None and not np.isnan(c.get('partial_p', np.nan))]
+        if partial:
+            _, q_par, _, _ = multipletests([c['partial_p'] for c in partial],
+                                           alpha=0.05, method='fdr_bh')
+            for c, q in zip(partial, q_par):
+                c['partial_p_fdr_within_contrast'] = float(q)
+
+    # Emit the PRIMARY symptom-correlation table: partial correlation
+    # (controlling age + IQ) is the headline analysis. Default primary contrast
+    # is speech_vs_reversed (combined intelligibility).
+    primary_contrast = 'speech_vs_reversed'
+    pres = all_results.get(primary_contrast)
+    if isinstance(pres, dict) and 'partial_correlations' in pres:
+        raw_lookup = {c['roi']: c for c in pres.get('correlations', [])}
+        rows = []
+        for pc in pres['partial_correlations']:
+            roi = pc['roi']
+            rc = raw_lookup.get(roi, {})
+            rows.append({
+                'contrast': primary_contrast,
+                'roi': roi,
+                'n': rc.get('n'),
+                'raw_r': rc.get('pearson_r'),
+                'raw_p': rc.get('pearson_p'),
+                'raw_p_fdr_within_contrast': rc.get('pearson_p_fdr_within_contrast'),
+                'partial_r': pc.get('partial_r'),
+                'partial_p': pc.get('partial_p'),
+                'partial_p_fdr_within_contrast': pc.get('partial_p_fdr_within_contrast'),
+                'controlling_for': 'age, iq',
+            })
+        primary_df = pd.DataFrame(rows).sort_values('partial_p', na_position='last')
+        primary_df.to_csv(output_dir / 'primary_psyrats.csv', index=False)
+        print(f"\n  Primary PSYRATS table -> {output_dir / 'primary_psyrats.csv'}")
+
     # Save summary
     with open(output_dir / 'correlation_summary.json', 'w') as f:
         # Convert NaN to None for JSON

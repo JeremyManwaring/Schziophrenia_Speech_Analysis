@@ -37,31 +37,32 @@ ds004302-Edited/
 │
 ├── results/
 │   ├── data/                          # SINGLE source of truth for stats
-│   │   ├── roi_values/                # one CSV per contrast
+│   │   ├── first_level/               # Per-subject first-level maps (effect + zstat)
+│   │   ├── roi_values/                # one CSV per contrast (incl. Welch ANOVA)
 │   │   ├── effect_sizes/              # per-contrast + combined CSV
-│   │   ├── correlations/              # PSYRATS Pearson + partial
+│   │   ├── confirmatory/             # ANCOVA + pre-specified Bonferroni + sensitivity
+│   │   ├── correlations/              # PSYRATS Pearson + partial (+ primary table)
 │   │   ├── cluster_maps/              # FWE-corrected NIfTI
 │   │   ├── svm_weights/               # SVM weight maps
 │   │   ├── connectivity*.{json,csv}   # ROI-ROI connectivity
 │   │   ├── laterality*.{csv,json}     # Laterality indices
 │   │   ├── qc.csv                     # Per-subject motion summary
 │   │   └── demographics/              # Statistical tests
-│   ├── poster/                        # 300 dpi poster-ready figures
-│   │   ├── 01_brain_maps/             # Glass + inflated fsaverage surfaces
-│   │   ├── 02_roi_effects/            # Raincloud + grouped bar + forest
-│   │   ├── 03_correlations/           # PSYRATS scatter
-│   │   ├── 04_classification/         # MVPA SVM
-│   │   ├── 05_connectivity/           # Connectivity matrix + sig diffs
-│   │   ├── 06_laterality/             # Heatmap + bars + effect sizes
-│   │   ├── 07_demographics_qc/        # Age, IQ, sex, motion
-│   │   ├── summary/                   # Hero key-findings figure
-│   │   └── README.md                  # Index + key findings
-│   ├── demographics/                  # Demographic stats
-│   └── vm_analysis/                   # First-/second-level GLM (Nilearn)
+│   └── poster/                        # 300 dpi poster-ready figures
+│       ├── 01_brain_maps/             # Glass + inflated fsaverage surfaces
+│       ├── 02_roi_effects/            # Raincloud + grouped bar + forest + confirmatory
+│       ├── 03_correlations/           # PSYRATS scatter
+│       ├── 04_classification/         # MVPA SVM
+│       ├── 05_connectivity/           # Connectivity matrix + sig diffs
+│       ├── 06_laterality/             # Heatmap + bars + effect sizes
+│       ├── 07_demographics_qc/        # Age, IQ, sex, motion
+│       ├── summary/                   # Hero key-findings figure
+│       └── README.md                  # Index + key findings
 │
 ├── docs/                              # Documentation
 │   ├── ANALYSIS_SUMMARY.md / GLM_Analysis_Plan.txt
-│   ├── guides/                        # How-to & workflow docs
+│   ├── REPLICATION_CHANGES.md         # What changed vs the original paper
+│   ├── guides/                        # Consolidated how-to (single README)
 │   └── status/                        # FINAL_STATUS.md (single canonical)
 │
 ├── utils/                             # Utility shell scripts
@@ -126,10 +127,10 @@ show_glm_results('01', 1)  % View subject 01, contrast 1
 
 | File | Description |
 |------|-------------|
-| `docs/guides/QUICKSTART.md` | Quick start guide |
-| `docs/guides/COMPLETE_WORKFLOW_SUMMARY.md` | Full analysis workflow |
-| `docs/guides/GLM_VISUAL_RESULTS.md` | T-test & F-test interpretation |
-| `docs/guides/GLM_ANALYSIS_SUMMARY.md` | GLM analysis details |
+| `docs/guides/README.md` | Consolidated setup + run guide |
+| `docs/ANALYSIS_SUMMARY.md` | Full analysis summary |
+| `docs/REPLICATION_CHANGES.md` | What changed vs the original paper (read this) |
+| `docs/status/FINAL_STATUS.md` | Pipeline status + file map |
 
 ---
 
@@ -181,11 +182,21 @@ Data sources -> `results/data/`. Figures -> `results/poster/` (300 dpi PNGs).
 
 ---
 
-## Key Findings
+## Key Findings (after confirmatory rework)
 
-1. **L_MTG and L_STS** show large effect sizes between AVH- and AVH+ during speech processing
-2. **R_STG posterior** activation correlates with hallucination severity (r = 0.59, p = 0.003)
-3. Classification accuracy suggests distributed rather than focal group differences
+1. **Confirmatory (pre-specified, ANCOVA-adjusted):** L_MTG (d = -0.90) and L_STS
+   (d = -0.84) differ between AVH- and AVH+ for `sentences > reversed`; both
+   survive Bonferroni (m = 2) and remain significant after excluding 4
+   high-motion subjects (n = 67).
+2. **Exploratory (Welch ANOVA + within-contrast FDR):** L_MTG and L_STS survive
+   FDR for `sentences > reversed` and `words > sentences`.
+3. **Symptom correlation:** R_STG-posterior activation correlates with PSYRATS in
+   AVH+; the partial correlation (controlling age + IQ) is stronger than the raw
+   (partial r = 0.65, p = 0.0008; survives within-contrast FDR).
+4. **Exploratory nulls:** MVPA at/below chance, no laterality differences,
+   connectivity differences uncorrected only (none survive FDR).
+
+See `docs/REPLICATION_CHANGES.md` for old-vs-new numbers and paper edits.
 
 ---
 

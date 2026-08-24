@@ -9,8 +9,9 @@ This document supersedes all earlier status reports
 | Stage                                | Output location                          |
 |--------------------------------------|------------------------------------------|
 | Preprocessing (SPM/MATLAB)           | `derivatives/`                           |
-| First-level GLM (Python / Nilearn)   | `results/vm_analysis/results/first_level/`|
-| Second-level GLM                     | `results/vm_analysis/results/second_level/`|
+| First-level GLM (Python / Nilearn)   | `results/data/first_level/`              |
+| Second-level GLM                     | `results/data/second_level_summary.json` |
+| Confirmatory (ANCOVA + pre-specified)| `results/data/confirmatory/`             |
 | ROI analysis                         | `results/data/roi_values/`               |
 | Effect sizes                         | `results/data/effect_sizes/`             |
 | PSYRATS correlations                 | `results/data/correlations/`             |

@@ -30,7 +30,7 @@ warnings.filterwarnings('ignore')
 
 # Configuration
 BASE_DIR = Path(__file__).parent.parent.parent
-FIRST_LEVEL_DIR = BASE_DIR / 'results' / 'vm_analysis' / 'results' / 'first_level'
+FIRST_LEVEL_DIR = BASE_DIR / 'results' / 'data' / 'first_level'
 FMRIPREP_DIR = BASE_DIR / 'derivatives' / 'fmriprep'
 PARTICIPANTS_PATH = BASE_DIR / 'participants.tsv'
 OUTPUT_DIR = BASE_DIR / 'results' / 'data' / 'svm_weights'
