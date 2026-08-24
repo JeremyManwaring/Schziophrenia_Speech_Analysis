@@ -165,42 +165,42 @@ def extract_all_subjects(first_level_dir, contrast_name, participants_df, roi_di
 
 def run_welch_anova(data, groups):
     """
-    Run Welch's ANOVA test.
-    
+    Run Welch's ANOVA test (does not assume equal variances across groups).
+
+    Delegates to the validated Welch implementation in ``welch_anova.py`` so the
+    statistic matches the documented method, rather than the previous
+    equal-variance ``scipy.stats.f_oneway`` fallback.
+
     Parameters
     ----------
     data : array-like
         Data values
     groups : array-like
         Group labels
-    
+
     Returns
     -------
     F_stat : float
-        F-statistic
+        Welch's F-statistic
     p_value : float
         p-value
     """
+    from welch_anova import welch_anova
+
     unique_groups = np.unique(groups)
     group_data = [data[groups == g] for g in unique_groups]
-    
+
     # Filter out NaN values
     group_data = [g[~np.isnan(g)] for g in group_data]
-    
+
     # Check if we have enough data
     if any(len(g) < 2 for g in group_data):
         return np.nan, np.nan
-    
-    # Welch's ANOVA (using scipy.stats.f_oneway with equal_var=False would require pingouin)
-    # Here we use a simple implementation
-    from scipy.stats import f_oneway
-    
-    # Standard one-way ANOVA (for Welch's, would need additional implementation)
-    try:
-        F_stat, p_value = f_oneway(*group_data)
-        return F_stat, p_value
-    except:
+
+    F_stat, p_value, _, _, error = welch_anova(group_data)
+    if error is not None or F_stat is None:
         return np.nan, np.nan
+    return F_stat, p_value
 
 
 def cohens_d(group1, group2):

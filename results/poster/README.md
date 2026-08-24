@@ -8,7 +8,7 @@ from the consolidated stats in `results/data/`. Re-run with:
 ## Sections
 
 - **01_brain_maps/** — Glass brain + inflated fsaverage surface plots for the key contrasts, plus a 12-ROI reference.
-- **02_roi_effects/** — Raincloud + grouped-bar + forest plots of ROI activation by group.
+- **02_roi_effects/** — Raincloud + grouped-bar + forest plots of ROI activation by group, plus the pre-specified confirmatory forest (ANCOVA-adjusted).
 - **03_correlations/** — ROI activation vs PSYRATS scatter plots in the AVH+ group.
 - **04_classification/** — MVPA SVM accuracy / AUC + permutation summary.
 - **05_connectivity/** — Functional connectivity matrix and significant ROI-ROI group differences.
@@ -18,9 +18,21 @@ from the consolidated stats in `results/data/`. Re-run with:
 
 ## Key Findings (AVH- vs AVH+)
 
+### Confirmatory (pre-specified: sentences > reversed x {L_MTG, L_STS}, Bonferroni m=2)
+- L MTG d=-0.90 (p_bonf=0.010, PASS);  L STS d=-0.84 (p_bonf=0.018, PASS)
+- Robust to excluding 4 high-motion subjects (motion-clean n=67); see `02_roi_effects/confirmatory_forest.png`.
+
+### Exploratory (FDR-corrected within each contrast, 12 ROIs)
 - ROI effect sizes (Cohen's d):  8 medium-large (|d| ≥ 0.5),  35 small (0.2 ≤ |d| < 0.5).
-- Significant ROI-ROI connectivity differences (p < 0.05): 2.
-- MVPA classification: Sentences vs Reversed: acc=0.50 (p=0.35), Speech vs Reversed: acc=0.47 (p=0.46), Words vs Sentences: acc=0.42 (p=0.66), Words vs Reversed: acc=0.42 (p=0.66).
+- With proper Welch ANOVA, L_MTG and L_STS survive within-contrast FDR for sentences>reversed and words>sentences.
+
+### Symptom correlation (AVH+, partial r controlling age + IQ)
+- R STG Posterior r=+0.65 (p=0.0008, FDR p=0.010) (within-contrast FDR).
+
+### Exploratory / not corrected
+- ROI-ROI connectivity differences (uncorrected p < 0.05): 2; none survive FDR.
+- MVPA classification (at/below chance): Sentences vs Reversed: acc=0.50 (p=0.35), Speech vs Reversed: acc=0.47 (p=0.46), Words vs Sentences: acc=0.42 (p=0.66), Words vs Reversed: acc=0.42 (p=0.66).
+- Laterality: no significant group differences.
 
 ## Style Standards
 

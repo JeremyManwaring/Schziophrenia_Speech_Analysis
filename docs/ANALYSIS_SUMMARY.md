@@ -100,30 +100,36 @@ This suggests that patients with more severe auditory hallucinations show greate
 
 ## Files Generated
 
+All canonical outputs live under `results/data/` (single source of truth):
+
 ```
-results/vm_analysis/results/
-├── qc/
-│   ├── qc_summary.csv
-│   └── motion_exclusions.txt
-├── first_level/
-│   └── [71 subject directories with contrast maps]
-├── second_level/
-│   └── [7 contrast directories with group maps]
-├── roi_analysis/
-│   ├── *_roi_values.csv (ROI activation values)
-│   ├── *_roi_anova.csv (ANOVA results)
-│   ├── *_roi_pairwise.csv (pairwise comparisons)
-│   ├── *_roi_descriptive.csv (group means/SDs)
-│   └── figures/*.png (bar plots)
+results/data/
+├── qc.csv                         # per-subject motion summary
+├── motion_exclusions.txt          # 4 high-motion subjects flagged
+├── first_level/                   # per-subject contrast maps (effect + zstat)
+├── roi_values/
+│   ├── *_roi_values.csv           # ROI activation values
+│   ├── *_roi_anova.csv            # Welch ANOVA + FDR (corrected method)
+│   ├── *_roi_pairwise.csv         # pairwise comparisons
+│   └── *_roi_descriptive.csv      # group means/SDs
+├── confirmatory/                  # REWORK: covariate-adjusted inference
+│   ├── roi_ancova.csv             # ANCOVA (group+age+iq+sex+mean_fd), FDR within contrast
+│   ├── confirmatory_primary.csv   # pre-specified L_MTG/L_STS, Bonferroni m=2
+│   ├── motion_sensitivity.csv     # full vs motion-clean (n=67)
+│   └── confirmatory_summary.json
 ├── correlations/
 │   ├── *_psyrats_correlations.csv
 │   ├── *_psyrats_partial.csv
-│   └── figures/*.png (scatter plots)
+│   └── primary_psyrats.csv        # REWORK: partial r primary + within-contrast FDR
 ├── effect_sizes/
-│   ├── effect_sizes_summary.csv
-│   └── figures/*.png (forest plots, heatmaps)
-└── analysis_report.txt
+│   └── effect_sizes_summary.csv
+├── cluster_maps/  svm_weights/  connectivity*  laterality*  demographics/
 ```
+
+> Rework note: the earlier mislabeled "Welch" ANOVA (which actually used
+> equal-variance `f_oneway`) was replaced with the validated Welch
+> implementation; ROI ANOVA CSVs were regenerated. See
+> `docs/REPLICATION_CHANGES.md`.
 
 ---
 

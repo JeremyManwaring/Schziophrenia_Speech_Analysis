@@ -25,7 +25,6 @@ from nilearn.masking import compute_brain_mask
 from nilearn.plotting import (
     plot_glass_brain,
     plot_img_on_surf,
-    plot_markers,
     plot_stat_map,
 )
 
@@ -61,6 +60,26 @@ ROIS = {
     "R_IFG": (48, 20, 10),
     "R_Heschl": (42, -22, 10),
 }
+
+# ROIs with an FDR-significant group/symptom finding (highlighted on the map)
+SIG_ROI_KEYS = {"L_MTG", "L_STS", "R_STG_post"}
+
+
+def _roi_display(key: str) -> str:
+    """'L_STG_post' -> 'L STG posterior' for legend labels."""
+    repl = {"post": "posterior", "ant": "anterior", "tri": "triangularis",
+            "oper": "opercularis", "stg": "STG", "mtg": "MTG", "sts": "STS",
+            "ifg": "IFG"}
+    out = []
+    for tok in key.split("_"):
+        low = tok.lower()
+        if tok in ("L", "R"):
+            out.append(tok)
+        elif low in repl:
+            out.append(repl[low])
+        else:
+            out.append(tok.capitalize())
+    return " ".join(out)
 
 
 # ---------------------------------------------------------------------------
@@ -273,26 +292,51 @@ def plot_svm_glass(contrast: str, out_path: Path, percentile: float = 92.0) -> b
 # Plot: ROI reference figure
 # ---------------------------------------------------------------------------
 def plot_roi_locations(out_path: Path) -> None:
-    """Reference figure: 12 speech/language ROIs plotted as colored spheres."""
-    coords = list(ROIS.values())
-    labels = list(ROIS.keys())
-    node_values = np.array([1.0 if k.startswith("L_") else 2.0 for k in labels])
+    """High-quality reference figure: 12 speech/language ROIs as glass-brain
+    spheres, with the FDR-significant ROIs (L MTG, L STS, R STG posterior)
+    highlighted and a labeled legend.
+    """
+    from matplotlib.lines import Line2D
 
-    fig = plt.figure(figsize=(14, 5))
-    plot_markers(
-        node_values=node_values,
-        node_coords=coords,
-        node_size=180,
-        node_cmap="coolwarm",
-        node_vmin=0,
-        node_vmax=3,
-        display_mode="lyrz",
-        colorbar=False,
-        title="Speech / Language ROIs (MNI)   |   Blue: Left   Red: Right",
-        figure=fig,
+    L_COLOR, R_COLOR, SIG_COLOR = "#3498db", "#e67e22", "#c0392b"
+
+    def _coords(predicate):
+        return [c for k, c in ROIS.items() if predicate(k)]
+
+    sig_coords = _coords(lambda k: k in SIG_ROI_KEYS)
+    left_coords = _coords(lambda k: k.startswith("L_") and k not in SIG_ROI_KEYS)
+    right_coords = _coords(lambda k: k.startswith("R_") and k not in SIG_ROI_KEYS)
+
+    fig = plt.figure(figsize=(16, 6))
+    display = plot_glass_brain(
+        None, display_mode="lyrz", figure=fig,
+        title="Speech / Language ROIs (MNI)",
     )
+    if left_coords:
+        display.add_markers(left_coords, marker_color=L_COLOR, marker_size=130,
+                            edgecolor="black", alpha=0.95)
+    if right_coords:
+        display.add_markers(right_coords, marker_color=R_COLOR, marker_size=130,
+                            edgecolor="black", alpha=0.95)
+    if sig_coords:
+        display.add_markers(sig_coords, marker_color=SIG_COLOR, marker_size=320,
+                            edgecolor="black", alpha=1.0)
+
+    sig_names = ", ".join(_roi_display(k) for k in ROIS if k in SIG_ROI_KEYS)
+    handles = [
+        Line2D([0], [0], marker="o", color="w", markerfacecolor=L_COLOR,
+               markeredgecolor="black", markersize=11, label="Left hemisphere ROI"),
+        Line2D([0], [0], marker="o", color="w", markerfacecolor=R_COLOR,
+               markeredgecolor="black", markersize=11, label="Right hemisphere ROI"),
+        Line2D([0], [0], marker="o", color="w", markerfacecolor=SIG_COLOR,
+               markeredgecolor="black", markersize=16,
+               label=f"FDR-significant: {sig_names}"),
+    ]
+    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=True,
+               fontsize=11, bbox_to_anchor=(0.5, -0.04))
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=300, bbox_inches="tight", facecolor="white")
+    fig.savefig(out_path, dpi=400, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
 

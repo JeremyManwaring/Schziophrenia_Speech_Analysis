@@ -50,6 +50,7 @@ PARTICIPANTS = BASE_DIR / "participants.tsv"
 ROI_DIR = DATA_DIR / "roi_values"
 EFFECT_DIR = DATA_DIR / "effect_sizes"
 CORR_DIR = DATA_DIR / "correlations"
+CONF_DIR = DATA_DIR / "confirmatory"
 
 POSTER_SECTIONS = [
     "01_brain_maps",
@@ -101,6 +102,35 @@ def _sig_marker(p: float) -> str:
     if p < 0.10:
         return "."
     return ""
+
+
+def _confirmatory_text() -> str:
+    """One-line summary of the pre-specified confirmatory result (full sample)."""
+    path = CONF_DIR / "confirmatory_primary.csv"
+    if not path.exists():
+        return "n/a"
+    df = pd.read_csv(path)
+    full = df[df["sample"].str.startswith("full")]
+    if full.empty:
+        return "n/a"
+    parts = []
+    for _, r in full.iterrows():
+        mark = "PASS" if r["survives_bonferroni"] else "n.s."
+        parts.append(f"{format_roi(r['roi'])} d={r['d_adj']:+.2f} (p_bonf={r['p_bonferroni']:.3f}, {mark})")
+    return ";  ".join(parts)
+
+
+def _primary_psyrats_text() -> str:
+    """One-line summary of the primary PSYRATS partial correlation."""
+    path = CORR_DIR / "primary_psyrats.csv"
+    if not path.exists():
+        return "n/a"
+    df = pd.read_csv(path).sort_values("partial_p")
+    top = df.iloc[0]
+    fdr = top.get("partial_p_fdr_within_contrast", float("nan"))
+    fdr_txt = f", FDR p={fdr:.3f}" if pd.notna(fdr) else ""
+    return (f"{format_roi(top['roi'])} r={top['partial_r']:+.2f} "
+            f"(p={top['partial_p']:.4f}{fdr_txt})")
 
 
 def _load_participants() -> pd.DataFrame:
@@ -258,6 +288,147 @@ def make_roi_effects() -> None:
             _save(fig, out / "effect_sizes_forest.png")
 
 
+def make_confirmatory() -> None:
+    """Forest of covariate-adjusted (ANCOVA) effects for the pre-specified
+    confirmatory family, shown for the full and motion-clean samples.
+
+    Reads results/data/confirmatory/confirmatory_primary.csv.
+    """
+    primary_path = CONF_DIR / "confirmatory_primary.csv"
+    if not primary_path.exists():
+        print("  ! confirmatory_primary.csv missing; skipping confirmatory panel")
+        return
+    df = pd.read_csv(primary_path)
+    if df.empty:
+        return
+
+    out = POSTER_DIR / "02_roi_effects"
+    # Order: group by ROI, full above clean
+    sample_order = sorted(df["sample"].unique(), reverse=True)  # full_* before clean_*
+    df["sample_label"] = df["sample"].map(
+        lambda s: "Full (n=71)" if s.startswith("full") else "Motion-clean (n=67)"
+    )
+    df["roi_label"] = df["roi"].map(format_roi)
+    df = df.sort_values(["roi", "sample"]).reset_index(drop=True)
+
+    fig, ax = plt.subplots(figsize=(11, max(4, len(df) * 0.6)))
+    y = np.arange(len(df))
+    colors = ["#27ae60" if surv else "#e67e22" for surv in df["survives_bonferroni"]]
+    ax.errorbar(
+        df["d_adj"], y,
+        xerr=[df["d_adj"] - df["d_adj_ci_lo"], df["d_adj_ci_hi"] - df["d_adj"]],
+        fmt="none", ecolor="gray", capsize=4, lw=1.2,
+    )
+    ax.scatter(df["d_adj"], y, c=colors, s=140, edgecolor="black", zorder=5)
+    ax.axvline(0, color="black", lw=0.7, ls="--", alpha=0.6)
+    ax.set_yticks(y)
+    ax.set_yticklabels([f"{r}  ·  {s}" for r, s in zip(df["roi_label"], df["sample_label"])],
+                       fontsize=11)
+    for yi, (d, p) in enumerate(zip(df["d_adj"], df["p_bonferroni"])):
+        ax.annotate(f"d={d:+.2f}  p_bonf={p:.3f}", (d, yi),
+                    textcoords="offset points", xytext=(0, 10),
+                    ha="center", fontsize=9)
+    ax.set_xlabel("Covariate-adjusted Cohen's d (AVH- vs AVH+)  [95% CI]")
+    ax.set_title("Pre-specified Confirmatory ROIs\nsentences > reversed  ·  ANCOVA (age, IQ, sex, motion)",
+                 fontsize=16, fontweight="bold")
+    handles = [
+        Line2D([0], [0], marker="o", color="w", markerfacecolor="#27ae60",
+               markersize=11, label="Survives Bonferroni (m=2)"),
+        Line2D([0], [0], marker="o", color="w", markerfacecolor="#e67e22",
+               markersize=11, label="Does not survive"),
+    ]
+    ax.legend(handles=handles, loc="lower right", frameon=True)
+    fig.tight_layout()
+    _save(fig, out / "confirmatory_forest.png")
+    print(f"  confirmatory forest -> {out / 'confirmatory_forest.png'}")
+
+
+def _omnibus_fdr_significant() -> pd.DataFrame:
+    """ROI x contrast cells with omnibus 3-group ANOVA within-contrast FDR < 0.05."""
+    rows: list[dict] = []
+    for path in sorted(ROI_DIR.glob("*_roi_anova.csv")):
+        contrast = path.name.replace("_roi_anova.csv", "")
+        df = pd.read_csv(path)
+        if "p_fdr" not in df.columns:
+            continue
+        for _, r in df[df["p_fdr"] < 0.05].iterrows():
+            rows.append({"contrast": contrast, "roi": r["roi"],
+                         "F_stat": r["F_stat"], "p_fdr": r["p_fdr"]})
+    return pd.DataFrame(rows)
+
+
+def make_significant_effects_bar() -> None:
+    """Single summary bar chart of the significant group effects across all
+    contrasts: Cohen's d (AVH- vs AVH+) for every ROI x contrast cell that
+    survives the omnibus within-contrast FDR, annotated with FDR significance.
+
+    Writes `02_roi_effects/significant_effects_summary.png`.
+    """
+    out = POSTER_DIR / "02_roi_effects"
+    sig = _omnibus_fdr_significant()
+    if sig.empty:
+        print("  no FDR-significant omnibus effects; skipping summary bar")
+        return
+
+    es_path = EFFECT_DIR / "effect_sizes_summary.csv"
+    if not es_path.exists():
+        return
+    es = pd.read_csv(es_path)
+    es = es[es["comparison"] == "AVH-_vs_AVH+"][
+        ["contrast", "roi", "cohens_d", "d_ci_lower", "d_ci_upper"]
+    ]
+    merged = sig.merge(es, on=["contrast", "roi"], how="left").dropna(subset=["cohens_d"])
+    if merged.empty:
+        return
+
+    contrast_order = [
+        "sentences_vs_reversed", "words_vs_sentences", "speech_vs_reversed",
+        "words_vs_reversed", "words_vs_baseline", "sentences_vs_baseline",
+        "reversed_vs_baseline",
+    ]
+    order_map = {c: i for i, c in enumerate(contrast_order)}
+    merged["c_ord"] = merged["contrast"].map(order_map).fillna(99)
+    # Plot bottom-to-top: keep contrasts together, larger |d| toward the top
+    merged = merged.sort_values(["c_ord", "cohens_d"], ascending=[False, True]).reset_index(drop=True)
+    merged["label"] = [f"{format_contrast(c)}  ·  {format_roi(r)}"
+                       for c, r in zip(merged["contrast"], merged["roi"])]
+
+    fig, ax = plt.subplots(figsize=(12, max(4.5, 0.75 * len(merged))))
+    y = np.arange(len(merged))
+    # d < 0  => higher in AVH+ (red);  d > 0 => higher in AVH- (blue)
+    colors = [PALETTE["AVH+"] if d < 0 else PALETTE["AVH-"] for d in merged["cohens_d"]]
+    xerr = None
+    if merged[["d_ci_lower", "d_ci_upper"]].notna().all(axis=None):
+        xerr = [merged["cohens_d"] - merged["d_ci_lower"],
+                merged["d_ci_upper"] - merged["cohens_d"]]
+    ax.barh(y, merged["cohens_d"], color=colors, edgecolor="black", lw=0.9,
+            xerr=xerr, capsize=3, error_kw=dict(ecolor="gray", lw=1), zorder=3)
+    ax.axvline(0, color="black", lw=0.7, ls="--", alpha=0.6)
+    ax.set_yticks(y)
+    ax.set_yticklabels(merged["label"], fontsize=11)
+    ax.set_xlabel("Cohen's d  (AVH- vs AVH+)  [95% CI]")
+    ax.set_title("Significant Group Effects Across Contrasts\n"
+                 "omnibus ANOVA, within-contrast FDR < 0.05",
+                 fontsize=16, fontweight="bold")
+
+    xmax = float(merged["cohens_d"].abs().max())
+    ax.set_xlim(-xmax * 2.0, xmax * 2.0)
+    for yi, (d, p) in enumerate(zip(merged["cohens_d"], merged["p_fdr"])):
+        ax.text(d + (0.04 if d >= 0 else -0.04), yi,
+                f"d={d:+.2f}  {_sig_marker(p)} FDR={p:.3f}",
+                va="center", ha="left" if d >= 0 else "right",
+                fontsize=9, fontweight="bold")
+    handles = [
+        Patch(facecolor=PALETTE["AVH+"], edgecolor="black", label="Higher in AVH+  (d < 0)"),
+        Patch(facecolor=PALETTE["AVH-"], edgecolor="black", label="Higher in AVH-  (d > 0)"),
+    ]
+    ax.legend(handles=handles, loc="lower right", frameon=True, fontsize=10)
+    fig.tight_layout()
+    _save(fig, out / "significant_effects_summary.png")
+    print(f"  significant effects summary -> {out / 'significant_effects_summary.png'}  "
+          f"({len(merged)} cells)")
+
+
 # ===========================================================================
 # 03 CORRELATIONS (PSYRATS)
 # ===========================================================================
@@ -315,6 +486,121 @@ def make_correlations() -> None:
 
 
 SIG_OK = "#c0392b"  # title color when significant
+
+
+# ===========================================================================
+# 03b SIGNIFICANT-ONLY CORRELATIONS (FDR within contrast)
+# ===========================================================================
+def _fdr_significant_correlations() -> list[dict]:
+    """ROI x contrast cells whose PSYRATS partial correlation (controlling
+    age + IQ) survives within-contrast FDR (< 0.05).
+
+    Reads the consolidated `correlation_summary.json`.
+    """
+    path = CORR_DIR / "correlation_summary.json"
+    if not path.exists():
+        return []
+    with open(path) as f:
+        summary = json.load(f)
+
+    hits: list[dict] = []
+    for contrast, blk in summary.items():
+        raw = {r["roi"]: r for r in blk.get("correlations", [])}
+        for pc in blk.get("partial_correlations", []):
+            fdr = pc.get("partial_p_fdr_within_contrast")
+            if fdr is None or fdr >= 0.05:
+                continue
+            rr = raw.get(pc["roi"], {})
+            hits.append({
+                "contrast": contrast,
+                "roi": pc["roi"],
+                "partial_r": pc["partial_r"],
+                "partial_p": pc["partial_p"],
+                "partial_fdr": fdr,
+                "raw_r": rr.get("pearson_r", float("nan")),
+                "raw_p": rr.get("pearson_p", float("nan")),
+            })
+    return sorted(hits, key=lambda h: h["partial_fdr"])
+
+
+def _corr_scatter_panel(ax, x: np.ndarray, y: np.ndarray, hit: dict) -> None:
+    """Single clean PSYRATS scatter with regression line + 95% CI band."""
+    sns.regplot(
+        x=x, y=y, ax=ax, color=PALETTE["AVH+"], truncate=False,
+        scatter_kws=dict(s=70, edgecolor="black", linewidths=0.6, alpha=0.85),
+        line_kws=dict(color="black", lw=1.6, ls="--"),
+    )
+    ax.set_xlabel("Activation (β)")
+    ax.set_ylabel("PSYRATS Total")
+    ax.set_title(f"{format_roi(hit['roi'])}  ·  {format_contrast(hit['contrast'])}",
+                 fontsize=13, fontweight="bold", color=SIG_OK)
+    txt = (f"partial r = {hit['partial_r']:+.2f}  (age, IQ)\n"
+           f"p = {hit['partial_p']:.4f}    FDR p = {hit['partial_fdr']:.3f}\n"
+           f"raw r = {hit['raw_r']:+.2f}    n = {len(x)}")
+    ax.text(0.04, 0.96, txt, transform=ax.transAxes, va="top", ha="left",
+            fontsize=10, fontweight="bold",
+            bbox=dict(boxstyle="round,pad=0.45", facecolor="white",
+                      edgecolor=SIG_OK, linewidth=1.2, alpha=0.92))
+
+
+def make_correlations_significant() -> None:
+    """FDR-significant PSYRATS correlations only.
+
+    Writes one simplified single-ROI scatter per significant cell plus a
+    combined summary figure to `03_correlations/significant/`.
+    """
+    out = POSTER_DIR / "03_correlations" / "significant"
+    out.mkdir(parents=True, exist_ok=True)
+
+    hits = _fdr_significant_correlations()
+    if not hits:
+        print("  no FDR-significant correlations; skipping significant/ folder")
+        return
+
+    parts = _load_participants()
+    avh = parts[parts["group"] == "AVH+"].dropna(subset=["psyrats"])
+    if avh.empty:
+        return
+
+    panels: list[tuple[dict, np.ndarray, np.ndarray]] = []
+    for hit in hits:
+        roi_path = ROI_DIR / f"{hit['contrast']}_roi_values.csv"
+        if not roi_path.exists():
+            continue
+        roi_df = pd.read_csv(roi_path)
+        if hit["roi"] not in roi_df.columns:
+            continue
+        merged = roi_df.merge(avh[["participant_id", "psyrats"]],
+                              left_on="subject_id", right_on="participant_id", how="inner")
+        if merged.empty:
+            continue
+        x = merged[hit["roi"]].to_numpy(dtype=float)
+        y = merged["psyrats"].to_numpy(dtype=float)
+        mask = np.isfinite(x) & np.isfinite(y)
+        x, y = x[mask], y[mask]
+        if x.size < 3:
+            continue
+        panels.append((hit, x, y))
+
+        fig, ax = plt.subplots(figsize=(6.2, 5.2))
+        _corr_scatter_panel(ax, x, y, hit)
+        fig.tight_layout()
+        _save(fig, out / f"{hit['roi']}_{hit['contrast']}.png")
+
+    if panels:
+        n = len(panels)
+        fig, axes = plt.subplots(1, n, figsize=(6.0 * n, 5.4), squeeze=False)
+        for ax, (hit, x, y) in zip(axes.flatten(), panels):
+            _corr_scatter_panel(ax, x, y, hit)
+        roi_label = format_roi(panels[0][0]["roi"])
+        fig.suptitle(
+            f"Symptom Correlation (AVH+):  {roi_label} Activation vs PSYRATS\n"
+            "partial r controlling age + IQ  ·  within-contrast FDR < 0.05",
+            fontsize=15, fontweight="bold", y=1.05,
+        )
+        fig.tight_layout()
+        _save(fig, out / "significant_correlations_summary.png")
+    print(f"  significant correlations -> {out}  ({len(panels)} cell(s))")
 
 
 # ===========================================================================
@@ -607,107 +893,96 @@ def make_demographics_qc() -> None:
 # SUMMARY HERO FIGURE
 # ===========================================================================
 def make_summary() -> None:
+    """Simplified, professional hero figure focused on the FDR/Bonferroni-robust
+    findings: sample sizes, confirmatory effects, the primary symptom correlation,
+    and a tidy key-findings box.
+    """
     out = POSTER_DIR / "summary"
     parts = _load_participants()
-    es_path = EFFECT_DIR / "effect_sizes_summary.csv"
-    cls_path = DATA_DIR / "svm_weights" / "classification_results.json"
-    if not es_path.exists():
-        return
 
-    es = pd.read_csv(es_path)
-    es = es[es["comparison"] == "AVH-_vs_AVH+"]
+    fig = plt.figure(figsize=(15, 10))
+    gs = fig.add_gridspec(
+        2, 2, height_ratios=[1.0, 0.62], hspace=0.42, wspace=0.26,
+        left=0.07, right=0.96, top=0.88, bottom=0.06,
+    )
 
-    fig = plt.figure(figsize=(18, 11))
-    gs = fig.add_gridspec(3, 3, hspace=0.45, wspace=0.32)
-
-    # (1) Group sizes
+    # (a) Sample sizes ------------------------------------------------------
     ax = fig.add_subplot(gs[0, 0])
     counts = parts.groupby("group", observed=True).size().reindex(GROUP_ORDER)
     bars = ax.bar(counts.index.astype(str), counts.values,
-                  color=[PALETTE[g] for g in GROUP_ORDER], edgecolor="black", lw=0.8)
+                  color=[PALETTE[g] for g in GROUP_ORDER], edgecolor="black", lw=0.9)
     for b, v in zip(bars, counts.values):
         ax.text(b.get_x() + b.get_width() / 2, v + 0.4, f"n = {v}",
-                ha="center", fontsize=11, fontweight="bold")
-    ax.set_title("Sample Sizes", fontsize=14, fontweight="bold")
+                ha="center", fontsize=12, fontweight="bold")
+    ax.set_title("Sample Sizes", fontsize=15, fontweight="bold")
     ax.set_ylabel("Participants")
-    ax.set_ylim(0, counts.max() * 1.18)
+    ax.set_ylim(0, float(counts.max()) * 1.20)
 
-    # (2) Top effect sizes
-    ax = fig.add_subplot(gs[0, 1:])
-    top = es.assign(abs_d=lambda d: d["cohens_d"].abs()).sort_values("abs_d", ascending=False).head(10)
-    top["label"] = [f"{format_contrast(c)}  ·  {format_roi(r)}"
-                    for c, r in zip(top["contrast"], top["roi"])]
-    colors = [SIG_OK if abs(d) >= 0.5 else "#3498db" if abs(d) >= 0.2 else "#95a5a6"
-              for d in top["cohens_d"]]
-    ax.barh(top["label"][::-1], top["cohens_d"][::-1],
-            color=colors[::-1], edgecolor="black", lw=0.8)
-    ax.axvline(0, color="black", lw=0.6, ls="--")
-    ax.set_xlabel("Cohen's d  (AVH- vs AVH+)")
-    ax.set_title("Top 10 ROI Effect Sizes", fontsize=14, fontweight="bold")
+    # (b) Confirmatory forest (pre-specified, ANCOVA-adjusted) --------------
+    ax = fig.add_subplot(gs[0, 1])
+    conf_path = CONF_DIR / "confirmatory_primary.csv"
+    if conf_path.exists():
+        conf = pd.read_csv(conf_path)
+        full = conf[conf["sample"].str.startswith("full")].copy()
+        full = full.sort_values("d_adj")
+        y = np.arange(len(full))
+        colors = ["#27ae60" if s else "#e67e22" for s in full["survives_bonferroni"]]
+        ax.errorbar(full["d_adj"], y,
+                    xerr=[full["d_adj"] - full["d_adj_ci_lo"], full["d_adj_ci_hi"] - full["d_adj"]],
+                    fmt="none", ecolor="gray", capsize=4, lw=1.3)
+        ax.scatter(full["d_adj"], y, c=colors, s=150, edgecolor="black", zorder=5)
+        ax.axvline(0, color="black", lw=0.7, ls="--", alpha=0.6)
+        ax.set_yticks(y)
+        ax.set_yticklabels([format_roi(r) for r in full["roi"]])
+        ax.set_xlim(min(full["d_adj_ci_lo"].min(), -0.2) - 0.25, 0.35)
+        for yi, (d, p) in enumerate(zip(full["d_adj"], full["p_bonferroni"])):
+            ax.annotate(f"d={d:+.2f}, p_bonf={p:.3f}", (d, yi),
+                        textcoords="offset points", xytext=(0, 11),
+                        ha="center", fontsize=9, fontweight="bold")
+    ax.set_xlabel("Adjusted Cohen's d  (AVH- vs AVH+)")
+    ax.set_title("Confirmatory ROIs\nsentences > reversed (Bonferroni m=2)",
+                 fontsize=14, fontweight="bold")
 
-    # (3) Classification accuracy
+    # (c) Primary symptom correlation scatter -------------------------------
     ax = fig.add_subplot(gs[1, 0])
-    if cls_path.exists():
-        with open(cls_path) as f:
-            cls = json.load(f)
-        rows = pd.DataFrame(cls["results"])
-        x = np.arange(len(rows))
-        ax.bar(x, rows["accuracy"], color="#3498db", edgecolor="black", lw=0.8)
-        ax.axhline(0.5, color="black", lw=1.0, ls="--", alpha=0.7)
-        ax.set_xticks(x)
-        ax.set_xticklabels([format_contrast(c) for c in rows["contrast"]],
-                           rotation=20, ha="right", fontsize=9)
-        ax.set_ylim(0, 1)
-        ax.set_ylabel("Accuracy")
-        ax.set_title("MVPA Classification", fontsize=14, fontweight="bold")
-        for xi, (a, p) in enumerate(zip(rows["accuracy"], rows["p_value"])):
-            ax.text(xi, a + 0.02, f"p={p:.2f}", ha="center", fontsize=8)
+    hits = _fdr_significant_correlations()
+    avh = parts[parts["group"] == "AVH+"].dropna(subset=["psyrats"])
+    drew = False
+    if hits and not avh.empty:
+        hit = hits[0]  # primary = smallest FDR p
+        roi_path = ROI_DIR / f"{hit['contrast']}_roi_values.csv"
+        if roi_path.exists():
+            roi_df = pd.read_csv(roi_path)
+            merged = roi_df.merge(avh[["participant_id", "psyrats"]],
+                                  left_on="subject_id", right_on="participant_id", how="inner")
+            if hit["roi"] in merged.columns and not merged.empty:
+                x = merged[hit["roi"]].to_numpy(dtype=float)
+                yv = merged["psyrats"].to_numpy(dtype=float)
+                m = np.isfinite(x) & np.isfinite(yv)
+                _corr_scatter_panel(ax, x[m], yv[m], hit)
+                drew = True
+    if not drew:
+        ax.axis("off")
 
-    # (4) Connectivity sig
+    # (d) Key findings box --------------------------------------------------
     ax = fig.add_subplot(gs[1, 1])
-    sig_path = DATA_DIR / "connectivity_significant.csv"
-    if sig_path.exists():
-        sig = pd.read_csv(sig_path)
-        if not sig.empty:
-            labels = [f"{format_roi(a)}\n↔ {format_roi(b)}" for a, b in zip(sig["roi1"], sig["roi2"])]
-            colors = [PALETTE["AVH-"] if d > 0 else PALETTE["AVH+"] for d in sig["diff"]]
-            ax.barh(labels, sig["diff"], color=colors, edgecolor="black", lw=0.8)
-            ax.axvline(0, color="black", lw=0.6, ls="--")
-    ax.set_xlabel("Δ Connectivity")
-    ax.set_title("Significant Connections", fontsize=14, fontweight="bold")
-
-    # (5) PSYRATS distribution
-    ax = fig.add_subplot(gs[1, 2])
-    psy = parts[parts["group"] == "AVH+"].dropna(subset=["psyrats"])
-    if not psy.empty:
-        ax.hist(psy["psyrats"], bins=10, color=PALETTE["AVH+"],
-                edgecolor="black", lw=0.8, alpha=0.85)
-        ax.axvline(psy["psyrats"].mean(), color="black", ls="--",
-                   label=f"Mean = {psy['psyrats'].mean():.1f}")
-        ax.legend(loc="upper right")
-    ax.set_xlabel("PSYRATS Total")
-    ax.set_ylabel("Count (AVH+)")
-    ax.set_title("Hallucination Severity", fontsize=14, fontweight="bold")
-
-    # (6) Bottom-row callout box with key findings text
-    ax = fig.add_subplot(gs[2, :])
     ax.axis("off")
-    n_sig = int((es["cohens_d"].abs() >= 0.5).sum())
-    n_med = int(((es["cohens_d"].abs() >= 0.2) & (es["cohens_d"].abs() < 0.5)).sum())
     msg = (
-        "KEY FINDINGS  (AVH- vs AVH+)\n"
-        f"  •  ROI effect sizes:  {n_sig} medium-large (|d| ≥ 0.5)   |   {n_med} small (0.2 ≤ |d| < 0.5)\n"
-        f"  •  MVPA accuracy below chance — auditory ROIs do not discriminate AVH subgroups linearly\n"
-        f"  •  Connectivity:  {len(pd.read_csv(sig_path)) if sig_path.exists() else 0} significant ROI-ROI differences (uncorrected p < 0.05)\n"
-        f"  •  Laterality differences strongest in MTG and STG-posterior — see laterality panel for d & p"
+        "KEY FINDINGS  (AVH- vs AVH+)\n\n"
+        "Confirmatory  (pre-specified, sentences > reversed)\n"
+        f"   {_confirmatory_text()}\n\n"
+        "Symptom correlation  (AVH+, partial r | age, IQ)\n"
+        f"   {_primary_psyrats_text()}\n\n"
+        "Exploratory\n"
+        "   MVPA at/below chance; laterality n.s.;\n"
+        "   no connectivity edge survives FDR."
     )
-    ax.text(0.01, 0.95, msg, va="top", ha="left",
-            fontsize=14, fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.8", facecolor="#f4f6f7",
+    ax.text(0.0, 1.0, msg, va="top", ha="left", fontsize=12.5, linespacing=1.35,
+            bbox=dict(boxstyle="round,pad=0.9", facecolor="#f4f6f7",
                       edgecolor="#2c3e50", linewidth=1.5))
 
     fig.suptitle("Schizophrenia Auditory Verbal Hallucinations  ·  Key Findings",
-                 fontsize=22, fontweight="bold", y=1.005)
+                 fontsize=20, fontweight="bold", y=0.965)
     _save(fig, out / "key_findings.png")
 
 
@@ -721,7 +996,7 @@ def write_readme() -> None:
 
     sections = [
         ("01_brain_maps", "Glass brain + inflated fsaverage surface plots for the key contrasts, plus a 12-ROI reference."),
-        ("02_roi_effects", "Raincloud + grouped-bar + forest plots of ROI activation by group."),
+        ("02_roi_effects", "Raincloud + grouped-bar + forest plots of ROI activation by group, plus the pre-specified confirmatory forest (ANCOVA-adjusted)."),
         ("03_correlations", "ROI activation vs PSYRATS scatter plots in the AVH+ group."),
         ("04_classification", "MVPA SVM accuracy / AUC + permutation summary."),
         ("05_connectivity", "Functional connectivity matrix and significant ROI-ROI group differences."),
@@ -763,9 +1038,21 @@ def write_readme() -> None:
         "",
         "## Key Findings (AVH- vs AVH+)",
         "",
+        "### Confirmatory (pre-specified: sentences > reversed x {L_MTG, L_STS}, Bonferroni m=2)",
+        f"- {_confirmatory_text()}",
+        "- Robust to excluding 4 high-motion subjects (motion-clean n=67); see `02_roi_effects/confirmatory_forest.png`.",
+        "",
+        "### Exploratory (FDR-corrected within each contrast, 12 ROIs)",
         f"- ROI effect sizes (Cohen's d):  {n_sig} medium-large (|d| ≥ 0.5),  {n_med} small (0.2 ≤ |d| < 0.5).",
-        f"- Significant ROI-ROI connectivity differences (p < 0.05): {n_conn}.",
-        f"- MVPA classification: {cls_summary}.",
+        "- With proper Welch ANOVA, L_MTG and L_STS survive within-contrast FDR for sentences>reversed and words>sentences.",
+        "",
+        "### Symptom correlation (AVH+, partial r controlling age + IQ)",
+        f"- {_primary_psyrats_text()} (within-contrast FDR).",
+        "",
+        "### Exploratory / not corrected",
+        f"- ROI-ROI connectivity differences (uncorrected p < 0.05): {n_conn}; none survive FDR.",
+        f"- MVPA classification (at/below chance): {cls_summary}.",
+        "- Laterality: no significant group differences.",
         "",
         "## Style Standards",
         "",
@@ -795,8 +1082,11 @@ def main() -> None:
 
     print("\n[2/8] ROI effects ...")
     make_roi_effects()
+    make_confirmatory()
+    make_significant_effects_bar()
     print("\n[3/8] Correlations ...")
     make_correlations()
+    make_correlations_significant()
     print("\n[4/8] Classification ...")
     make_classification()
     print("\n[5/8] Connectivity ...")

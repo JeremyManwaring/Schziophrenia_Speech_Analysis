@@ -1,174 +1,88 @@
-# MATLAB/SPM Analysis Scripts for ds004302
+# ds004302 - Analysis Guide
 
-This directory contains MATLAB scripts for analyzing the ds004302 dataset using SPM12.
+Single consolidated how-to for setup, data retrieval, and running the analysis
+pipeline. Supersedes the previously separate QUICKSTART / RUN_ANALYSIS /
+RUNNING_ANALYSIS / INSTALL_GIT_ANNEX / RETRIEVE_FILES / MONITOR / GLM_* guides.
 
-## Prerequisites
+---
 
-1. **MATLAB** (R2014b or later recommended)
-   - Download from: https://www.mathworks.com/products/matlab.html
+## 1. Environment
 
-2. **SPM12**
-   - Download from: https://www.fil.ion.ucl.ac.uk/spm/software/download/
-   - Extract to a directory (e.g., `/path/to/spm12`)
+Python is the canonical analysis stack. Use the project virtualenv `venv/`
+(it has nilearn + statsmodels installed):
 
-## Setup
-
-1. **Install SPM12**
-   ```matlab
-   % Download and extract SPM12 to your preferred location
-   % Example: /Applications/spm12 or /usr/local/spm12
-   ```
-
-2. **Initialize SPM**
-   ```matlab
-   cd matlab
-   edit init_spm.m  % Modify SPM_PATH variable
-   init_spm
-   ```
-
-3. **Verify setup**
-   ```matlab
-   spm('version')  % Should display SPM version
-   ```
-
-## Dataset Information
-
-- **Task**: Speech perception (block design)
-- **Conditions**: words, sentences, reversed, white-noise (baseline)
-- **TR**: 2.0 seconds
-- **Block duration**: 26 seconds
-- **Note**: First 5 volumes (10 seconds) were discarded in original analysis
-
-## Scripts Overview
-
-### `init_spm.m`
-Initializes SPM and sets up paths. **Run this first** before any analysis.
-
-### `load_bids_data.m`
-Loads BIDS dataset structure and participant information.
-
-### `batch_preprocessing.m`
-Preprocessing pipeline:
-1. Realignment (motion correction)
-2. Coregistration (functional to structural)
-3. Segmentation (tissue segmentation)
-4. Normalization (to MNI space)
-5. Smoothing (8mm FWHM)
-
-### `batch_first_level.m`
-First-level (subject-level) GLM analysis:
-- Models task conditions (words, sentences, reversed)
-- Includes motion regressors
-- Creates contrasts of interest
-
-### `batch_second_level.m`
-Second-level (group-level) analysis:
-- One-sample t-tests for each condition
-- Group comparisons (HC vs AVH- vs AVH+)
-
-## Usage Workflow
-
-### Complete Analysis Pipeline
-
-```matlab
-% 1. Initialize SPM
-cd matlab
-init_spm
-
-% 2. Preprocess all subjects
-batch_preprocessing
-
-% 3. Run first-level analysis
-batch_first_level
-
-% 4. Create contrasts at first level (manual step)
-% Use SPM GUI: Stats > Results > Select contrast
-
-% 5. Run second-level analysis
-batch_second_level
+```bash
+# from the dataset root
+python3 -m venv venv          # only if venv/ does not exist
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### Individual Steps
+All scripts can also be invoked without activating: `venv/bin/python code/python/<script>.py`.
+
+MATLAB/SPM is only needed to (re)run preprocessing and the original SPM GLM:
 
 ```matlab
-% Load data
-[subjects, participants] = load_bids_data();
-
-% Process specific subject
-% (modify batch scripts to process single subject)
+cd code/matlab
+init_spm            % sets SPM path
+run_complete_analysis
 ```
 
-## Important Notes
+---
 
-1. **File Formats**: 
-   - SPM may require unzipped `.nii` files (not `.nii.gz`)
-   - You may need to unzip files first:
-   ```bash
-   gunzip sub-*/func/*.nii.gz
-   gunzip sub-*/anat/*.nii.gz
-   ```
+## 2. Data layout (canonical)
 
-2. **Disk Space**: 
-   - Preprocessing creates many intermediate files
-   - Ensure sufficient disk space (~500MB-1GB per subject)
+- `results/data/` - the single source of truth for every CSV / JSON / NIfTI.
+  - `first_level/` - per-subject first-level contrast maps (effect + zstat).
+  - `roi_values/`, `effect_sizes/`, `correlations/`, `cluster_maps/`,
+    `svm_weights/`, `connectivity*`, `laterality*`, `qc.csv`, `demographics/`.
+  - `confirmatory/` - covariate-adjusted (ANCOVA) + pre-specified results.
+- `results/poster/` - 300 dpi figures, rebuilt from `results/data/`.
 
-3. **Memory**: 
-   - Large datasets may require substantial RAM
-   - Consider processing subjects in batches if needed
+Raw BIDS NIfTIs are git-annex pointers. If content is missing, fetch with
+`datalad get <path>` or `git annex get <path>` (see the dataset's DataLad setup).
 
-4. **Computing Time**: 
-   - Full preprocessing: ~10-30 minutes per subject
-   - First-level analysis: ~5-10 minutes per subject
-   - Second-level: ~1-5 minutes
+---
 
-## Customization
+## 3. Running the pipeline
 
-### Modify Preprocessing Parameters
+```bash
+source venv/bin/activate
 
-Edit `batch_preprocessing.m`:
-- `VoxelSize`: Normalization voxel size (default: [2 2 2] mm)
-- `FWHM`: Smoothing kernel (default: [8 8 8] mm)
+# (a) Heavy compute: first/second-level GLM, ROI extraction
+python code/python/run_complete_analysis.py     # SPM-independent Nilearn path
 
-### Modify Analysis Parameters
+# (b) Advanced AVH analyses: cluster perm, MVPA, connectivity, laterality
+python code/python/run_advanced_analyses.py
 
-Edit `batch_first_level.m`:
-- `TR`: Repetition time (default: 2.0 seconds)
-- `HPF`: High-pass filter (default: 128 seconds)
-- `BASIS_DERIVS`: HRF derivatives (default: [0 0])
+# (c) Confirmatory rework: ANCOVA + pre-specified Bonferroni + motion sensitivity
+python code/python/confirmatory_roi_analysis.py
 
-### Add Custom Contrasts
+# (d) Rebuild all poster figures (fast; reads only results/data/)
+python code/python/poster_visualizations.py
+```
 
-Modify `batch_first_level.m` to add contrast specification after model estimation.
+Steps (a) and (b) are the only ones that need the first-level maps in
+`results/data/first_level/`. Steps (c) and (d) run from the consolidated CSVs.
 
-## Troubleshooting
+---
 
-1. **SPM not found**
-   - Check SPM_PATH in `init_spm.m`
-   - Ensure SPM is properly installed
+## 4. Statistical approach (rework)
 
-2. **File not found errors**
-   - Verify BIDS structure is intact
-   - Check file naming conventions
-   - Ensure files are unzipped if needed
+- **Confirmatory (pre-specified):** `sentences > reversed` x {L_MTG, L_STS},
+  AVH- vs AVH+, ANCOVA adjusting age + IQ + sex + mean FD, Bonferroni m = 2.
+  Validated with a motion-clean sensitivity analysis (n = 67).
+- **Exploratory:** all 7 contrasts x 12 ROIs, Welch ANOVA + FDR within each
+  contrast. Group ROI test uses the validated Welch implementation in
+  `welch_anova.py`.
+- **Symptom correlation:** PSYRATS vs ROI activation in AVH+, partial
+  correlation controlling age + IQ, FDR within contrast.
+- **MVPA / connectivity / laterality:** exploratory only; report as such.
 
-3. **Out of memory**
-   - Process fewer subjects at once
-   - Increase MATLAB memory: Preferences > General > Java Heap Memory
+---
 
-4. **Preprocessing errors**
-   - Check image quality
-   - Verify acquisition parameters match script settings
-   - Review SPM error messages for specific issues
+## 5. Contrasts
 
-## Additional Resources
-
-- SPM Manual: https://www.fil.ion.ucl.ac.uk/spm/doc/
-- SPM Wiki: https://en.wikibooks.org/wiki/SPM
-- BIDS Specification: https://bids-specification.readthedocs.io/
-
-## Citation
-
-If using these scripts, please cite:
-- SPM: https://www.fil.ion.ucl.ac.uk/spm/doc/
-- Original dataset: Soler-Vidal et al. (2022) PLOS ONE
-
+T-tests: Words>Baseline, Sentences>Baseline, Reversed>Baseline, Words>Reversed,
+Sentences>Reversed, (Words+Sentences)>Reversed, Words>Sentences.
+F-tests: all-conditions omnibus; condition-differences omnibus.
