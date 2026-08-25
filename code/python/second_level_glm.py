@@ -406,9 +406,9 @@ def main():
     """Main function to run second-level analysis."""
     # Set paths
     dataset_root = Path(__file__).parent.parent.parent
-    first_level_dir = dataset_root / 'results' / 'first_level'
+    first_level_dir = dataset_root / 'results' / 'data' / 'first_level'
     participants_path = dataset_root / 'participants.tsv'
-    output_dir = dataset_root / 'results' / 'second_level'
+    output_dir = dataset_root / 'results' / 'data' / 'second_level'
     
     # Check if first-level results exist
     if not first_level_dir.exists():

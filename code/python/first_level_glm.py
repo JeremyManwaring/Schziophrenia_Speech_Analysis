@@ -12,6 +12,7 @@ import pandas as pd
 from pathlib import Path
 import nibabel as nib
 from nilearn.glm.first_level import FirstLevelModel, make_first_level_design_matrix
+from nilearn.glm.contrasts import expression_to_contrast_vector
 from nilearn.plotting import plot_design_matrix, plot_contrast_matrix
 from nilearn.image import load_img
 import warnings
@@ -23,9 +24,9 @@ warnings.filterwarnings('ignore')
 # Define contrasts
 CONTRASTS = {
     # T-contrasts
-    'words_vs_baseline': 'words - white-noise',
-    'sentences_vs_baseline': 'sentences - white-noise',
-    'reversed_vs_baseline': 'reversed - white-noise',
+    'words_vs_baseline': 'words - white_noise',
+    'sentences_vs_baseline': 'sentences - white_noise',
+    'reversed_vs_baseline': 'reversed - white_noise',
     'words_vs_reversed': 'words - reversed',
     'sentences_vs_reversed': 'sentences - reversed',
     'speech_vs_reversed': '0.5*words + 0.5*sentences - reversed',
@@ -35,7 +36,8 @@ CONTRASTS = {
 # F-contrasts (defined as arrays after design matrix is created)
 F_CONTRASTS = {
     'all_conditions': ['words', 'sentences', 'reversed'],  # Any task activation
-    'condition_differences': ['words - reversed', 'sentences - reversed', 'words - sentences'],
+    # Two independent rows span the three pairwise condition differences.
+    'condition_differences': ['words - reversed', 'sentences - reversed'],
 }
 
 
@@ -230,11 +232,18 @@ def run_first_level_glm(subject_id, fmriprep_dir, events_path, output_dir,
         except Exception as e:
             print(f"      Warning: Could not compute contrast '{contrast_name}': {e}")
     
-    # Compute F-contrasts
+    # Compute F-contrasts. A list of strings is interpreted by Nilearn as one
+    # contrast per run, so explicitly build a multi-row contrast matrix.
+    design_columns = fmri_glm.design_matrices_[0].columns.tolist()
     for f_name, conditions in F_CONTRASTS.items():
         try:
-            # F-contrast requires a list of contrasts
-            f_map = fmri_glm.compute_contrast(conditions, output_type='z_score', stat_type='F')
+            f_matrix = np.vstack([
+                expression_to_contrast_vector(expression, design_columns)
+                for expression in conditions
+            ])
+            f_map = fmri_glm.compute_contrast(
+                f_matrix, output_type='z_score', stat_type='F'
+            )
             nib.save(f_map, subject_output / f'{subject_id}_{f_name}_fstat.nii.gz')
             
             results['contrasts'][f_name] = {
@@ -246,10 +255,14 @@ def run_first_level_glm(subject_id, fmriprep_dir, events_path, output_dir,
     # Save design matrix plot
     try:
         design_matrix = fmri_glm.design_matrices_[0]
-        fig = plot_design_matrix(design_matrix)
-        fig.savefig(subject_output / f'{subject_id}_design_matrix.png', dpi=150, bbox_inches='tight')
+        ax = plot_design_matrix(design_matrix)
+        ax.figure.savefig(
+            subject_output / f'{subject_id}_design_matrix.png',
+            dpi=150,
+            bbox_inches='tight',
+        )
         import matplotlib.pyplot as plt
-        plt.close(fig)
+        plt.close(ax.figure)
     except Exception as e:
         print(f"      Warning: Could not save design matrix plot: {e}")
     
@@ -369,7 +382,7 @@ def main():
     dataset_root = Path(__file__).parent.parent.parent
     fmriprep_dir = dataset_root / 'derivatives' / 'fmriprep'
     events_path = dataset_root / 'task-speech_events.tsv'
-    output_dir = dataset_root / 'results' / 'first_level'
+    output_dir = dataset_root / 'results' / 'data' / 'first_level'
     
     # Load task parameters
     task_json = dataset_root / 'task-speech_bold.json'
@@ -389,7 +402,7 @@ def main():
         return
     
     # Check for motion exclusions
-    exclusion_file = dataset_root / 'results' / 'qc' / 'motion_exclusions.txt'
+    exclusion_file = dataset_root / 'results' / 'data' / 'motion_exclusions.txt'
     exclude_subjects = []
     
     if exclusion_file.exists():

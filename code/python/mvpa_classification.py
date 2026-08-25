@@ -86,7 +86,7 @@ def load_contrast_data(contrast_name, participants_df):
 
 
 def run_svm_classification(contrast_name, participants_df):
-    """Run SVM classification with leave-one-out cross-validation."""
+    """Run SVM classification with shuffled five-fold KFold CV."""
     print(f"\n  Processing {contrast_name}...")
     
     maps, labels, subjects = load_contrast_data(contrast_name, participants_df)
@@ -213,7 +213,7 @@ def create_accuracy_plot(all_results):
     ax.set_xticklabels([c.replace('_', '\n') for c in contrasts], fontsize=10)
     ax.set_ylabel('Classification Accuracy (%)', fontsize=12)
     ax.set_xlabel('Contrast', fontsize=12)
-    ax.set_title('SVM Classification: AVH- vs AVH+\n(Leave-One-Out Cross-Validation)', fontsize=13, fontweight='bold')
+    ax.set_title('SVM Classification: AVH- vs AVH+\n(Shuffled 5-Fold KFold CV)', fontsize=13, fontweight='bold')
     ax.set_ylim(0, 100)
     
     # Legend
@@ -374,7 +374,7 @@ def main():
     summary = {
         'analysis': 'MVPA SVM Classification',
         'comparison': 'AVH- vs AVH+',
-        'method': 'Leave-One-Out Cross-Validation',
+        'method': 'Shuffled 5-fold KFold cross-validation (random_state=42)',
         'results': []
     }
     
@@ -405,7 +405,7 @@ hallucinations (AVH+) from those without (AVH-).
 
 ## Method
 - Classifier: Linear SVM (C=1.0)
-- Validation: Leave-One-Out Cross-Validation
+- Validation: Shuffled 5-fold KFold cross-validation (random_state=42)
 - Features: Whole-brain voxel activation patterns
 - Statistical test: Permutation test (100 permutations)
 

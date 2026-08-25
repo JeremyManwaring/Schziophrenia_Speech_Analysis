@@ -50,7 +50,7 @@ PARTICIPANTS = BASE_DIR / "participants.tsv"
 ROI_DIR = DATA_DIR / "roi_values"
 EFFECT_DIR = DATA_DIR / "effect_sizes"
 CORR_DIR = DATA_DIR / "correlations"
-CONF_DIR = DATA_DIR / "confirmatory"
+POSTHOC_DIR = DATA_DIR / "posthoc"
 
 POSTER_SECTIONS = [
     "01_brain_maps",
@@ -104,9 +104,9 @@ def _sig_marker(p: float) -> str:
     return ""
 
 
-def _confirmatory_text() -> str:
-    """One-line summary of the pre-specified confirmatory result (full sample)."""
-    path = CONF_DIR / "confirmatory_primary.csv"
+def _posthoc_text() -> str:
+    """One-line summary of the targeted post hoc result (full model)."""
+    path = POSTHOC_DIR / "posthoc_targeted.csv"
     if not path.exists():
         return "n/a"
     df = pd.read_csv(path)
@@ -288,25 +288,27 @@ def make_roi_effects() -> None:
             _save(fig, out / "effect_sizes_forest.png")
 
 
-def make_confirmatory() -> None:
-    """Forest of covariate-adjusted (ANCOVA) effects for the pre-specified
-    confirmatory family, shown for the full and motion-clean samples.
+def make_posthoc() -> None:
+    """Forest of covariate-adjusted effects for the targeted post hoc family.
 
-    Reads results/data/confirmatory/confirmatory_primary.csv.
+    Reads results/data/posthoc/posthoc_targeted.csv.
     """
-    primary_path = CONF_DIR / "confirmatory_primary.csv"
-    if not primary_path.exists():
-        print("  ! confirmatory_primary.csv missing; skipping confirmatory panel")
+    targeted_path = POSTHOC_DIR / "posthoc_targeted.csv"
+    if not targeted_path.exists():
+        print("  ! posthoc_targeted.csv missing; skipping post hoc panel")
         return
-    df = pd.read_csv(primary_path)
+    df = pd.read_csv(targeted_path)
     if df.empty:
         return
 
     out = POSTER_DIR / "02_roi_effects"
     # Order: group by ROI, full above clean
-    sample_order = sorted(df["sample"].unique(), reverse=True)  # full_* before clean_*
     df["sample_label"] = df["sample"].map(
-        lambda s: "Full (n=71)" if s.startswith("full") else "Motion-clean (n=67)"
+        lambda s: (
+            f"Full model (n={s.rsplit('n', 1)[-1]})"
+            if s.startswith("full")
+            else f"Motion-clean model (n={s.rsplit('n', 1)[-1]})"
+        )
     )
     df["roi_label"] = df["roi"].map(format_roi)
     df = df.sort_values(["roi", "sample"]).reset_index(drop=True)
@@ -329,7 +331,7 @@ def make_confirmatory() -> None:
                     textcoords="offset points", xytext=(0, 10),
                     ha="center", fontsize=9)
     ax.set_xlabel("Covariate-adjusted Cohen's d (AVH- vs AVH+)  [95% CI]")
-    ax.set_title("Pre-specified Confirmatory ROIs\nsentences > reversed  ·  ANCOVA (age, IQ, sex, motion)",
+    ax.set_title("Post hoc targeted ROIs\nsentences > reversed  ·  ANCOVA (age, IQ, sex, motion)",
                  fontsize=16, fontweight="bold")
     handles = [
         Line2D([0], [0], marker="o", color="w", markerfacecolor="#27ae60",
@@ -339,8 +341,8 @@ def make_confirmatory() -> None:
     ]
     ax.legend(handles=handles, loc="lower right", frameon=True)
     fig.tight_layout()
-    _save(fig, out / "confirmatory_forest.png")
-    print(f"  confirmatory forest -> {out / 'confirmatory_forest.png'}")
+    _save(fig, out / "posthoc_ancova_forest.png")
+    print(f"  post hoc forest -> {out / 'posthoc_ancova_forest.png'}")
 
 
 def _omnibus_fdr_significant() -> pd.DataFrame:
@@ -629,7 +631,11 @@ def make_classification() -> None:
     ax.set_xticklabels(rows["contrast_label"], rotation=15, ha="right")
     ax.set_ylim(0, 1)
     ax.set_ylabel("Score")
-    ax.set_title("MVPA SVM: AVH- vs AVH+ Classification", fontsize=18, fontweight="bold")
+    ax.set_title(
+        "MVPA SVM: AVH- vs AVH+ Classification\n"
+        "Shuffled 5-fold KFold CV (random_state=42)",
+        fontsize=18, fontweight="bold",
+    )
     ax.legend(loc="upper right")
     for bar, p in zip(bars1, rows["p_value"]):
         sig = _sig_marker(p)
@@ -655,8 +661,11 @@ def make_classification() -> None:
     ax.set_yticklabels(labels)
     ax.set_xlim(0, 1)
     ax.set_xlabel("Score")
-    ax.set_title("Classification Performance with Permutation p-values",
-                 fontsize=16, fontweight="bold")
+    ax.set_title(
+        "Classification Performance with Permutation p-values\n"
+        "Shuffled 5-fold KFold CV (random_state=42)",
+        fontsize=16, fontweight="bold",
+    )
     ax.legend(loc="lower right")
     fig.tight_layout()
     _save(fig, out / "svm_permutation_summary.png")
@@ -894,7 +903,7 @@ def make_demographics_qc() -> None:
 # ===========================================================================
 def make_summary() -> None:
     """Simplified, professional hero figure focused on the FDR/Bonferroni-robust
-    findings: sample sizes, confirmatory effects, the primary symptom correlation,
+    findings: sample sizes, post hoc effects, the symptom correlation,
     and a tidy key-findings box.
     """
     out = POSTER_DIR / "summary"
@@ -918,12 +927,12 @@ def make_summary() -> None:
     ax.set_ylabel("Participants")
     ax.set_ylim(0, float(counts.max()) * 1.20)
 
-    # (b) Confirmatory forest (pre-specified, ANCOVA-adjusted) --------------
+    # (b) Targeted post hoc forest (ANCOVA-adjusted) -------------------------
     ax = fig.add_subplot(gs[0, 1])
-    conf_path = CONF_DIR / "confirmatory_primary.csv"
-    if conf_path.exists():
-        conf = pd.read_csv(conf_path)
-        full = conf[conf["sample"].str.startswith("full")].copy()
+    posthoc_path = POSTHOC_DIR / "posthoc_targeted.csv"
+    if posthoc_path.exists():
+        posthoc = pd.read_csv(posthoc_path)
+        full = posthoc[posthoc["sample"].str.startswith("full")].copy()
         full = full.sort_values("d_adj")
         y = np.arange(len(full))
         colors = ["#27ae60" if s else "#e67e22" for s in full["survives_bonferroni"]]
@@ -940,7 +949,7 @@ def make_summary() -> None:
                         textcoords="offset points", xytext=(0, 11),
                         ha="center", fontsize=9, fontweight="bold")
     ax.set_xlabel("Adjusted Cohen's d  (AVH- vs AVH+)")
-    ax.set_title("Confirmatory ROIs\nsentences > reversed (Bonferroni m=2)",
+    ax.set_title("Post hoc targeted ROIs\nsentences > reversed (Bonferroni m=2)",
                  fontsize=14, fontweight="bold")
 
     # (c) Primary symptom correlation scatter -------------------------------
@@ -969,8 +978,8 @@ def make_summary() -> None:
     ax.axis("off")
     msg = (
         "KEY FINDINGS  (AVH- vs AVH+)\n\n"
-        "Confirmatory  (pre-specified, sentences > reversed)\n"
-        f"   {_confirmatory_text()}\n\n"
+        "Post hoc targeted ANCOVA  (sentences > reversed)\n"
+        f"   {_posthoc_text()}\n\n"
         "Symptom correlation  (AVH+, partial r | age, IQ)\n"
         f"   {_primary_psyrats_text()}\n\n"
         "Exploratory\n"
@@ -996,9 +1005,9 @@ def write_readme() -> None:
 
     sections = [
         ("01_brain_maps", "Glass brain + inflated fsaverage surface plots for the key contrasts, plus a 12-ROI reference."),
-        ("02_roi_effects", "Raincloud + grouped-bar + forest plots of ROI activation by group, plus the pre-specified confirmatory forest (ANCOVA-adjusted)."),
+        ("02_roi_effects", "Raincloud + grouped-bar + forest plots of ROI activation by group, plus the targeted post hoc ANCOVA forest."),
         ("03_correlations", "ROI activation vs PSYRATS scatter plots in the AVH+ group."),
-        ("04_classification", "MVPA SVM accuracy / AUC + permutation summary."),
+        ("04_classification", "MVPA SVM accuracy / AUC + permutation summary; shuffled five-fold KFold CV with random_state=42."),
         ("05_connectivity", "Functional connectivity matrix and significant ROI-ROI group differences."),
         ("06_laterality", "Hemispheric laterality heatmap, bar plots, and effect-size summary."),
         ("07_demographics_qc", "Age, IQ, sex distribution, and motion QC."),
@@ -1026,6 +1035,7 @@ def write_readme() -> None:
     else:
         n_sig = n_med = 0
     n_conn = len(pd.read_csv(sig_path)) if sig_path.exists() else 0
+    n_omnibus_fdr = len(_omnibus_fdr_significant())
     cls_summary = ""
     if cls_path.exists():
         with open(cls_path) as f:
@@ -1038,13 +1048,13 @@ def write_readme() -> None:
         "",
         "## Key Findings (AVH- vs AVH+)",
         "",
-        "### Confirmatory (pre-specified: sentences > reversed x {L_MTG, L_STS}, Bonferroni m=2)",
-        f"- {_confirmatory_text()}",
-        "- Robust to excluding 4 high-motion subjects (motion-clean n=67); see `02_roi_effects/confirmatory_forest.png`.",
+        "### Post hoc targeted ANCOVA (sentences > reversed x {L_MTG, L_STS}, Bonferroni m=2)",
+        f"- {_posthoc_text()}",
+        "- Full model n=69; motion-clean model n=65; see `02_roi_effects/posthoc_ancova_forest.png`.",
         "",
         "### Exploratory (FDR-corrected within each contrast, 12 ROIs)",
         f"- ROI effect sizes (Cohen's d):  {n_sig} medium-large (|d| ≥ 0.5),  {n_med} small (0.2 ≤ |d| < 0.5).",
-        "- With proper Welch ANOVA, L_MTG and L_STS survive within-contrast FDR for sentences>reversed and words>sentences.",
+        f"- Corrected Welch omnibus ROI findings surviving within-contrast FDR: {n_omnibus_fdr}.",
         "",
         "### Symptom correlation (AVH+, partial r controlling age + IQ)",
         f"- {_primary_psyrats_text()} (within-contrast FDR).",
@@ -1082,7 +1092,7 @@ def main() -> None:
 
     print("\n[2/8] ROI effects ...")
     make_roi_effects()
-    make_confirmatory()
+    make_posthoc()
     make_significant_effects_bar()
     print("\n[3/8] Correlations ...")
     make_correlations()

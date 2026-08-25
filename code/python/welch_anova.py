@@ -69,12 +69,16 @@ def welch_anova(groups):
     df_within : float
         Degrees of freedom within groups
     """
-    # Filter out empty groups
-    groups = [g[~np.isnan(g)] for g in groups if len(g[~np.isnan(g)]) > 0]
+    # Filter missing values but keep the requested groups aligned.
+    groups = [np.asarray(g, dtype=float) for g in groups]
+    groups = [g[np.isfinite(g)] for g in groups if np.isfinite(g).sum() > 0]
     
     if len(groups) < 2:
         return None, None, None, None, "Need at least 2 groups"
     
+    if any(len(g) < 2 for g in groups):
+        return None, None, None, None, "Need at least 2 observations per group"
+
     # Calculate group statistics
     means = np.array([np.mean(g) for g in groups])
     vars_ = np.array([np.var(g, ddof=1) for g in groups])  # Sample variance
@@ -90,22 +94,24 @@ def welch_anova(groups):
     # Calculate weighted mean
     x_bar_w = np.sum(weights * means) / np.sum(weights)
     
-    # Calculate numerator (between-group variance)
-    numerator = np.sum(weights * (means - x_bar_w)**2)
+    k = len(groups)
+
+    # Welch (1951): the weighted between-group term is divided by k - 1.
+    numerator = np.sum(weights * (means - x_bar_w)**2) / (k - 1)
     
     # Calculate denominator components
     lambda_term = np.sum(((1 - weights / np.sum(weights))**2) / (ns - 1))
-    denominator = 1 + (2 * (len(groups) - 2) * lambda_term / (len(groups)**2 - 1))
+    denominator = 1 + (2 * (k - 2) * lambda_term / (k**2 - 1))
     
     # Welch's F-statistic
     F_welch = numerator / denominator
     
     # Degrees of freedom
-    df_between = len(groups) - 1
-    df_within = (len(groups)**2 - 1) / (3 * lambda_term)
+    df_between = k - 1
+    df_within = (k**2 - 1) / (3 * lambda_term)
     
     # p-value
-    p_value = 1 - stats.f.cdf(F_welch, df_between, df_within)
+    p_value = stats.f.sf(F_welch, df_between, df_within)
     
     return F_welch, p_value, df_between, df_within, None
 
@@ -115,7 +121,8 @@ def games_howell_posthoc(groups, group_names):
     Perform Games-Howell post-hoc test for pairwise comparisons.
     
     Games-Howell is appropriate when variances are unequal and sample sizes
-    may differ. It's a pairwise t-test with adjusted degrees of freedom.
+    may differ. P-values are taken from the studentized-range distribution,
+    which controls the familywise error rate across the compared groups.
     
     Parameters
     ----------
@@ -147,19 +154,24 @@ def games_howell_posthoc(groups, group_names):
             n_i = len(group_i)
             n_j = len(group_j)
             
-            # Standard error
-            se = np.sqrt(var_i / n_i + var_j / n_j)
-            
-            # t-statistic
-            t_stat = (mean_i - mean_j) / se
-            
-            # Degrees of freedom (Welch-Satterthwaite equation)
-            df = (var_i / n_i + var_j / n_j)**2 / (
+            variance_term = var_i / n_i + var_j / n_j
+            if not np.isfinite(variance_term) or variance_term <= 0:
+                continue
+
+            # The Games-Howell statistic is a studentized-range statistic.
+            # q = |mean_i - mean_j| / sqrt(0.5 * (s_i^2/n_i + s_j^2/n_j))
+            mean_diff = mean_i - mean_j
+            t_stat = mean_diff / np.sqrt(variance_term)
+            q_stat = np.sqrt(2.0) * abs(t_stat)
+
+            # Welch-Satterthwaite degrees of freedom.
+            df = variance_term**2 / (
                 (var_i / n_i)**2 / (n_i - 1) + (var_j / n_j)**2 / (n_j - 1)
             )
-            
-            # p-value (two-tailed)
-            p_value = 2 * (1 - stats.t.cdf(abs(t_stat), df))
+
+            # Studentized-range survival probability is already multiplicity
+            # adjusted for all k group means in the family.
+            p_value = stats.studentized_range.sf(q_stat, n_groups, df)
             
             # Effect size (Cohen's d)
             pooled_std = np.sqrt((var_i + var_j) / 2)
@@ -170,8 +182,9 @@ def games_howell_posthoc(groups, group_names):
                 'group2': group_names[j],
                 'mean1': mean_i,
                 'mean2': mean_j,
-                'mean_diff': mean_i - mean_j,
+                'mean_diff': mean_diff,
                 't_stat': t_stat,
+                'q_stat': q_stat,
                 'df': df,
                 'p_value': p_value,
                 'cohens_d': cohens_d
@@ -388,4 +401,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

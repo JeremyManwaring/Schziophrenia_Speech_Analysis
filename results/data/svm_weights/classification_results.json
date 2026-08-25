@@ -1,7 +1,7 @@
 {
   "analysis": "MVPA SVM Classification",
   "comparison": "AVH- vs AVH+",
-  "method": "Leave-One-Out Cross-Validation",
+  "method": "Shuffled 5-fold KFold cross-validation (random_state=42)",
   "results": [
     {
       "contrast": "sentences_vs_reversed",

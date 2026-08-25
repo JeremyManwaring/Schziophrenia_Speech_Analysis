@@ -1,184 +1,90 @@
-# Complete fMRI Analysis Summary
+# Corrected fMRI Analysis Summary
 
-## Study Overview
-- **Dataset**: ds004302 - Speech Perception in Schizophrenia
-- **N = 71 subjects**: HC (25), AVH- (24), AVH+ (23)
-- **Task**: Speech perception (words, sentences, reversed, white-noise baseline)
-- **Analysis Date**: January 11, 2026
+## Cohort and first-level data
 
----
+- Cohort: HC=25, AVH-=23, AVH+=23 (N=71).
+- All seven T-contrast map families contain 71 subjects in `results/data/first_level/`.
+- The previously absent map sets for sub-02, sub-07, sub-19, sub-21, sub-32, sub-38, sub-54, sub-60, sub-61, and sub-76 were regenerated from their fMRIPrep inputs with the existing first-level design.
+- Canonical analysis directories are `first_level`, `roi_values`, `correlations`, and `effect_sizes` under `results/data/`.
 
-## Quality Control
+## ROI analysis
 
-| Metric | Value |
-|--------|-------|
-| Total subjects | 71 |
-| Mean framewise displacement | 0.189 mm |
-| Range | 0.069 - 0.455 mm |
-| Flagged for motion (>20% high-motion volumes) | 4 subjects |
+Each of the seven ROI value files contains 71 rows with HC=25, AVH-=23, and AVH+=23. Every omnibus table contains 12 Welch tests; every pairwise table contains 36 Games-Howell comparisons with `q_stat`, Welch-Satterthwaite `df`, and studentized-range p-values.
 
-**Flagged subjects**: sub-02 (28.5%), sub-22 (20.6%), sub-34 (35.0%), sub-45 (35.3%)
+Welch's ANOVA is implemented as
 
----
+\[
+F_W = \frac{\sum_i w_i(\bar{x}_i-\bar{x}_w)^2/(k-1)}
+{1 + \frac{2(k-2)}{k^2-1}\sum_i\frac{(1-w_i/W)^2}{n_i-1}},
+\]
 
-## First-Level GLM
+with numerator df `k-1`, Welch denominator df, and the F survival function. Benjamini-Hochberg FDR is recomputed within each contrast over 12 ROIs.
 
-- **Subjects processed**: 71/71
-- **Contrasts computed**: 9 (7 T-contrasts + 2 F-contrasts)
-- **Smoothing**: 6mm FWHM
-- **Confounds**: 6 motion parameters + CSF + WM
+No omnibus ROI test survives within-contrast FDR. The most suggestive family is sentences > reversed:
 
-### Contrasts:
-1. Words > Baseline (white_noise)
-2. Sentences > Baseline
-3. Reversed > Baseline
-4. Words > Reversed (speech intelligibility)
-5. Sentences > Reversed
-6. Speech > Reversed (combined intelligibility)
-7. Words > Sentences
+| ROI | Welch F | df numerator | df denominator | raw p | FDR q |
+|---|---:|---:|---:|---:|---:|
+| L STS | 5.059 | 2 | 45.237 | .0104 | .0995 |
+| L MTG | 4.501 | 2 | 44.532 | .0166 | .0995 |
 
----
+## ROI radii and non-independence
 
-## Second-Level Group Analysis
+Ten cortical ROIs use 8 mm spheres; bilateral Heschl's gyri use 6 mm. Values are extracted by radius-specific maskers with overlap enabled, preserving each declared sphere rather than silently dropping shared voxels. The full coordinates, radii, and overlap metadata are in `results/data/roi_values/roi_analysis_summary.json`.
 
-- **Groups compared**: HC vs AVH- vs AVH+
-- **Covariates**: Age (demeaned), IQ (demeaned), Sex
-- **Pairwise comparisons**: HC>AVH-, HC>AVH+, AVH->AVH+
+| Pair | center distance | radii sum | overlap depth |
+|---|---:|---:|---:|
+| L posterior STG–L STS | 10.198 mm | 16 mm | 5.802 mm |
+| L MTG–L STS | 8.246 mm | 16 mm | 7.754 mm |
+| L IFG triangularis–L IFG opercularis | 14.967 mm | 16 mm | 1.033 mm |
 
----
+Because these spheres share voxels, their ROI means are not independent.
 
-## ROI-Based Analysis
+## Post hoc targeted ANCOVA
 
-### 12 Speech/Language ROIs:
-- Left: STG posterior, STG anterior, MTG, IFG triangularis, IFG opercularis, STS, Heschl
-- Right: STG posterior, STG anterior, MTG, IFG, Heschl
+The targeted sentences > reversed analysis of L MTG and L STS is post hoc. The model is `activation ~ group + age + iq + sex + mean_fd`, and the AVH- versus AVH+ contrast is Bonferroni-adjusted over two ROIs.
 
-### Key Findings - Large Effect Sizes (|d| ≥ 0.8):
+| ROI | model sample | adjusted d [95% CI] | raw p | Bonferroni p |
+|---|---|---:|---:|---:|
+| L MTG | full_n69 | -.90 [-1.59, -.38] | .0052 | .0105 |
+| L STS | full_n69 | -.84 [-1.46, -.38] | .0090 | .0179 |
+| L MTG | motion_clean_n65 | -.87 [-1.60, -.38] | .0083 | .0167 |
+| L STS | motion_clean_n65 | -.82 [-1.46, -.31] | .0128 | .0255 |
 
-| Contrast | ROI | Comparison | Cohen's d | 95% CI |
-|----------|-----|------------|-----------|--------|
-| Sentences > Reversed | L_MTG | AVH- vs AVH+ | **-0.89** | [-1.49, -0.36] |
-| Sentences > Reversed | L_STS | AVH- vs AVH+ | **-0.92** | [-1.46, -0.42] |
-| Words > Sentences | L_MTG | AVH- vs AVH+ | **0.83** | [0.27, 1.46] |
-| Words > Sentences | L_STS | AVH- vs AVH+ | **0.86** | [0.36, 1.40] |
+The full and motion-clean source cohorts contain 71 and 67 participants, respectively; missing covariates reduce model complete cases to 69 and 65. The exploratory all-12-ROI ANCOVA FDR family has no hits.
 
-**Interpretation**: AVH- patients (schizophrenia without hallucinations) show different activation patterns in left temporal regions compared to AVH+ patients (with hallucinations) during speech processing, particularly in:
-- Left Middle Temporal Gyrus (L_MTG)
-- Left Superior Temporal Sulcus (L_STS)
+## PSYRATS partial correlations
 
----
+Partial-correlation p-values use `df=n-k-2`, where `k` is the independent covariate rank. For age and IQ in AVH+, n=23 and df=19 in every row. Within each contrast, BH-FDR covers 12 ROIs.
 
-## PSYRATS Correlation Analysis (AVH+ Group Only)
+The primary reported association is speech > reversed in right posterior STG: partial r=.647, p=.00152, q=.0182. Right Heschl and right MTG have raw partial p values near .033 but do not survive within-contrast FDR (q=.136).
 
-### Significant Correlations with Hallucination Severity:
+## Whole-brain permutation inference
 
-| Contrast | ROI | Pearson r | p-value |
-|----------|-----|-----------|---------|
-| Speech > Reversed | **R_STG_posterior** | **0.59** | **0.003** |
-| Speech > Reversed | R_MTG | 0.39 | 0.064 |
-| Speech > Reversed | R_Heschl | 0.40 | 0.056 |
+All three planned contrasts completed using Nilearn 0.13.0 with:
 
-**Key Finding**: Higher auditory hallucination severity (PSYRATS scores) significantly correlates with increased RIGHT posterior STG activation during speech intelligibility processing (r = 0.59, p = 0.003).
+- 10,000 permutations and fixed random seed 20260824;
+- two-sided testing;
+- voxelwise uncorrected cluster-forming p<.001;
+- maximum-cluster-size FWER p<.05;
+- complete covariate cases for age, IQ, and sex.
 
-This suggests that patients with more severe auditory hallucinations show greater right hemisphere auditory cortex engagement during speech perception.
+Sub-28 is excluded for missing IQ, yielding n=45 (AVH-=22, AVH+=23). No cluster survives in sentences > reversed, speech > reversed, or words > sentences. Corrected t maps are therefore empty by design; the poster panels show descriptive thresholded t maps and state the null corrected result. No smoothing is applied after inference.
 
----
+## MVPA documentation
 
-## Demographic Analysis
+The stored MVPA computation was not changed. It uses shuffled five-fold `KFold` cross-validation with `random_state=42`. The stored n=40 results range from accuracy .425 to .500 and none is significant by permutation testing.
 
-### Welch's ANOVA Results:
+## Output map
 
-| Variable | F-statistic | p-value | Significant |
-|----------|-------------|---------|-------------|
-| Age | 4.00 | 0.026 | Yes |
-| IQ | 1.36 | 0.267 | No |
-
-- Age shows significant group differences (AVH- older on average)
-- IQ is matched across groups
-
----
-
-## Files Generated
-
-All canonical outputs live under `results/data/` (single source of truth):
-
-```
+```text
 results/data/
-├── qc.csv                         # per-subject motion summary
-├── motion_exclusions.txt          # 4 high-motion subjects flagged
-├── first_level/                   # per-subject contrast maps (effect + zstat)
+├── first_level/
 ├── roi_values/
-│   ├── *_roi_values.csv           # ROI activation values
-│   ├── *_roi_anova.csv            # Welch ANOVA + FDR (corrected method)
-│   ├── *_roi_pairwise.csv         # pairwise comparisons
-│   └── *_roi_descriptive.csv      # group means/SDs
-├── confirmatory/                  # REWORK: covariate-adjusted inference
-│   ├── roi_ancova.csv             # ANCOVA (group+age+iq+sex+mean_fd), FDR within contrast
-│   ├── confirmatory_primary.csv   # pre-specified L_MTG/L_STS, Bonferroni m=2
-│   ├── motion_sensitivity.csv     # full vs motion-clean (n=67)
-│   └── confirmatory_summary.json
-├── correlations/
-│   ├── *_psyrats_correlations.csv
-│   ├── *_psyrats_partial.csv
-│   └── primary_psyrats.csv        # REWORK: partial r primary + within-contrast FDR
 ├── effect_sizes/
-│   └── effect_sizes_summary.csv
-├── cluster_maps/  svm_weights/  connectivity*  laterality*  demographics/
+├── correlations/
+├── posthoc/
+├── cluster_maps/
+└── svm_weights/
 ```
 
-> Rework note: the earlier mislabeled "Welch" ANOVA (which actually used
-> equal-variance `f_oneway`) was replaced with the validated Welch
-> implementation; ROI ANOVA CSVs were regenerated. See
-> `docs/REPLICATION_CHANGES.md`.
-
----
-
-## Conclusions
-
-1. **Group differences**: Large effect sizes found between AVH- and AVH+ groups in left temporal regions (L_MTG, L_STS) during speech processing
-
-2. **Brain-behavior correlation**: Significant correlation between hallucination severity and right posterior STG activation in AVH+ patients
-
-3. **Motion**: 4 subjects flagged for excessive motion but not excluded from current analysis
-
-4. **Next steps**: Consider excluding high-motion subjects for sensitivity analysis
-
----
-
-## Advanced Analyses (January 2026)
-
-Five additional analyses were conducted to further characterize AVH- vs AVH+ differences:
-
-### 1. Cluster-Corrected Whole-Brain Analysis
-- Permutation-based testing (1000 permutations)
-- Cluster-forming threshold: z > 2.3
-- Results: `results/visualizations/01_cluster_corrected/`
-
-### 2. Raincloud Plot Visualizations
-- Publication-quality distribution plots
-- Individual data points with group summaries
-- Results: `results/visualizations/02_raincloud_plots/`
-
-### 3. MVPA Classification
-- SVM classification (leave-one-out CV)
-- Best accuracy: 60% (words_vs_reversed)
-- Not significantly above chance (p > 0.05)
-- Results: `results/visualizations/03_mvpa_classification/`
-
-### 4. Functional Connectivity
-- ROI-to-ROI correlation analysis
-- 12 speech/language ROIs
-- 2 significant connection differences (p < 0.05 uncorrected)
-- Results: `results/visualizations/04_connectivity/`
-
-### 5. Laterality Analysis
-- Hemisphere dominance comparison
-- LI = (L - R) / (|L| + |R|)
-- No significant laterality differences between groups
-- Results: `results/visualizations/05_laterality/`
-
----
-
-## Files Generated
-
-See `results/visualizations/README.md` for complete documentation of visualization outputs.
+Paper/poster figures are in `results/poster/`. No `main.tex` exists in the workspace or Git history, so no TeX synchronization artifact is part of this repository.

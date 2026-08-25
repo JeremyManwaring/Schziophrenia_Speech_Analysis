@@ -8,9 +8,9 @@ from the consolidated stats in `results/data/`. Re-run with:
 ## Sections
 
 - **01_brain_maps/** — Glass brain + inflated fsaverage surface plots for the key contrasts, plus a 12-ROI reference.
-- **02_roi_effects/** — Raincloud + grouped-bar + forest plots of ROI activation by group, plus the pre-specified confirmatory forest (ANCOVA-adjusted).
+- **02_roi_effects/** — Raincloud + grouped-bar + forest plots of ROI activation by group, plus the targeted post hoc ANCOVA forest.
 - **03_correlations/** — ROI activation vs PSYRATS scatter plots in the AVH+ group.
-- **04_classification/** — MVPA SVM accuracy / AUC + permutation summary.
+- **04_classification/** — MVPA SVM accuracy / AUC + permutation summary; shuffled five-fold KFold CV with random_state=42.
 - **05_connectivity/** — Functional connectivity matrix and significant ROI-ROI group differences.
 - **06_laterality/** — Hemispheric laterality heatmap, bar plots, and effect-size summary.
 - **07_demographics_qc/** — Age, IQ, sex distribution, and motion QC.
@@ -18,16 +18,16 @@ from the consolidated stats in `results/data/`. Re-run with:
 
 ## Key Findings (AVH- vs AVH+)
 
-### Confirmatory (pre-specified: sentences > reversed x {L_MTG, L_STS}, Bonferroni m=2)
+### Post hoc targeted ANCOVA (sentences > reversed x {L_MTG, L_STS}, Bonferroni m=2)
 - L MTG d=-0.90 (p_bonf=0.010, PASS);  L STS d=-0.84 (p_bonf=0.018, PASS)
-- Robust to excluding 4 high-motion subjects (motion-clean n=67); see `02_roi_effects/confirmatory_forest.png`.
+- Full model n=69; motion-clean model n=65; see `02_roi_effects/posthoc_ancova_forest.png`.
 
 ### Exploratory (FDR-corrected within each contrast, 12 ROIs)
 - ROI effect sizes (Cohen's d):  8 medium-large (|d| ≥ 0.5),  35 small (0.2 ≤ |d| < 0.5).
-- With proper Welch ANOVA, L_MTG and L_STS survive within-contrast FDR for sentences>reversed and words>sentences.
+- Corrected Welch omnibus ROI findings surviving within-contrast FDR: 0.
 
 ### Symptom correlation (AVH+, partial r controlling age + IQ)
-- R STG Posterior r=+0.65 (p=0.0008, FDR p=0.010) (within-contrast FDR).
+- R STG Posterior r=+0.65 (p=0.0015, FDR p=0.018) (within-contrast FDR).
 
 ### Exploratory / not corrected
 - ROI-ROI connectivity differences (uncorrected p < 0.05): 2; none survive FDR.

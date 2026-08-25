@@ -4,7 +4,7 @@ Publication-ready figures for the manuscript.
 Builds a small set of composite figures tuned for a paper (rather than a poster)
 into `results/poster/paper_visualizations/`:
 
-- figure1_main_results.png : confirmatory forest + confirmatory-ROI rainclouds
+- figure1_main_results.png : post hoc ANCOVA forest + targeted-ROI rainclouds
   (sentences > reversed) + the primary symptom correlation.
 - effect_size_heatmap.png  : ROI x contrast Cohen's d (AVH- vs AVH+) heatmap with
   FDR-significant omnibus cells boxed.
@@ -39,7 +39,7 @@ from poster_style import (  # noqa: E402
     format_contrast,
     format_roi,
 )
-from surface_brain_plots import ROIS, SIG_ROI_KEYS, _roi_display, plot_roi_locations  # noqa: E402
+from surface_brain_plots import ROI_RADII, ROIS, _roi_display, plot_roi_locations  # noqa: E402
 
 warnings.filterwarnings("ignore")
 apply_style()
@@ -57,10 +57,10 @@ PARTICIPANTS = BASE_DIR / "participants.tsv"
 ROI_DIR = DATA_DIR / "roi_values"
 EFFECT_DIR = DATA_DIR / "effect_sizes"
 CORR_DIR = DATA_DIR / "correlations"
-CONF_DIR = DATA_DIR / "confirmatory"
+POSTHOC_DIR = DATA_DIR / "posthoc"
 
-CONF_CONTRAST = "sentences_vs_reversed"
-CONF_ROIS = ["L_MTG", "L_STS"]
+TARGET_CONTRAST = "sentences_vs_reversed"
+TARGET_ROIS = ["L_MTG", "L_STS"]
 
 ROI_ORDER = [
     "L_STG_posterior", "L_STG_anterior", "L_Heschl",
@@ -141,12 +141,12 @@ def figure1_main_results() -> None:
     gs = fig.add_gridspec(2, 2, hspace=0.38, wspace=0.26,
                           left=0.08, right=0.96, top=0.9, bottom=0.07)
 
-    # (A) Confirmatory forest --------------------------------------------------
+    # (A) Targeted post hoc forest --------------------------------------------
     ax = fig.add_subplot(gs[0, 0])
-    conf_path = CONF_DIR / "confirmatory_primary.csv"
-    if conf_path.exists():
-        conf = pd.read_csv(conf_path)
-        full = conf[conf["sample"].str.startswith("full")].sort_values("d_adj")
+    posthoc_path = POSTHOC_DIR / "posthoc_targeted.csv"
+    if posthoc_path.exists():
+        posthoc = pd.read_csv(posthoc_path)
+        full = posthoc[posthoc["sample"].str.startswith("full")].sort_values("d_adj")
         y = np.arange(len(full))
         colors = ["#27ae60" if s else "#e67e22" for s in full["survives_bonferroni"]]
         ax.errorbar(full["d_adj"], y,
@@ -162,7 +162,7 @@ def figure1_main_results() -> None:
                         ha="center", fontsize=9, fontweight="bold")
         ax.set_xlim(min(full["d_adj_ci_lo"].min(), -0.2) - 0.25, 0.35)
     ax.set_xlabel("Adjusted Cohen's d  (AVH- vs AVH+)")
-    ax.set_title("A  Confirmatory ROIs (ANCOVA)\nsentences > reversed, Bonferroni m=2",
+    ax.set_title("A  Post hoc targeted ROIs (ANCOVA)\nsentences > reversed, Bonferroni m=2",
                  fontsize=13, fontweight="bold", loc="left")
 
     # (B) Primary symptom correlation -----------------------------------------
@@ -195,12 +195,12 @@ def figure1_main_results() -> None:
                      f"{format_contrast(hit['contrast'])}",
                      fontsize=13, fontweight="bold", loc="left")
 
-    # (C, D) Confirmatory-ROI rainclouds (sentences > reversed) ---------------
-    roi_path = ROI_DIR / f"{CONF_CONTRAST}_roi_values.csv"
+    # (C, D) Targeted-ROI rainclouds (sentences > reversed) -------------------
+    roi_path = ROI_DIR / f"{TARGET_CONTRAST}_roi_values.csv"
     roi_df = pd.read_csv(roi_path) if roi_path.exists() else None
     panel_axes = [fig.add_subplot(gs[1, 0]), fig.add_subplot(gs[1, 1])]
     panel_tags = ["C", "D"]
-    for ax, roi, tag in zip(panel_axes, CONF_ROIS, panel_tags):
+    for ax, roi, tag in zip(panel_axes, TARGET_ROIS, panel_tags):
         if roi_df is None or roi not in roi_df.columns:
             ax.axis("off")
             continue
@@ -221,7 +221,7 @@ def figure1_main_results() -> None:
         ax.axhline(0, color="black", lw=0.6, ls="--", alpha=0.5)
         ax.set_xlabel("")
         ax.set_ylabel("Activation (β)")
-        ax.set_title(f"{tag}  {format_roi(roi)}  ·  {format_contrast(CONF_CONTRAST)}",
+        ax.set_title(f"{tag}  {format_roi(roi)}  ·  {format_contrast(TARGET_CONTRAST)}",
                      fontsize=13, fontweight="bold", loc="left")
 
     fig.suptitle("Figure 1.  Group differences and symptom correlation in AVH",
@@ -293,25 +293,24 @@ def roi_definition_panel() -> None:
     ax_tbl.set_title("B  ROI definitions (MNI)", fontsize=14, fontweight="bold", loc="left")
     rows = []
     for key, (x, y, z) in ROIS.items():
-        sig = "Yes" if key in SIG_ROI_KEYS else ""
-        rows.append([_roi_display(key), f"{x:>4.0f}, {y:>4.0f}, {z:>4.0f}", sig])
+        rows.append([
+            _roi_display(key),
+            f"{x:>4.0f}, {y:>4.0f}, {z:>4.0f}",
+            f"{ROI_RADII[key]} mm",
+        ])
     table = ax_tbl.table(
         cellText=rows,
-        colLabels=["ROI", "MNI (x, y, z)", "FDR sig."],
+        colLabels=["ROI", "MNI (x, y, z)", "Radius"],
         colWidths=[0.5, 0.34, 0.16], cellLoc="left", loc="center",
     )
     table.auto_set_font_size(False)
     table.set_fontsize(11)
     table.scale(1, 1.6)
-    # Style header + significant rows
+    # Style header.
     for (r, c), cell in table.get_celld().items():
         if r == 0:
             cell.set_facecolor("#2c3e50")
             cell.set_text_props(color="white", fontweight="bold")
-        elif rows[r - 1][2] == "Yes":
-            cell.set_facecolor("#fdecea")
-            if c == 2:
-                cell.set_text_props(fontweight="bold", color="#c0392b")
 
     fig.suptitle("Region-of-interest definitions", fontsize=17, fontweight="bold", y=1.0)
     _save(fig, PAPER_DIR / "roi_definition_panel.png")
@@ -333,14 +332,14 @@ def write_readme() -> None:
         "",
         "## Figures",
         "",
-        "- **figure1_main_results.png** — Core results figure. (A) Confirmatory "
+        "- **figure1_main_results.png** — Core results figure. (A) Post hoc targeted "
         "ANCOVA forest for sentences > reversed (L MTG, L STS; Bonferroni m=2). "
         "(B) Primary PSYRATS symptom correlation (R STG posterior, partial r | age, IQ, "
-        "FDR < 0.05). (C, D) Activation rainclouds by group for the two confirmatory ROIs.",
+        "FDR < 0.05). (C, D) Activation rainclouds by group for the two targeted ROIs.",
         "- **effect_size_heatmap.png** — ROI x contrast Cohen's d (AVH- vs AVH+); cells "
         "passing the omnibus within-contrast FDR (< 0.05) are outlined in black.",
         "- **roi_definition_panel.png** — Glass-brain ROI map plus an MNI-coordinate "
-        "reference table; FDR-significant ROIs are highlighted.",
+        "reference table with the extraction radius for each sphere. Overlapping spheres are not independent.",
         "",
         "## Conventions",
         "",

@@ -30,6 +30,7 @@ from nilearn.plotting import (
 
 sys.path.insert(0, str(Path(__file__).parent))
 from poster_style import apply_style, format_contrast  # noqa: E402
+from roi_analysis import SPEECH_ROIS  # noqa: E402
 
 warnings.filterwarnings("ignore")
 apply_style()
@@ -45,24 +46,9 @@ POSTER_BRAIN = BASE_DIR / "results" / "poster" / "01_brain_maps"
 KEY_CONTRASTS = ["sentences_vs_reversed", "speech_vs_reversed", "words_vs_sentences"]
 SVM_CONTRASTS = KEY_CONTRASTS + ["words_vs_reversed"]
 
-# ROI coordinates (MNI) used for the reference figure
-ROIS = {
-    "L_STG_post": (-58, -22, 4),
-    "L_STG_ant": (-54, 4, -8),
-    "L_MTG": (-60, -12, -12),
-    "L_IFG_tri": (-48, 26, 14),
-    "L_IFG_oper": (-48, 14, 8),
-    "L_STS": (-54, -40, 4),
-    "L_Heschl": (-42, -22, 10),
-    "R_STG_post": (58, -22, 4),
-    "R_STG_ant": (54, 4, -8),
-    "R_MTG": (60, -12, -12),
-    "R_IFG": (48, 20, 10),
-    "R_Heschl": (42, -22, 10),
-}
-
-# ROIs with an FDR-significant group/symptom finding (highlighted on the map)
-SIG_ROI_KEYS = {"L_MTG", "L_STS", "R_STG_post"}
+# Use the extraction definitions as the single source of truth for maps/tables.
+ROIS = {name: definition["coords"] for name, definition in SPEECH_ROIS.items()}
+ROI_RADII = {name: definition["radius"] for name, definition in SPEECH_ROIS.items()}
 
 
 def _roi_display(key: str) -> str:
@@ -86,16 +72,28 @@ def _roi_display(key: str) -> str:
 # Helpers
 # ---------------------------------------------------------------------------
 def _resolve_cluster_map(contrast: str) -> Path | None:
-    """Prefer the corrected map, fall back to the uncorrected z-stat."""
-    candidates = [
-        DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_p05_corrected.nii.gz",
-        DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_neglogp_corrected.nii.gz",
-        DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_zstat_uncorrected.nii.gz",
-    ]
-    for c in candidates:
-        if c.exists():
-            return c
+    """Prefer verified cluster-size FWER output, then a descriptive t map."""
+    corrected = DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_cluster_fwer_p05_tstat.nii.gz"
+    if corrected.exists() and np.any(load_img(str(corrected)).get_fdata()):
+        return corrected
+    descriptive = DATA_CLUSTER / f"{contrast}_AVH-_vs_AVH+_tstat.nii.gz"
+    if descriptive.exists():
+        return descriptive
     return None
+
+
+def _cluster_map_label(stat_path: Path) -> str:
+    if "cluster_fwer_p05" in stat_path.name:
+        return "cluster-size FWER p < .05; CFT p < .001; 10,000 permutations"
+    return (
+        "descriptive t map at two-sided voxel p < .001; "
+        "no cluster survives cluster-size FWER p < .05; 10,000 permutations"
+    )
+
+
+def _display_threshold(stat_path: Path) -> float:
+    """Corrected maps are pre-thresholded; descriptive maps use the CFT t."""
+    return 0.0 if "cluster_fwer_p05" in stat_path.name else 3.55
 
 
 def _smooth_and_mask(stat_path: Path, fwhm: float = 6.0):
@@ -118,24 +116,25 @@ def _abs_threshold(img, percentile: float = 90.0) -> float:
 # ---------------------------------------------------------------------------
 # Plot: cluster glass brain (single clean panel)
 # ---------------------------------------------------------------------------
-def plot_cluster_glass(contrast: str, out_path: Path, threshold: float = 2.3) -> bool:
+def plot_cluster_glass(contrast: str, out_path: Path, threshold: float = 0.0) -> bool:
     """Render a single-panel cleaned glass brain for the cluster map."""
     stat_path = _resolve_cluster_map(contrast)
     if stat_path is None:
         return False
 
-    img = _smooth_and_mask(stat_path, fwhm=6.0)
+    img = load_img(str(stat_path))
 
     fig = plt.figure(figsize=(14, 5))
     plot_glass_brain(
         img,
-        threshold=threshold,
+        threshold=_display_threshold(stat_path),
         display_mode="lyrz",
         colorbar=True,
         cmap="cold_hot",
         plot_abs=False,
         symmetric_cbar=True,
-        title=f"{format_contrast(contrast)}  -  AVH- vs AVH+  (|z| > {threshold})",
+        title=(f"{format_contrast(contrast)} - AVH- vs AVH+\n"
+               f"{_cluster_map_label(stat_path)}"),
         figure=fig,
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -147,20 +146,21 @@ def plot_cluster_glass(contrast: str, out_path: Path, threshold: float = 2.3) ->
 # ---------------------------------------------------------------------------
 # Plot: cluster surface (fsaverage, inflated)
 # ---------------------------------------------------------------------------
-def plot_cluster_surface(contrast: str, out_path: Path, threshold: float = 2.0) -> bool:
+def plot_cluster_surface(contrast: str, out_path: Path, threshold: float = 0.0) -> bool:
     """Project the cluster map onto an inflated fsaverage surface."""
     stat_path = _resolve_cluster_map(contrast)
     if stat_path is None:
         return False
 
-    img = _smooth_and_mask(stat_path, fwhm=6.0)
+    img = load_img(str(stat_path))
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    title = f"{format_contrast(contrast)}: AVH- vs AVH+  (|z| > {threshold})"
+    title = (f"{format_contrast(contrast)}: AVH- vs AVH+\n"
+             f"{_cluster_map_label(stat_path)}")
     plot_img_on_surf(
         stat_map=img,
         surf_mesh="fsaverage",
-        threshold=threshold,
+        threshold=_display_threshold(stat_path),
         cmap="cold_hot",
         views=["lateral", "medial"],
         hemispheres=["left", "right"],
@@ -179,7 +179,7 @@ def plot_cluster_surface(contrast: str, out_path: Path, threshold: float = 2.0) 
 def plot_cluster_stat_slices_grid(
     contrasts: list[str],
     out_path: Path,
-    threshold: float = 2.0,
+    threshold: float = 0.0,
 ) -> bool:
     """Render AVH- vs AVH+ anatomical slices side by side."""
     maps = []
@@ -187,7 +187,7 @@ def plot_cluster_stat_slices_grid(
         stat_path = _resolve_cluster_map(contrast)
         if stat_path is None:
             continue
-        maps.append((contrast, _smooth_and_mask(stat_path, fwhm=6.0)))
+        maps.append((contrast, stat_path, load_img(str(stat_path))))
 
     if not maps:
         return False
@@ -197,12 +197,12 @@ def plot_cluster_stat_slices_grid(
     displays = []
     panel_width = 0.30
 
-    for idx, (contrast, img) in enumerate(maps):
+    for idx, (contrast, stat_path, img) in enumerate(maps):
         left = 0.02 + idx * 0.32
         display = plot_stat_map(
             stat_map_img=img,
             bg_img=mni_bg,
-            threshold=threshold,
+            threshold=_display_threshold(stat_path),
             display_mode="ortho",
             cut_coords=(-52, -24, 6),
             cmap="cold_hot",
@@ -213,7 +213,8 @@ def plot_cluster_stat_slices_grid(
             colorbar=True,
             draw_cross=False,
             vmax=3.0,
-            title=f"{format_contrast(contrast)}\nAVH- vs AVH+ (|z| > {threshold})",
+            title=(f"{format_contrast(contrast)}\nAVH- vs AVH+\n"
+                   f"{_cluster_map_label(stat_path)}"),
             figure=fig,
             axes=(left, 0.12, panel_width, 0.78),
         )
@@ -292,47 +293,37 @@ def plot_svm_glass(contrast: str, out_path: Path, percentile: float = 92.0) -> b
 # Plot: ROI reference figure
 # ---------------------------------------------------------------------------
 def plot_roi_locations(out_path: Path) -> None:
-    """High-quality reference figure: 12 speech/language ROIs as glass-brain
-    spheres, with the FDR-significant ROIs (L MTG, L STS, R STG posterior)
-    highlighted and a labeled legend.
-    """
+    """Reference figure using the exact extraction coordinates and radii."""
     from matplotlib.lines import Line2D
 
-    L_COLOR, R_COLOR, SIG_COLOR = "#3498db", "#e67e22", "#c0392b"
-
-    def _coords(predicate):
-        return [c for k, c in ROIS.items() if predicate(k)]
-
-    sig_coords = _coords(lambda k: k in SIG_ROI_KEYS)
-    left_coords = _coords(lambda k: k.startswith("L_") and k not in SIG_ROI_KEYS)
-    right_coords = _coords(lambda k: k.startswith("R_") and k not in SIG_ROI_KEYS)
+    L_COLOR, R_COLOR = "#3498db", "#e67e22"
 
     fig = plt.figure(figsize=(16, 6))
     display = plot_glass_brain(
         None, display_mode="lyrz", figure=fig,
         title="Speech / Language ROIs (MNI)",
     )
-    if left_coords:
-        display.add_markers(left_coords, marker_color=L_COLOR, marker_size=130,
-                            edgecolor="black", alpha=0.95)
-    if right_coords:
-        display.add_markers(right_coords, marker_color=R_COLOR, marker_size=130,
-                            edgecolor="black", alpha=0.95)
-    if sig_coords:
-        display.add_markers(sig_coords, marker_color=SIG_COLOR, marker_size=320,
-                            edgecolor="black", alpha=1.0)
+    for hemisphere, color in (("L_", L_COLOR), ("R_", R_COLOR)):
+        for radius, size in ((8, 150), (6, 95)):
+            coords = [
+                coord for key, coord in ROIS.items()
+                if key.startswith(hemisphere) and ROI_RADII[key] == radius
+            ]
+            if coords:
+                display.add_markers(coords, marker_color=color, marker_size=size,
+                                    edgecolor="black", alpha=0.95)
 
-    sig_names = ", ".join(_roi_display(k) for k in ROIS if k in SIG_ROI_KEYS)
     handles = [
         Line2D([0], [0], marker="o", color="w", markerfacecolor=L_COLOR,
                markeredgecolor="black", markersize=11, label="Left hemisphere ROI"),
         Line2D([0], [0], marker="o", color="w", markerfacecolor=R_COLOR,
                markeredgecolor="black", markersize=11, label="Right hemisphere ROI"),
-        Line2D([0], [0], marker="o", color="w", markerfacecolor=SIG_COLOR,
-               markeredgecolor="black", markersize=16,
-               label=f"FDR-significant: {sig_names}"),
+        Line2D([0], [0], marker="o", color="w", markerfacecolor="#7f8c8d",
+               markeredgecolor="black", markersize=11, label="8 mm cortical sphere"),
+        Line2D([0], [0], marker="o", color="w", markerfacecolor="#7f8c8d",
+               markeredgecolor="black", markersize=8, label="6 mm Heschl sphere"),
     ]
-    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=True,
+    fig.legend(handles=handles, loc="lower center", ncol=4, frameon=True,
                fontsize=11, bbox_to_anchor=(0.5, -0.04))
 
     out_path.parent.mkdir(parents=True, exist_ok=True)

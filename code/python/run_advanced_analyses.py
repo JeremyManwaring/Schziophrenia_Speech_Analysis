@@ -2,7 +2,7 @@
 Master script: run all advanced AVH analyses end-to-end.
 
 Pipeline:
-  1. Cluster-corrected whole-brain analysis  -> results/data/cluster_maps/
+  1. Permutation cluster inference            -> results/data/cluster_maps/
   2. MVPA SVM classification                 -> results/data/svm_weights/
   3. Functional connectivity                 -> results/data/connectivity/
   4. Laterality index                        -> results/data/laterality.csv
@@ -43,7 +43,7 @@ def run_all_analyses() -> None:
     from laterality_analysis import main as laterality_main
     from poster_visualizations import main as poster_main
 
-    _run_step("STEP 1/5: Cluster-corrected whole-brain analysis", cluster_main)
+    _run_step("STEP 1/5: Permutation cluster inference", cluster_main)
     _run_step("STEP 2/5: MVPA SVM classification", mvpa_main)
     _run_step("STEP 3/5: Functional connectivity", connectivity_main)
     _run_step("STEP 4/5: Laterality index", laterality_main)
