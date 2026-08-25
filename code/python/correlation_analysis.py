@@ -39,7 +39,11 @@ def partial_correlation(x, y, covariates):
     r : float
         Partial correlation coefficient
     p : float
-        p-value
+        Two-sided p-value using n - k - 2 degrees of freedom
+    n : int
+        Complete-case sample size
+    df : int
+        Degrees of freedom used for the t test
     """
     x = np.array(x)
     y = np.array(y)
@@ -58,15 +62,19 @@ def partial_correlation(x, y, covariates):
     y = y[valid_mask]
     covariates = covariates[valid_mask]
     
-    if len(x) < 5:
-        return np.nan, np.nan
-    
     # Residualize x and y on covariates
     if len(covariates.shape) == 1:
         covariates = covariates.reshape(-1, 1)
-    
+
     # Add intercept
     C = np.column_stack([np.ones(len(x)), covariates])
+
+    # k is the number of linearly independent control variables. The partial
+    # correlation test therefore has n - k - 2 degrees of freedom.
+    k = int(np.linalg.matrix_rank(C) - 1)
+    df = int(len(x) - k - 2)
+    if len(x) < 3 or df <= 0:
+        return np.nan, np.nan, int(len(x)), df
     
     # Regress out covariates from x
     beta_x = np.linalg.lstsq(C, x, rcond=None)[0]
@@ -76,10 +84,19 @@ def partial_correlation(x, y, covariates):
     beta_y = np.linalg.lstsq(C, y, rcond=None)[0]
     res_y = y - C @ beta_y
     
-    # Correlate residuals
-    r, p = pearsonr(res_x, res_y)
-    
-    return r, p
+    # Correlate residuals, then calculate the p-value with the partial-
+    # correlation degrees of freedom rather than Pearson's default n - 2.
+    r = float(pearsonr(res_x, res_y).statistic)
+    if not np.isfinite(r):
+        return np.nan, np.nan, int(len(x)), df
+    r = float(np.clip(r, -1.0, 1.0))
+    if abs(r) == 1.0:
+        p = 0.0
+    else:
+        t_stat = r * np.sqrt(df / (1.0 - r**2))
+        p = float(2.0 * stats.t.sf(abs(t_stat), df))
+
+    return r, p, int(len(x)), df
 
 
 def load_roi_data(roi_dir, contrast_name):
@@ -222,12 +239,16 @@ def correlate_psyrats_with_activation(roi_df, participants_df, output_dir, contr
         psyrats = avh_plus['psyrats'].values
         covariates = avh_plus[['age', 'iq']].values
         
-        r_partial, p_partial = partial_correlation(roi_data, psyrats, covariates)
+        r_partial, p_partial, n_partial, df_partial = partial_correlation(
+            roi_data, psyrats, covariates
+        )
         
         results['partial_correlations'].append({
             'roi': roi,
             'partial_r': r_partial,
             'partial_p': p_partial,
+            'n': n_partial,
+            'df': df_partial,
             'controlling_for': ['age', 'iq']
         })
         
@@ -355,7 +376,7 @@ def create_correlation_heatmap(roi_df, participants_df, output_dir, contrast_nam
     
     # Merge data
     merged = roi_df.merge(
-        participants_df[['participant_id', 'age', 'iq', 'psyrats', 'group']],
+        participants_df[['participant_id', 'age', 'iq', 'psyrats']],
         left_on='subject_id',
         right_on='participant_id',
         how='left'
@@ -507,8 +528,6 @@ def run_correlation_analysis(roi_dir, participants_path, output_dir):
             c['pearson_p_fdr'] = float(q)
 
     # Within-contrast FDR (12 ROIs) for BOTH raw and partial correlations.
-    # This is the appropriate correction for a single pre-specified contrast,
-    # rather than diluting power across all 7 contrasts.
     for cname, res in all_results.items():
         if not (isinstance(res, dict) and 'correlations' in res):
             continue
@@ -526,6 +545,16 @@ def run_correlation_analysis(roi_dir, participants_path, output_dir):
             for c, q in zip(partial, q_par):
                 c['partial_p_fdr_within_contrast'] = float(q)
 
+        # Persist the corrected records after FDR is calculated. Writing these
+        # tables inside correlate_psyrats_with_activation() would omit the FDR
+        # fields because the correction family is assembled here.
+        pd.DataFrame(res['correlations']).to_csv(
+            output_dir / f'{cname}_psyrats_correlations.csv', index=False
+        )
+        pd.DataFrame(res.get('partial_correlations', [])).to_csv(
+            output_dir / f'{cname}_psyrats_partial_correlations.csv', index=False
+        )
+
     # Emit the PRIMARY symptom-correlation table: partial correlation
     # (controlling age + IQ) is the headline analysis. Default primary contrast
     # is speech_vs_reversed (combined intelligibility).
@@ -540,7 +569,8 @@ def run_correlation_analysis(roi_dir, participants_path, output_dir):
             rows.append({
                 'contrast': primary_contrast,
                 'roi': roi,
-                'n': rc.get('n'),
+                'n': pc.get('n'),
+                'df': pc.get('df'),
                 'raw_r': rc.get('pearson_r'),
                 'raw_p': rc.get('pearson_p'),
                 'raw_p_fdr_within_contrast': rc.get('pearson_p_fdr_within_contrast'),
@@ -580,9 +610,9 @@ def run_correlation_analysis(roi_dir, participants_path, output_dir):
 def main():
     """Main function."""
     dataset_root = Path(__file__).parent.parent.parent
-    roi_dir = dataset_root / 'results' / 'roi_analysis'
+    roi_dir = dataset_root / 'results' / 'data' / 'roi_values'
     participants_path = dataset_root / 'participants.tsv'
-    output_dir = dataset_root / 'results' / 'correlations'
+    output_dir = dataset_root / 'results' / 'data' / 'correlations'
     
     if not roi_dir.exists():
         print(f"\nError: ROI analysis results not found: {roi_dir}")

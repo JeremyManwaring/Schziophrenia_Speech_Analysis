@@ -15,6 +15,131 @@
     "L_Heschl",
     "R_Heschl"
   ],
+  "roi_definitions": {
+    "L_STG_posterior": {
+      "coords": [
+        -58,
+        -22,
+        4
+      ],
+      "radius": 8
+    },
+    "L_STG_anterior": {
+      "coords": [
+        -54,
+        0,
+        -8
+      ],
+      "radius": 8
+    },
+    "L_MTG": {
+      "coords": [
+        -60,
+        -38,
+        0
+      ],
+      "radius": 8
+    },
+    "L_IFG_triangularis": {
+      "coords": [
+        -48,
+        24,
+        16
+      ],
+      "radius": 8
+    },
+    "L_IFG_opercularis": {
+      "coords": [
+        -52,
+        12,
+        8
+      ],
+      "radius": 8
+    },
+    "L_STS": {
+      "coords": [
+        -56,
+        -32,
+        4
+      ],
+      "radius": 8
+    },
+    "R_STG_posterior": {
+      "coords": [
+        58,
+        -22,
+        4
+      ],
+      "radius": 8
+    },
+    "R_STG_anterior": {
+      "coords": [
+        54,
+        0,
+        -8
+      ],
+      "radius": 8
+    },
+    "R_MTG": {
+      "coords": [
+        60,
+        -38,
+        0
+      ],
+      "radius": 8
+    },
+    "R_IFG": {
+      "coords": [
+        48,
+        24,
+        16
+      ],
+      "radius": 8
+    },
+    "L_Heschl": {
+      "coords": [
+        -42,
+        -22,
+        8
+      ],
+      "radius": 6
+    },
+    "R_Heschl": {
+      "coords": [
+        42,
+        -22,
+        8
+      ],
+      "radius": 6
+    }
+  },
+  "overlapping_spheres": [
+    {
+      "roi_a": "L_STG_posterior",
+      "roi_b": "L_STS",
+      "center_distance_mm": 10.198039027185569,
+      "radii_sum_mm": 16,
+      "overlap_depth_mm": 5.801960972814431
+    },
+    {
+      "roi_a": "L_MTG",
+      "roi_b": "L_STS",
+      "center_distance_mm": 8.246211251235321,
+      "radii_sum_mm": 16,
+      "overlap_depth_mm": 7.753788748764679
+    },
+    {
+      "roi_a": "L_IFG_triangularis",
+      "roi_b": "L_IFG_opercularis",
+      "center_distance_mm": 14.966629547095765,
+      "radii_sum_mm": 16,
+      "overlap_depth_mm": 1.0333704529042347
+    }
+  ],
+  "overlap_note": "Spheres are not mutually exclusive; voxels in overlapping regions contribute to each corresponding ROI mean.",
+  "anova_method": "Welch's one-way ANOVA",
+  "pairwise_method": "Games-Howell with studentized-range p-values",
+  "fdr_method": "Benjamini-Hochberg within each contrast across 12 ROIs",
   "contrasts": [
     "words_vs_baseline",
     "sentences_vs_baseline",

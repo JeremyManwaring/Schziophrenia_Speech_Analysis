@@ -18,6 +18,7 @@ from nilearn.maskers import NiftiLabelsMasker, NiftiSpheresMasker
 from scipy import stats
 from statsmodels.stats.multitest import multipletests
 import json
+import math
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -45,9 +46,15 @@ SPEECH_ROIS = {
 }
 
 
-def create_sphere_masker(roi_dict, reference_img):
+def create_sphere_masker(roi_dict, reference_img=None):
     """
-    Create a spherical masker for ROI extraction.
+    Create one spherical masker per declared radius.
+
+    ``NiftiSpheresMasker`` accepts only one radius for a multi-seed masker.
+    Radius-specific maskers preserve the declared 8 mm cortical radii and 6 mm
+    Heschl radii while extracting one output column per ROI. Intentional sphere
+    overlap is enabled explicitly, so a voxel may contribute to more than one
+    ROI summary.
     
     Parameters
     ----------
@@ -58,26 +65,34 @@ def create_sphere_masker(roi_dict, reference_img):
     
     Returns
     -------
-    masker : NiftiSpheresMasker
-        Fitted masker object
+    masker_groups : dict[int, dict]
+        One multi-seed masker per radius, plus its ordered ROI names.
     roi_names : list
         List of ROI names
     """
-    coords = [roi['coords'] for roi in roi_dict.values()]
-    radii = [roi['radius'] for roi in roi_dict.values()]
     roi_names = list(roi_dict.keys())
-    
-    masker = NiftiSpheresMasker(
-        seeds=coords,
-        radius=radii[0],  # Use first radius as default (they're all the same)
-        standardize=False,
-        detrend=False
-    )
-    
-    return masker, roi_names
+
+    masker_groups = {}
+    for radius in sorted({definition['radius'] for definition in roi_dict.values()}):
+        names = [
+            name for name, definition in roi_dict.items()
+            if definition['radius'] == radius
+        ]
+        masker_groups[radius] = {
+            'names': names,
+            'masker': NiftiSpheresMasker(
+                seeds=[roi_dict[name]['coords'] for name in names],
+                radius=radius,
+                allow_overlap=True,
+                standardize=False,
+                detrend=False,
+            ),
+        }
+
+    return masker_groups, roi_names
 
 
-def extract_roi_values(contrast_map, masker, roi_names):
+def extract_roi_values(contrast_map, masker_groups, roi_names):
     """
     Extract mean activation from ROIs.
     
@@ -85,8 +100,8 @@ def extract_roi_values(contrast_map, masker, roi_names):
     ----------
     contrast_map : str or nibabel image
         Path to contrast map
-    masker : NiftiSpheresMasker
-        Fitted masker
+    masker_groups : dict[int, dict]
+        Radius-specific maskers and ordered ROI names.
     roi_names : list
         List of ROI names
     
@@ -95,11 +110,17 @@ def extract_roi_values(contrast_map, masker, roi_names):
     roi_values : dict
         Dictionary with ROI names and values
     """
-    try:
-        values = masker.fit_transform(contrast_map)
-        roi_values = dict(zip(roi_names, values.flatten()))
-    except Exception as e:
-        roi_values = {name: np.nan for name in roi_names}
+    img = load_img(contrast_map)
+    roi_values = {name: np.nan for name in roi_names}
+    for group in masker_groups.values():
+        try:
+            values = group['masker'].fit_transform(img).ravel()
+            roi_values.update({
+                name: float(value)
+                for name, value in zip(group['names'], values)
+            })
+        except Exception:
+            continue
     
     return roi_values
 
@@ -139,7 +160,7 @@ def extract_all_subjects(first_level_dir, contrast_name, participants_df, roi_di
         raise ValueError(f"No contrast maps found for {contrast_name}")
     
     # Create masker
-    masker, roi_names = create_sphere_masker(roi_dict, ref_img)
+    masker_groups, roi_names = create_sphere_masker(roi_dict, ref_img)
     
     # Extract values for each subject
     all_data = []
@@ -149,7 +170,7 @@ def extract_all_subjects(first_level_dir, contrast_name, participants_df, roi_di
         map_path = first_level_dir / subject_id / f'{subject_id}_{contrast_name}_effect.nii.gz'
         
         if map_path.exists():
-            roi_values = extract_roi_values(str(map_path), masker, roi_names)
+            roi_values = extract_roi_values(str(map_path), masker_groups, roi_names)
             roi_values['subject_id'] = subject_id
             roi_values['group'] = row['group']
             all_data.append(roi_values)
@@ -195,12 +216,12 @@ def run_welch_anova(data, groups):
 
     # Check if we have enough data
     if any(len(g) < 2 for g in group_data):
-        return np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan
 
-    F_stat, p_value, _, _, error = welch_anova(group_data)
+    F_stat, p_value, df_between, df_within, error = welch_anova(group_data)
     if error is not None or F_stat is None:
-        return np.nan, np.nan
-    return F_stat, p_value
+        return np.nan, np.nan, np.nan, np.nan
+    return F_stat, p_value, df_between, df_within
 
 
 def cohens_d(group1, group2):
@@ -300,41 +321,47 @@ def run_roi_analysis(roi_df, output_dir, contrast_name):
         data = roi_df[roi].values
         
         # ANOVA
-        F_stat, p_value = run_welch_anova(data, groups)
+        F_stat, p_value, df_between, df_within = run_welch_anova(data, groups)
         
         # Calculate n for each group
-        ns = [(groups == g).sum() for g in unique_groups]
-        df_between = len(unique_groups) - 1
-        df_within = sum(ns) - len(unique_groups)
-        
-        eta_sq = eta_squared(F_stat, df_between, df_within)
+        valid = np.isfinite(data)
+        valid_data = data[valid]
+        valid_groups = groups[valid]
+        grand_mean = np.mean(valid_data)
+        ss_total = np.sum((valid_data - grand_mean) ** 2)
+        ss_between = sum(
+            np.sum(valid_groups == g)
+            * (np.mean(valid_data[valid_groups == g]) - grand_mean) ** 2
+            for g in unique_groups
+        )
+        eta_sq = ss_between / ss_total if ss_total > 0 else np.nan
         
         results['anova'].append({
             'roi': roi,
             'F_stat': F_stat,
+            'df_num': df_between,
+            'df_den': df_within,
             'p_value': p_value,
             'eta_squared': eta_sq
         })
-        
-        # Pairwise comparisons
-        for i, g1 in enumerate(unique_groups):
-            for g2 in unique_groups[i+1:]:
-                d1 = data[groups == g1]
-                d2 = data[groups == g2]
-                
-                # T-test
-                t_stat, t_pval = stats.ttest_ind(d1[~np.isnan(d1)], d2[~np.isnan(d2)])
-                
-                # Effect size
-                d = cohens_d(d1, d2)
-                
-                results['pairwise'].append({
-                    'roi': roi,
-                    'comparison': f'{g1}_vs_{g2}',
-                    't_stat': t_stat,
-                    'p_value': t_pval,
-                    'cohens_d': d
-                })
+
+        # Genuine Games-Howell pairwise comparisons. Its studentized-range
+        # p-values are adjusted across the three group means for this ROI.
+        from welch_anova import games_howell_posthoc
+        group_data = [data[groups == g] for g in unique_groups]
+        for pair in games_howell_posthoc(group_data, list(unique_groups)):
+            results['pairwise'].append({
+                'roi': roi,
+                'comparison': f"{pair['group1']}_vs_{pair['group2']}",
+                'group1': pair['group1'],
+                'group2': pair['group2'],
+                'mean_diff': pair['mean_diff'],
+                't_stat': pair['t_stat'],
+                'q_stat': pair['q_stat'],
+                'df': pair['df'],
+                'p_value': pair['p_value'],
+                'cohens_d': pair['cohens_d'],
+            })
         
         # Descriptive statistics
         for g in unique_groups:
@@ -543,11 +570,35 @@ def run_full_roi_analysis(first_level_dir, participants_path, output_dir):
             all_results[contrast_name] = {'error': str(e)}
     
     # Save summary
+    overlap_pairs = []
+    roi_items = list(SPEECH_ROIS.items())
+    for idx, (name_a, roi_a) in enumerate(roi_items):
+        for name_b, roi_b in roi_items[idx + 1:]:
+            distance = math.dist(roi_a['coords'], roi_b['coords'])
+            radii_sum = roi_a['radius'] + roi_b['radius']
+            if distance < radii_sum:
+                overlap_pairs.append({
+                    'roi_a': name_a,
+                    'roi_b': name_b,
+                    'center_distance_mm': distance,
+                    'radii_sum_mm': radii_sum,
+                    'overlap_depth_mm': radii_sum - distance,
+                })
+
     summary = {
         'n_rois': len(SPEECH_ROIS),
         'n_contrasts': len(contrasts),
         'roi_names': list(SPEECH_ROIS.keys()),
-        'contrasts': contrasts
+        'roi_definitions': SPEECH_ROIS,
+        'overlapping_spheres': overlap_pairs,
+        'overlap_note': (
+            'Spheres are not mutually exclusive; voxels in overlapping regions '
+            'contribute to each corresponding ROI mean.'
+        ),
+        'anova_method': "Welch's one-way ANOVA",
+        'pairwise_method': 'Games-Howell with studentized-range p-values',
+        'fdr_method': 'Benjamini-Hochberg within each contrast across 12 ROIs',
+        'contrasts': contrasts,
     }
     
     with open(output_dir / 'roi_analysis_summary.json', 'w') as f:
@@ -565,9 +616,9 @@ def run_full_roi_analysis(first_level_dir, participants_path, output_dir):
 def main():
     """Main function."""
     dataset_root = Path(__file__).parent.parent.parent
-    first_level_dir = dataset_root / 'results' / 'first_level'
+    first_level_dir = dataset_root / 'results' / 'data' / 'first_level'
     participants_path = dataset_root / 'participants.tsv'
-    output_dir = dataset_root / 'results' / 'roi_analysis'
+    output_dir = dataset_root / 'results' / 'data' / 'roi_values'
     
     if not first_level_dir.exists():
         print(f"\nError: First-level results not found: {first_level_dir}")

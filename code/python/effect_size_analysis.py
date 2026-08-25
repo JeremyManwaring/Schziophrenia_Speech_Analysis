@@ -18,6 +18,7 @@ import json
 import warnings
 
 warnings.filterwarnings('ignore')
+RNG = np.random.default_rng(20260824)
 
 
 def cohens_d(group1, group2):
@@ -62,8 +63,8 @@ def cohens_d(group1, group2):
     d_bootstrap = []
     
     for _ in range(n_bootstrap):
-        g1_boot = np.random.choice(g1, size=len(g1), replace=True)
-        g2_boot = np.random.choice(g2, size=len(g2), replace=True)
+        g1_boot = RNG.choice(g1, size=len(g1), replace=True)
+        g2_boot = RNG.choice(g2, size=len(g2), replace=True)
         
         var1_boot = np.var(g1_boot, ddof=1)
         var2_boot = np.var(g2_boot, ddof=1)
@@ -585,8 +586,8 @@ def run_effect_size_analysis(roi_dir, output_dir):
 def main():
     """Main function."""
     dataset_root = Path(__file__).parent.parent.parent
-    roi_dir = dataset_root / 'results' / 'roi_analysis'
-    output_dir = dataset_root / 'results' / 'effect_sizes'
+    roi_dir = dataset_root / 'results' / 'data' / 'roi_values'
+    output_dir = dataset_root / 'results' / 'data' / 'effect_sizes'
     
     if not roi_dir.exists():
         print(f"\nError: ROI analysis results not found: {roi_dir}")

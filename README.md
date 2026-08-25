@@ -2,221 +2,89 @@
 
 Brain correlates of speech perception in schizophrenia patients with and without auditory hallucinations.
 
-## Dataset Overview
+## Dataset
 
-- **Study**: Soler-Vidal et al. (2022) PLOS ONE
-- **Task**: Speech perception (block design)
-- **Conditions**: Words, Sentences, Reversed speech, White-noise (baseline)
-- **Subjects**: 71 participants
-  - **HC** (sub-01 to sub-25): Healthy Controls
-  - **AVH-** (sub-26 to sub-54): Schizophrenia without auditory hallucinations
-  - **AVH+** (sub-55 to sub-77): Schizophrenia with auditory hallucinations
+- Study: Soler-Vidal et al. (2022), PLOS ONE
+- Task: block-design speech perception (words, sentences, reversed speech, white-noise baseline)
+- Cohort: 71 participants — HC=25, AVH-=23, AVH+=23
+- Canonical first-level maps: `results/data/first_level/`
 
----
+## Canonical outputs
 
-## Directory Structure
+All statistical outputs used by the figures live under `results/data/`:
 
-```
-ds004302-Edited/
-│
-├── code/                              # All analysis code
-│   ├── matlab/                        # MATLAB/SPM preprocessing & GLM scripts
-│   └── python/                        # Python analysis scripts
-│       ├── poster_style.py            # Shared rcParams, palette, formatters
-│       ├── poster_visualizations.py   # Orchestrator: builds results/poster/
-│       ├── surface_brain_plots.py     # Cluster + SVM brain map utilities
-│       ├── advanced_cluster_analysis.py
-│       ├── mvpa_classification.py
-│       ├── connectivity_analysis.py
-│       ├── laterality_analysis.py
-│       ├── first_level_glm.py / second_level_glm.py
-│       ├── roi_analysis.py / correlation_analysis.py / effect_size_analysis.py
-│       └── run_advanced_analyses.py   # One-shot pipeline driver
-│
-├── derivatives/                       # fMRIPrep preprocessed data (71 subjects)
-│
-├── results/
-│   ├── data/                          # SINGLE source of truth for stats
-│   │   ├── first_level/               # Per-subject first-level maps (effect + zstat)
-│   │   ├── roi_values/                # one CSV per contrast (incl. Welch ANOVA)
-│   │   ├── effect_sizes/              # per-contrast + combined CSV
-│   │   ├── confirmatory/             # ANCOVA + pre-specified Bonferroni + sensitivity
-│   │   ├── correlations/              # PSYRATS Pearson + partial (+ primary table)
-│   │   ├── cluster_maps/              # FWE-corrected NIfTI
-│   │   ├── svm_weights/               # SVM weight maps
-│   │   ├── connectivity*.{json,csv}   # ROI-ROI connectivity
-│   │   ├── laterality*.{csv,json}     # Laterality indices
-│   │   ├── qc.csv                     # Per-subject motion summary
-│   │   └── demographics/              # Statistical tests
-│   └── poster/                        # 300 dpi poster-ready figures
-│       ├── 01_brain_maps/             # Glass + inflated fsaverage surfaces
-│       ├── 02_roi_effects/            # Raincloud + grouped bar + forest + confirmatory
-│       ├── 03_correlations/           # PSYRATS scatter
-│       ├── 04_classification/         # MVPA SVM
-│       ├── 05_connectivity/           # Connectivity matrix + sig diffs
-│       ├── 06_laterality/             # Heatmap + bars + effect sizes
-│       ├── 07_demographics_qc/        # Age, IQ, sex, motion
-│       ├── summary/                   # Hero key-findings figure
-│       └── README.md                  # Index + key findings
-│
-├── docs/                              # Documentation
-│   ├── ANALYSIS_SUMMARY.md / GLM_Analysis_Plan.txt
-│   ├── REPLICATION_CHANGES.md         # What changed vs the original paper
-│   ├── guides/                        # Consolidated how-to (single README)
-│   └── status/                        # FINAL_STATUS.md (single canonical)
-│
-├── utils/                             # Utility shell scripts
-│
-├── sub-*/                             # BIDS subject data (71 subjects)
-│
-└── [BIDS metadata files]              # participants.tsv, task JSONs, etc.
+```text
+results/data/
+├── first_level/       # subject-level effect, t, z, and F maps
+├── roi_values/        # ROI values, descriptives, Welch ANOVA, Games-Howell
+├── effect_sizes/      # omnibus and pairwise effect sizes
+├── correlations/      # raw and partial PSYRATS correlations
+├── posthoc/           # post hoc targeted ANCOVA and sensitivity analysis
+├── cluster_maps/      # permutation inference maps, tables, and metadata
+├── svm_weights/       # unchanged MVPA results and weight maps
+├── demographics/
+├── connectivity*.{csv,json}
+├── laterality*.{csv,json}
+└── qc.csv
 ```
 
----
+Poster-ready and paper-ready figures are regenerated from those records into `results/poster/`.
 
-## 🚀 Quick Start
+## Statistical methods
 
-### 1. Setup Environment
+- ROI omnibus tests use Welch's one-way ANOVA with the weighted between-group term divided by `k-1`, the Welch denominator/denominator degrees of freedom, and F survival-function p-values.
+- Each ROI has all three genuine Games-Howell group comparisons, calculated with Welch-Satterthwaite degrees of freedom and the studentized-range distribution.
+- Benjamini-Hochberg FDR is applied within each contrast across its 12 ROI omnibus tests.
+- AVH+ partial correlations control age and IQ and use `df=n-k-2`; all current rows have n=23 and df=19. Their FDR family is the 12 ROIs within a contrast.
+- The targeted L_MTG/L_STS ANCOVA is post hoc. Complete-case model labels are `full_n69` and `motion_clean_n65`; the corresponding source cohorts contain 71 and 67 participants.
+- Whole-brain AVH- versus AVH+ inference uses 10,000 permutations, two-sided tests, voxelwise cluster-forming p<.001, maximum-cluster-size FWER p<.05, and random seed 20260824. Complete covariates give n=45 (AVH-=22, AVH+=23); sub-28 is excluded for missing IQ.
+- Existing MVPA computations are unchanged: shuffled five-fold `KFold` cross-validation with `random_state=42`.
+
+## ROI definitions and overlap
+
+The single definition source is `SPEECH_ROIS` in `code/python/roi_analysis.py`, serialized to `results/data/roi_values/roi_analysis_summary.json`. Ten cortical spheres use an 8 mm radius; bilateral Heschl's gyri use 6 mm.
+
+Three sphere pairs intentionally share voxels and therefore are not independent:
+
+- L posterior STG–L STS: center distance 10.198 mm
+- L MTG–L STS: center distance 8.246 mm
+- L IFG triangularis–L IFG opercularis: center distance 14.967 mm
+
+## Corrected results
+
+- No ROI omnibus test survives within-contrast FDR. For sentences > reversed, the smallest values are L STS (raw p=.0104, q=.0995) and L MTG (raw p=.0166, q=.0995).
+- The post hoc targeted ANCOVA is significant after Bonferroni correction over L MTG and L STS in both complete-case models: full n=69 (adjusted d=-.90 and -.84) and motion-clean n=65 (adjusted d=-.87 and -.82). These results must not be presented as a priori.
+- In AVH+ participants, speech > reversed activation in right posterior STG correlates with PSYRATS after controlling age and IQ: partial r=.647, p=.00152, within-contrast q=.0182, n=23, df=19.
+- No cluster survives the valid 10,000-permutation cluster-size FWER analysis in any of the three tested contrasts.
+- Historical MVPA results remain at/below chance (accuracy .425–.500; all permutation p>=.347), and use shuffled five-fold KFold CV.
+
+## Reproduce
 
 ```bash
-# Python environment
-bash utils/setup_env.sh
-
-# For MATLAB/SPM analysis
-cd code/matlab
-matlab -batch "init_spm"
-```
-
-### 2. Run Analysis
-
-**MATLAB/SPM Pipeline:**
-```matlab
-cd code/matlab
-init_spm
-run_complete_analysis  % Full preprocessing + GLM
-```
-
-**Python Analysis:**
-```bash
-source venv/bin/activate
-python code/python/example_analysis.py
-```
-
-### 3. View Results
-
-```matlab
-% In MATLAB
-show_glm_results('01', 1)  % View subject 01, contrast 1
-```
-
----
-
-## 📊 Analysis Pipeline
-
-| Stage | Scripts | Description |
-|-------|---------|-------------|
-| **Preprocessing** | `batch_preprocessing.m` | Realignment, coregistration, normalization, smoothing |
-| **First-Level GLM** | `batch_first_level.m`, `voxelwise_glm_tests.m` | Subject-level T-tests and F-tests |
-| **Second-Level** | `batch_second_level.m` | Group-level analysis |
-| **Visualization** | `show_glm_results.m`, `visualize_glm_results.m` | View statistical maps |
-| **Statistics** | `normality_tests.py`, `welch_anova.py` | Statistical testing |
-
----
-
-## 📖 Key Documentation
-
-| File | Description |
-|------|-------------|
-| `docs/guides/README.md` | Consolidated setup + run guide |
-| `docs/ANALYSIS_SUMMARY.md` | Full analysis summary |
-| `docs/REPLICATION_CHANGES.md` | What changed vs the original paper (read this) |
-| `docs/status/FINAL_STATUS.md` | Pipeline status + file map |
-
----
-
-## 🏷️ Contrasts Performed
-
-### T-tests (7 contrasts):
-1. Words > Baseline
-2. Sentences > Baseline
-3. Reversed > Baseline
-4. Words > Reversed
-5. Sentences > Reversed
-6. (Words + Sentences) > Reversed
-7. Words > Sentences
-
-### F-tests (2 omnibus tests):
-1. All Conditions (any task activation)
-2. Condition Differences (differential responses)
-
----
-
-## AVH- vs AVH+ Advanced Analyses
-
-Advanced analyses comparing schizophrenia patients with and without auditory hallucinations.
-All analyses write to `results/data/`; `poster_visualizations.py` then renders the
-poster-ready figures into `results/poster/`.
-
-| Analysis | Method | Output (data) | Output (figures) |
-|----------|--------|---------------|------------------|
-| **Cluster correction** | Permutation testing (1000 perm) | `results/data/cluster_maps/` | `results/poster/01_brain_maps/` |
-| **ROI activation**     | Raincloud + grouped bars + forest | `results/data/roi_values/` & `effect_sizes/` | `results/poster/02_roi_effects/` |
-| **PSYRATS correlations** | Pearson r in AVH+ | `results/data/correlations/` | `results/poster/03_correlations/` |
-| **MVPA classification** | Linear SVM, LOO-CV, permutation | `results/data/svm_weights/` | `results/poster/04_classification/` |
-| **Connectivity** | ROI-to-ROI Fisher-z | `results/data/connectivity*.{json,csv}` | `results/poster/05_connectivity/` |
-| **Laterality** | LI = (L-R)/(\|L\|+\|R\|) | `results/data/laterality*.{csv,json}` | `results/poster/06_laterality/` |
-
-### Run Advanced Analyses
-
-```bash
-source venv/bin/activate
-
-# Heavy compute pipeline (cluster perm tests, MVPA, connectivity, laterality)
-python code/python/run_advanced_analyses.py
-
-# Re-render poster figures only (fast, reads from results/data/)
+python code/python/roi_analysis.py
+python code/python/effect_size_analysis.py
+python code/python/correlation_analysis.py
+python code/python/posthoc_roi_analysis.py
+python code/python/advanced_cluster_analysis.py
 python code/python/poster_visualizations.py
+python code/python/paper_visualizations.py
+python -m pytest -q tests/test_statistics.py
 ```
 
-Data sources -> `results/data/`. Figures -> `results/poster/` (300 dpi PNGs).
-
----
-
-## Key Findings (after confirmatory rework)
-
-1. **Confirmatory (pre-specified, ANCOVA-adjusted):** L_MTG (d = -0.90) and L_STS
-   (d = -0.84) differ between AVH- and AVH+ for `sentences > reversed`; both
-   survive Bonferroni (m = 2) and remain significant after excluding 4
-   high-motion subjects (n = 67).
-2. **Exploratory (Welch ANOVA + within-contrast FDR):** L_MTG and L_STS survive
-   FDR for `sentences > reversed` and `words > sentences`.
-3. **Symptom correlation:** R_STG-posterior activation correlates with PSYRATS in
-   AVH+; the partial correlation (controlling age + IQ) is stronger than the raw
-   (partial r = 0.65, p = 0.0008; survives within-contrast FDR).
-4. **Exploratory nulls:** MVPA at/below chance, no laterality differences,
-   connectivity differences uncorrected only (none survive FDR).
-
-See `docs/REPLICATION_CHANGES.md` for old-vs-new numbers and paper edits.
-
----
+See `docs/ANALYSIS_SUMMARY.md`, `docs/REPLICATION_CHANGES.md`, and `docs/guides/README.md` for details.
 
 ## Citation
 
 ```bibtex
 @article{soler2022brain,
-  title={Brain correlates of speech perception in schizophrenia patients 
-         with and without auditory hallucinations},
-  author={Soler-Vidal, Joan and Fuentes-Claramonte, Paola and ...},
+  title={Brain correlates of speech perception in schizophrenia patients with and without auditory hallucinations},
+  author={Soler-Vidal, Joan and Fuentes-Claramonte, Paola and others},
   journal={PLOS ONE},
   year={2022},
   doi={10.1371/journal.pone.0276975}
 }
 ```
 
----
-
-## 📁 Original Files
-
-- **BIDS Version**: 1.7.0
-- **License**: CC0
-- **DOI**: [10.18112/openneuro.ds004302.v1.0.1](https://doi.org/10.18112/openneuro.ds004302.v1.0.1)
+- BIDS version: 1.7.0
+- License: CC0
+- Dataset DOI: [10.18112/openneuro.ds004302.v1.0.1](https://doi.org/10.18112/openneuro.ds004302.v1.0.1)
