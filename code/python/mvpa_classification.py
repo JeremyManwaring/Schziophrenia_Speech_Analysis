@@ -13,13 +13,13 @@ import pandas as pd
 from pathlib import Path
 import nibabel as nib
 from nilearn.maskers import NiftiMasker
-from nilearn.image import load_img, mean_img, math_img
+from nilearn.image import math_img
 from nilearn.masking import compute_brain_mask
 from nilearn.plotting import plot_stat_map, plot_glass_brain
 from sklearn.svm import SVC
-from sklearn.model_selection import KFold, cross_val_score, permutation_test_score
+from sklearn.model_selection import KFold, permutation_test_score
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score
 from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -53,7 +53,6 @@ def load_participants():
 def get_brain_mask():
     """Get a brain mask from fMRIPrep outputs."""
     # Use first available subject's brain mask
-    mask_pattern = FMRIPREP_DIR / 'sub-01' / 'func' / '*_desc-brain_mask.nii.gz'
     masks = list(FMRIPREP_DIR.glob('sub-*/func/*_desc-brain_mask.nii.gz'))
     
     if masks:
@@ -140,7 +139,7 @@ def run_svm_classification(contrast_name, participants_df):
     
     try:
         auc = roc_auc_score(y, probabilities)
-    except:
+    except Exception:
         auc = 0.5
     
     cm = confusion_matrix(y, predictions)
@@ -155,7 +154,7 @@ def run_svm_classification(contrast_name, participants_df):
         score, perm_scores, p_value = permutation_test_score(
             clf_perm, X, y, scoring='accuracy', cv=cv, n_permutations=100, n_jobs=-1
         )
-    except:
+    except Exception:
         p_value = 1.0
         perm_scores = np.zeros(100)
     
@@ -198,7 +197,7 @@ def create_accuracy_plot(all_results):
     
     colors = ['#e74c3c' if p < 0.05 else '#3498db' for p in p_values]
     
-    bars = ax.bar(range(len(contrasts)), accuracies, color=colors, alpha=0.7, edgecolor='black')
+    ax.bar(range(len(contrasts)), accuracies, color=colors, alpha=0.7, edgecolor='black')
     
     # Add chance level line
     ax.axhline(y=50, color='gray', linestyle='--', linewidth=2, label='Chance (50%)')
@@ -287,7 +286,7 @@ def create_weight_maps(all_results):
         title_base = _format_contrast_title(contrast)
 
         # Glass brain
-        fig = plt.figure(figsize=(12, 5))
+        plt.figure(figsize=(12, 5))
         plot_glass_brain(
             weight_masked,
             threshold='auto',
@@ -301,7 +300,7 @@ def create_weight_maps(all_results):
         plt.close()
 
         # Axial slices
-        fig = plt.figure(figsize=(15, 4))
+        plt.figure(figsize=(15, 4))
         plot_stat_map(
             weight_masked,
             threshold='auto',
@@ -396,7 +395,7 @@ def main():
     best = max(all_results, key=lambda x: x['accuracy'])
     
     # Create README
-    readme = f"""# MVPA Classification: AVH- vs AVH+
+    readme = """# MVPA Classification: AVH- vs AVH+
 
 ## Overview
 Support Vector Machine (SVM) classification was used to determine if brain

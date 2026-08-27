@@ -3,10 +3,9 @@
 	"TaskDescription": "While in the scanner, participants performed an auditory speech perception task with three conditions of interest: spoken words (words), spoken sentences (sentences), and spoken unintelligible reversed speech (reversed). These auditory stimuli were presented in a block-design fashion, with six blocks per condition presented in random order, each lasting 26 seconds with a 2-seconds inter-block interval. Every three stimulation blocks, a low-level baseline block was presented consisting of white noise, with the same duration as the speech blocks. The session lasted a total of 11 minutes and 22 seconds. In the words condition, stimuli consisted of unrelated neutral word lists (nouns, verbs, and adjectives). In each block, a list of 22 to 24 words was presented. In the sentences condition, a list of 8 unrelated sentences with neutral content was presented in each block. Stimuli in the reversed condition consisted of 8 acoustically reversed sentences per block. Stimuli were presented through MRI-compatible headphones (VisuaStim Digital, Resonance Technology, Northridge, CA, USA). To maintain visual stimulation constant and similar for all participants, the task was performed with eyes open while looking at a gray screen shown through MRI-compatible goggles (VisuaStim Digital). Participants were instructed to remain silent and listen carefully to the recordings during the task.", 	
 	"Manufacturer": "Philips",
 	"ManufacturersModelName": "Ingenia",
-	"MagneticFieldStrength": "3",
+	"MagneticFieldStrength": 3,
 	"PulseSequenceType": "T2*-weighted EPI",
 	"EchoTime": 0.030,
-	"FlipAngle": "70",
+	"FlipAngle": 70,
 	"RepetitionTime": 2
 }
-	

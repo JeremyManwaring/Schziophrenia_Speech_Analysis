@@ -10,7 +10,6 @@ This script:
 import pandas as pd
 import numpy as np
 from pathlib import Path
-import json
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -140,8 +139,8 @@ def generate_qc_summary(fmriprep_dir, output_dir):
     qc_df = qc_df[cols + [c for c in qc_df.columns if c not in cols]]
     
     # Save to CSV
-    qc_df.to_csv(output_dir / 'qc_summary.csv', index=False)
-    print(f"\nQC summary saved to: {output_dir / 'qc_summary.csv'}")
+    qc_df.to_csv(output_dir / 'qc.csv', index=False)
+    print(f"\nQC summary saved to: {output_dir / 'qc.csv'}")
     
     return qc_df
 
@@ -207,12 +206,12 @@ def print_qc_report(qc_df, exclusions, reasons, output_dir):
     print(f"\nTotal subjects: {len(qc_df)}")
     
     if 'mean_fd' in qc_df.columns:
-        print(f"\nFramewise Displacement Statistics:")
+        print("\nFramewise Displacement Statistics:")
         print(f"  Mean FD across subjects: {qc_df['mean_fd'].mean():.3f} mm")
         print(f"  Range: {qc_df['mean_fd'].min():.3f} - {qc_df['mean_fd'].max():.3f} mm")
     
     if 'pct_high_motion' in qc_df.columns:
-        print(f"\nHigh Motion Volumes (FD > 0.5mm):")
+        print("\nHigh Motion Volumes (FD > 0.5mm):")
         print(f"  Mean percentage: {qc_df['pct_high_motion'].mean():.1f}%")
         print(f"  Range: {qc_df['pct_high_motion'].min():.1f}% - {qc_df['pct_high_motion'].max():.1f}%")
     
@@ -231,9 +230,9 @@ def print_qc_report(qc_df, exclusions, reasons, output_dir):
     with open(output_dir / 'motion_exclusions.txt', 'w') as f:
         f.write("Motion-based exclusion recommendations\n")
         f.write("="*50 + "\n\n")
-        f.write(f"Criteria:\n")
-        f.write(f"  - Mean FD > 0.5 mm\n")
-        f.write(f"  - >20% of volumes with FD > 0.5 mm\n\n")
+        f.write("Criteria:\n")
+        f.write("  - Mean FD > 0.5 mm\n")
+        f.write("  - >20% of volumes with FD > 0.5 mm\n\n")
         
         if len(exclusions) == 0:
             f.write("No subjects flagged for exclusion.\n")
@@ -251,7 +250,7 @@ def main():
     # Set paths
     dataset_root = Path(__file__).parent.parent.parent
     fmriprep_dir = dataset_root / 'derivatives' / 'fmriprep'
-    output_dir = dataset_root / 'results' / 'qc'
+    output_dir = dataset_root / 'results' / 'data'
     
     print("\n" + "="*70)
     print("fMRIprep Quality Control Summary")

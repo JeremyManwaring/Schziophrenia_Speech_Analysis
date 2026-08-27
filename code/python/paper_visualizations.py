@@ -1,20 +1,7 @@
-"""
-Publication-ready figures for the manuscript.
+"""Build the canonical manuscript figure set from stored analysis records.
 
-Builds a compact manuscript figure set into `results/paper_figures/`.
-Every figure is exported as a 600 dpi PNG plus vector PDF and SVG:
-
-- figure1_main_results.png : post hoc ANCOVA forest + targeted-ROI rainclouds
-  (sentences > reversed) + the primary symptom correlation.
-- effect_size_heatmap.png  : ROI x contrast Cohen's d (AVH- vs AVH+) heatmap with
-  FDR-significant omnibus cells boxed.
-- roi_definition_panel.png : the upgraded ROI glass-brain map + a compact
-  ROI/MNI coordinate reference table.
-
-All statistics are read from the consolidated outputs in `results/data/`.
-
-Usage:
-    python code/python/paper_visualizations.py
+This script only renders figures. It does not rerun statistical models or
+alter values under ``results/data``.
 """
 
 from __future__ import annotations
@@ -28,39 +15,56 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib.cm import ScalarMappable
+from matplotlib.colors import ListedColormap, Normalize
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
-from nilearn.image import load_img
-from nilearn.plotting import plot_glass_brain
+from nilearn import datasets
+from nilearn.image import load_img, new_img_like
+from nilearn.plotting import plot_anat, plot_glass_brain
 
 sys.path.insert(0, str(Path(__file__).parent))
-from poster_style import (  # noqa: E402
-    GROUP_ORDER,
+from paper_figure_style import (
+    AXIS_COLOR,
+    COOL_PAPER,
+    CORAL,
+    DIVERGING_CMAP,
+    FIGURE_WIDTH,
     GRID_COLOR,
+    GROUP_MARKERS,
+    GROUP_ORDER,
+    HAIRLINE,
     INK,
+    MUTED_BLUE,
     MUTED_INK,
-    NEGATIVE_COLOR,
-    OUTLINE_COLOR,
+    NAVY,
+    PALE_BLUE,
     PALETTE,
-    PAPER_DPI,
-    apply_style,
-    format_contrast,
-    format_roi,
+    PAPER,
+    SOFT_TEAL,
+    add_note,
+    apply_figure_style,
+    clean_axis,
+    figure_title,
+    lighten,
+    panel_header,
+    save_figure,
+    stable_jitter,
     style_axis,
+    vectorize_scalar_images,
 )
-from surface_brain_plots import ROI_RADII, ROIS, _roi_display  # noqa: E402
+from surface_brain_plots import ROI_RADII, ROIS, _roi_display
 
 warnings.filterwarnings("ignore")
-apply_style()
+apply_figure_style()
+
 
 # ---------------------------------------------------------------------------
-# Paths
+# Paths and immutable display orders
 # ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).parent.parent.parent
 DATA_DIR = BASE_DIR / "results" / "data"
-POSTER_DIR = BASE_DIR / "results" / "poster"
-PAPER_DIR = BASE_DIR / "results" / "paper_figures"
-BRAIN_DIR = POSTER_DIR / "01_brain_maps"
+OUTPUT_DIR = BASE_DIR / "results" / "paper_figures"
 PARTICIPANTS = BASE_DIR / "participants.tsv"
 
 ROI_DIR = DATA_DIR / "roi_values"
@@ -72,34 +76,76 @@ TARGET_CONTRAST = "sentences_vs_reversed"
 TARGET_ROIS = ["L_MTG", "L_STS"]
 
 ROI_ORDER = [
-    "L_STG_posterior", "L_STG_anterior", "L_Heschl",
-    "L_MTG", "L_STS", "L_IFG_triangularis", "L_IFG_opercularis",
-    "R_STG_posterior", "R_STG_anterior", "R_Heschl",
-    "R_MTG", "R_IFG",
+    "L_STG_posterior",
+    "L_STG_anterior",
+    "L_Heschl",
+    "L_MTG",
+    "L_STS",
+    "L_IFG_triangularis",
+    "L_IFG_opercularis",
+    "R_STG_posterior",
+    "R_STG_anterior",
+    "R_Heschl",
+    "R_MTG",
+    "R_IFG",
 ]
 
 CONTRAST_ORDER = [
-    "sentences_vs_reversed", "words_vs_sentences", "speech_vs_reversed",
-    "words_vs_reversed", "words_vs_baseline", "sentences_vs_baseline",
+    "sentences_vs_reversed",
+    "words_vs_sentences",
+    "speech_vs_reversed",
+    "words_vs_reversed",
+    "words_vs_baseline",
+    "sentences_vs_baseline",
     "reversed_vs_baseline",
 ]
 
+CONTRAST_LABELS = {
+    "sentences_vs_reversed": "Sentences vs Reversed",
+    "words_vs_sentences": "Words vs Sentences",
+    "speech_vs_reversed": "Speech vs Reversed",
+    "words_vs_reversed": "Words vs Reversed",
+    "words_vs_baseline": "Words vs Baseline",
+    "sentences_vs_baseline": "Sentences vs Baseline",
+    "reversed_vs_baseline": "Reversed vs Baseline",
+}
+
+ROI_LABELS = {
+    "L_STG_posterior": "L STG posterior",
+    "L_STG_anterior": "L STG anterior",
+    "L_Heschl": "L Heschl",
+    "L_MTG": "L MTG",
+    "L_STS": "L STS",
+    "L_IFG_triangularis": "L IFG triangularis",
+    "L_IFG_opercularis": "L IFG opercularis",
+    "R_STG_posterior": "R STG posterior",
+    "R_STG_anterior": "R STG anterior",
+    "R_Heschl": "R Heschl",
+    "R_MTG": "R MTG",
+    "R_IFG": "R IFG",
+}
+
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Source readers and shared visual primitives
 # ---------------------------------------------------------------------------
-def _save(fig, path: Path) -> None:
-    """Export a journal-width raster plus editable vector copies."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    stem = path.with_suffix("")
-    fig.savefig(stem.with_suffix(".png"), dpi=PAPER_DPI, bbox_inches="tight", facecolor="white")
-    fig.savefig(stem.with_suffix(".pdf"), bbox_inches="tight", facecolor="white")
-    fig.savefig(stem.with_suffix(".svg"), bbox_inches="tight", facecolor="white")
-    plt.close(fig)
+def format_contrast(name: str) -> str:
+    return CONTRAST_LABELS.get(name, name.replace("_", " ").title())
 
 
-def _residualize(values: np.ndarray, covariates: np.ndarray) -> np.ndarray:
-    """Return residuals after OLS adjustment for the supplied covariates."""
+def format_roi(name: str) -> str:
+    return ROI_LABELS.get(name, name.replace("_", " "))
+
+
+def load_participants() -> pd.DataFrame:
+    data = pd.read_csv(PARTICIPANTS, sep="\t")
+    for column in ("age", "iq", "psyrats"):
+        data[column] = pd.to_numeric(data[column], errors="coerce")
+    data["group"] = pd.Categorical(data["group"], GROUP_ORDER, ordered=True)
+    return data
+
+
+def residualize(values: np.ndarray, covariates: np.ndarray) -> np.ndarray:
     values = np.asarray(values, dtype=float)
     covariates = np.asarray(covariates, dtype=float)
     design = np.column_stack([np.ones(len(values)), covariates])
@@ -107,657 +153,1167 @@ def _residualize(values: np.ndarray, covariates: np.ndarray) -> np.ndarray:
     return values - design @ beta
 
 
-def _load_participants() -> pd.DataFrame:
-    df = pd.read_csv(PARTICIPANTS, sep="\t")
-    for col in ("age", "iq", "psyrats"):
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-    df["group"] = pd.Categorical(df["group"], categories=GROUP_ORDER, ordered=True)
-    return df
-
-
-def _primary_correlation_hit() -> dict | None:
-    """Top PSYRATS partial correlation surviving within-contrast FDR (< 0.05)."""
-    path = CORR_DIR / "correlation_summary.json"
-    if not path.exists():
-        return None
-    with open(path) as f:
-        summary = json.load(f)
+def primary_correlation_hit() -> dict | None:
+    """Read the strongest stored within-contrast FDR-surviving partial hit."""
+    with open(CORR_DIR / "correlation_summary.json") as stream:
+        summary = json.load(stream)
     best = None
-    for contrast, blk in summary.items():
-        raw = {r["roi"]: r for r in blk.get("correlations", [])}
-        for pc in blk.get("partial_correlations", []):
-            fdr = pc.get("partial_p_fdr_within_contrast")
-            if fdr is None or fdr >= 0.05:
+    for contrast, block in summary.items():
+        for row in block.get("partial_correlations", []):
+            q_value = row.get("partial_p_fdr_within_contrast")
+            if q_value is None or q_value >= 0.05:
                 continue
-            rr = raw.get(pc["roi"], {})
-            cand = {
-                "contrast": contrast, "roi": pc["roi"],
-                "partial_r": pc["partial_r"], "partial_p": pc["partial_p"],
-                "partial_fdr": fdr, "raw_r": rr.get("pearson_r", float("nan")),
+            candidate = {
+                "contrast": contrast,
+                "roi": row["roi"],
+                "partial_r": row["partial_r"],
+                "partial_p": row["partial_p"],
+                "partial_fdr": q_value,
+                "n": row["n"],
+                "df": row["df"],
             }
-            if best is None or fdr < best["partial_fdr"]:
-                best = cand
+            if best is None or candidate["partial_fdr"] < best["partial_fdr"]:
+                best = candidate
     return best
 
 
-def _omnibus_fdr_sig_cells() -> set[tuple[str, str]]:
+def omnibus_fdr_sig_cells() -> set[tuple[str, str]]:
     cells: set[tuple[str, str]] = set()
     for path in ROI_DIR.glob("*_roi_anova.csv"):
         contrast = path.name.replace("_roi_anova.csv", "")
-        df = pd.read_csv(path)
-        if "p_fdr" not in df.columns:
+        table = pd.read_csv(path)
+        if "p_fdr" not in table.columns:
             continue
-        for _, r in df[df["p_fdr"] < 0.05].iterrows():
-            cells.add((contrast, r["roi"]))
+        for _, row in table[table["p_fdr"] < 0.05].iterrows():
+            cells.add((contrast, row["roi"]))
     return cells
 
 
-# ===========================================================================
-# Figure 1: main results
-# ===========================================================================
-def figure1_main_results() -> None:
-    parts = _load_participants()
-
-    fig = plt.figure(figsize=(7.2, 6.35))
-    gs = fig.add_gridspec(
-        2, 2, hspace=0.52, wspace=0.34,
-        left=0.09, right=0.985, top=0.96, bottom=0.095,
-    )
-
-    # (A) Targeted post hoc forest --------------------------------------------
-    ax = fig.add_subplot(gs[0, 0])
-    posthoc_path = POSTHOC_DIR / "posthoc_targeted.csv"
-    if posthoc_path.exists():
-        posthoc = pd.read_csv(posthoc_path)
-        full = posthoc[posthoc["sample"].str.startswith("full")].copy()
-        full["roi"] = pd.Categorical(full["roi"], categories=TARGET_ROIS, ordered=True)
-        full = full.sort_values("roi")
-        y = np.arange(len(full))
-        ax.errorbar(
-            full["d_adj"], y,
-            xerr=[full["d_adj"] - full["d_adj_ci_lo"], full["d_adj_ci_hi"] - full["d_adj"]],
-            fmt="none", ecolor=MUTED_INK, capsize=3, lw=1.0,
-        )
-        ax.scatter(
-            full["d_adj"], y, c=NEGATIVE_COLOR, s=46,
-            edgecolor=OUTLINE_COLOR, linewidth=0.7, zorder=5,
-        )
-        ax.axvline(0, color=OUTLINE_COLOR, lw=0.8, ls=(0, (3, 2)))
-        ax.set_yticks(y)
-        ax.set_yticklabels([format_roi(r) for r in full["roi"]])
-        for yi, (d, p) in enumerate(zip(full["d_adj"], full["p_bonferroni"])):
-            ax.annotate(
-                f"d = {d:+.2f}; pBonf = {p:.3f}",
-                (d, yi), textcoords="offset points", xytext=(0, 8),
-                ha="center", va="bottom", fontsize=7.2,
-            )
-        ax.set_ylim(len(full) - 0.45, -0.55)
-        ax.set_xlim(min(full["d_adj_ci_lo"].min(), -0.2) - 0.12, 0.22)
-    ax.set_xlabel("Adjusted Cohen's d (AVH\N{MINUS SIGN} vs AVH+)")
-    ax.set_title(
-        "A  Adjusted group contrast\nPost hoc ANCOVA; sentences > reversed",
-        loc="left", pad=7,
-    )
-    style_axis(ax, grid_axis="x")
-
-    # (B) Primary symptom correlation -----------------------------------------
-    ax = fig.add_subplot(gs[0, 1])
-    hit = _primary_correlation_hit()
-    avh = parts[parts["group"] == "AVH+"].dropna(subset=["psyrats", "age", "iq"])
-    if hit is not None and not avh.empty:
-        roi_path = ROI_DIR / f"{hit['contrast']}_roi_values.csv"
-        if roi_path.exists():
-            merged = pd.read_csv(roi_path).merge(
-                avh[["participant_id", "psyrats", "age", "iq"]],
-                left_on="subject_id", right_on="participant_id", how="inner")
-            if hit["roi"] in merged.columns:
-                x = merged[hit["roi"]].to_numpy(dtype=float)
-                yv = merged["psyrats"].to_numpy(dtype=float)
-                cov = merged[["age", "iq"]].to_numpy(dtype=float)
-                m = np.isfinite(x) & np.isfinite(yv) & np.all(np.isfinite(cov), axis=1)
-                x_res = _residualize(x[m], cov[m])
-                y_res = _residualize(yv[m], cov[m])
-                sns.regplot(
-                    x=x_res, y=y_res, ax=ax, color=PALETTE["AVH+"], truncate=False,
-                    scatter_kws=dict(s=25, edgecolor=OUTLINE_COLOR, linewidths=0.55, alpha=0.88),
-                    line_kws=dict(color=OUTLINE_COLOR, lw=1.2),
-                )
-                ax.axhline(0, color=GRID_COLOR, lw=0.7, zorder=0)
-                ax.axvline(0, color=GRID_COLOR, lw=0.7, zorder=0)
-                ax.text(0.04, 0.96,
-                        f"partial r = {hit['partial_r']:+.2f}\n"
-                        f"p = {hit['partial_p']:.4f}; q = {hit['partial_fdr']:.3f}; n = {m.sum()}",
-                        transform=ax.transAxes, va="top", ha="left", fontsize=7.4,
-                        bbox=dict(boxstyle="round,pad=0.30", facecolor="white",
-                                  edgecolor=PALETTE["AVH+"], linewidth=0.8, alpha=0.94))
-        ax.set_xlabel("Activation residual (β)")
-        ax.set_ylabel("PSYRATS residual")
-        ax.set_title(
-            f"B  Symptom association in AVH+\n{format_roi(hit['roi'])}; {format_contrast(hit['contrast'])}",
-            loc="left", pad=7,
-        )
-        style_axis(ax, grid_axis=None)
-
-    # (C, D) Targeted-ROI rainclouds (sentences > reversed) -------------------
-    roi_path = ROI_DIR / f"{TARGET_CONTRAST}_roi_values.csv"
-    roi_df = pd.read_csv(roi_path) if roi_path.exists() else None
-    panel_axes = [fig.add_subplot(gs[1, 0]), fig.add_subplot(gs[1, 1])]
-    panel_tags = ["C", "D"]
-    for ax, roi, tag in zip(panel_axes, TARGET_ROIS, panel_tags):
-        if roi_df is None or roi not in roi_df.columns:
-            ax.axis("off")
-            continue
-        sub = roi_df[["group", roi]].copy()
-        sub["group"] = pd.Categorical(sub["group"], categories=GROUP_ORDER, ordered=True)
-        sub = sub.dropna()
-        sns.violinplot(data=sub, x="group", y=roi, hue="group", order=GROUP_ORDER,
-                       palette=PALETTE, inner=None, cut=0, linewidth=0.8,
-                       saturation=0.9, legend=False, ax=ax)
-        for c in ax.collections:
-            c.set_alpha(0.32)
-        sns.boxplot(data=sub, x="group", y=roi, order=GROUP_ORDER, width=0.18,
-                    showcaps=True,
-                    boxprops={"facecolor": "white", "edgecolor": OUTLINE_COLOR, "zorder": 5},
-                    whiskerprops={"color": OUTLINE_COLOR, "linewidth": 0.8},
-                    capprops={"color": OUTLINE_COLOR, "linewidth": 0.8},
-                    showfliers=False,
-                    medianprops={"color": OUTLINE_COLOR, "linewidth": 1.0}, ax=ax)
-        sns.stripplot(data=sub, x="group", y=roi, hue="group", order=GROUP_ORDER,
-                      palette=PALETTE, size=2.7, alpha=0.80, jitter=0.16, legend=False,
-                      edgecolor="white", linewidth=0.25, ax=ax)
-        ax.axhline(0, color=MUTED_INK, lw=0.7, ls=(0, (3, 2)))
-        ax.set_xlabel("")
-        ax.set_ylabel("Activation (β)")
-        group_counts = sub.groupby("group", observed=True).size().reindex(GROUP_ORDER)
-        ax.set_xticklabels([f"{g}\n(n = {int(group_counts[g])})" for g in GROUP_ORDER])
-        ax.set_title(
-            f"{tag}  Raw activation distribution\n{format_roi(roi)}; {format_contrast(TARGET_CONTRAST)}",
-            loc="left", pad=7,
-        )
-        style_axis(ax, grid_axis="y")
-
-    fig.text(
-        0.09, 0.018,
-        "A: covariate-adjusted effects (age, IQ, sex, mean FD). B: age- and IQ-residualized values. "
-        "C-D: unadjusted subject-level distributions.",
-        ha="left", va="bottom", fontsize=6.7, color=MUTED_INK,
-    )
-    _save(fig, PAPER_DIR / "Figure_1_core_results.png")
-    print(f"  figure1 -> {PAPER_DIR / 'Figure_1_core_results.png'}")
-
-
-# ===========================================================================
-# Effect-size heatmap (ROI x contrast)
-# ===========================================================================
-def effect_size_heatmap() -> None:
-    es_path = EFFECT_DIR / "effect_sizes_summary.csv"
-    if not es_path.exists():
-        return
-    es = pd.read_csv(es_path)
-    es = es[es["comparison"] == "AVH-_vs_AVH+"]
-    pivot = es.pivot_table(index="roi", columns="contrast", values="cohens_d")
-    rois = [r for r in ROI_ORDER if r in pivot.index]
-    contrasts = [c for c in CONTRAST_ORDER if c in pivot.columns]
-    pivot = pivot.reindex(index=rois, columns=contrasts)
-
-    fig, ax = plt.subplots(figsize=(7.2, 4.85))
-    vmax = max(1.0, float(np.nanmax(np.abs(pivot.to_numpy()))))
-    cmap = sns.diverging_palette(245, 25, s=82, l=52, center="light", as_cmap=True)
-    sns.heatmap(
-        pivot, ax=ax, cmap=cmap, center=0, vmin=-vmax, vmax=vmax,
-        annot=True, fmt=".2f", annot_kws={"fontsize": 6.5},
-        linewidths=0.45, linecolor="white",
-        cbar_kws={"label": "Cohen's d (AVH\N{MINUS SIGN} vs AVH+)", "shrink": 0.86},
-        xticklabels=[format_contrast(c) for c in contrasts],
-        yticklabels=[format_roi(r) for r in rois],
-    )
-
-    # Box the omnibus FDR-significant cells
-    sig_cells = _omnibus_fdr_sig_cells()
-    for (contrast, roi) in sig_cells:
-        if roi in rois and contrast in contrasts:
-            ci, ri = contrasts.index(contrast), rois.index(roi)
-            ax.add_patch(Rectangle((ci, ri), 1, 1, fill=False,
-                                   edgecolor="black", lw=2.6, zorder=6))
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-    ax.set_title(
-        "ROI effect-size landscape\nPairwise standardized differences across task contrasts",
-        loc="left", pad=8,
-    )
-    plt.setp(ax.get_xticklabels(), rotation=32, ha="right", rotation_mode="anchor")
-    plt.setp(ax.get_yticklabels(), rotation=0)
-    sig_note = (
-        "Outlined cells survive omnibus within-contrast FDR."
-        if sig_cells else
-        "No omnibus ROI test survives within-contrast FDR."
-    )
-    fig.text(
-        0.02, 0.01,
-        "Negative values indicate higher activation in AVH+. " + sig_note,
-        ha="left", va="bottom", fontsize=6.8, color=MUTED_INK,
-    )
-    fig.subplots_adjust(left=0.20, right=0.93, top=0.88, bottom=0.27)
-    _save(fig, PAPER_DIR / "Figure_2_effect_size_landscape.png")
-    print(f"  heatmap -> {PAPER_DIR / 'Figure_2_effect_size_landscape.png'}")
-
-
-# ===========================================================================
-# ROI definition panel (map + coordinate table)
-# ===========================================================================
-def roi_definition_panel() -> None:
-    fig = plt.figure(figsize=(7.2, 3.15))
-    gs = fig.add_gridspec(
-        1, 2, width_ratios=[1.35, 1.0], wspace=0.12,
-        left=0.02, right=0.99, top=0.88, bottom=0.11,
-    )
-
-    ax_map = fig.add_subplot(gs[0, 0])
-    display = plot_glass_brain(
-        None, display_mode="lyrz", figure=fig, axes=ax_map,
-        annotate=True, black_bg=False,
-    )
-    hemisphere_colors = {"L_": NEGATIVE_COLOR, "R_": "#E69F00"}
-    for hemisphere, color in hemisphere_colors.items():
-        for radius, size in ((8, 46), (6, 28)):
-            coords = [
-                coord for key, coord in ROIS.items()
-                if key.startswith(hemisphere) and ROI_RADII[key] == radius
-            ]
-            if coords:
-                display.add_markers(
-                    coords, marker_color=color, marker_size=size,
-                    edgecolor=OUTLINE_COLOR, alpha=0.92,
-                )
-    ax_map.set_title("A  ROI locations", loc="left", pad=7)
-    handles = [
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=NEGATIVE_COLOR,
-               markeredgecolor=OUTLINE_COLOR, markersize=5.5, label="Left hemisphere"),
-        Line2D([0], [0], marker="o", color="none", markerfacecolor="#E69F00",
-               markeredgecolor=OUTLINE_COLOR, markersize=5.5, label="Right hemisphere"),
-        Line2D([0], [0], marker="o", color=MUTED_INK, markerfacecolor="white",
-               markersize=5.5, label="8 mm sphere"),
-        Line2D([0], [0], marker="o", color=MUTED_INK, markerfacecolor="white",
-               markersize=3.8, label="6 mm Heschl sphere"),
+def draw_group_distribution(
+    ax,
+    data: pd.DataFrame,
+    value_col: str,
+    *,
+    id_col: str | None = None,
+    show_counts: bool = True,
+    positions: list[float] | np.ndarray | None = None,
+) -> pd.Series:
+    """Draw restrained violins, compact boxes, and all participant values."""
+    columns = ["group", value_col] + ([id_col] if id_col else [])
+    sub = data[columns].copy()
+    sub["group"] = pd.Categorical(sub["group"], GROUP_ORDER, ordered=True)
+    sub = sub.dropna(subset=["group", value_col])
+    arrays = [
+        sub.loc[sub["group"] == group, value_col].to_numpy(dtype=float)
+        for group in GROUP_ORDER
     ]
-    ax_map.legend(
-        handles=handles, loc="lower center", bbox_to_anchor=(0.5, -0.10),
-        ncol=2, columnspacing=0.9, handletextpad=0.35,
+    plot_positions = (
+        np.arange(len(GROUP_ORDER), dtype=float)
+        if positions is None
+        else np.asarray(positions, dtype=float)
     )
+    if len(plot_positions) != len(GROUP_ORDER):
+        raise ValueError("positions must contain one location per group")
 
-    ax_tbl = fig.add_subplot(gs[0, 1])
-    ax_tbl.axis("off")
-    ax_tbl.set_title("B  ROI definitions (MNI)", loc="left", pad=7)
-    rows = []
-    for key, (x, y, z) in ROIS.items():
-        rows.append([
-            _roi_display(key),
-            f"{x:>4.0f}, {y:>4.0f}, {z:>4.0f}",
-            f"{ROI_RADII[key]} mm",
-        ])
-    table = ax_tbl.table(
+    violins = ax.violinplot(
+        arrays,
+        positions=plot_positions,
+        widths=0.72,
+        showmeans=False,
+        showmedians=False,
+        showextrema=False,
+        bw_method=0.28,
+    )
+    for body, group in zip(violins["bodies"], GROUP_ORDER):
+        body.set_facecolor(lighten(PALETTE[group], 0.72))
+        body.set_edgecolor(PALETTE[group])
+        body.set_linewidth(0.55)
+        body.set_alpha(0.78)
+        body.set_zorder(1)
+
+    box = ax.boxplot(
+        arrays,
+        positions=plot_positions,
+        widths=0.20,
+        patch_artist=True,
+        showfliers=False,
+        manage_ticks=False,
+        boxprops={"linewidth": 0.62, "edgecolor": AXIS_COLOR},
+        whiskerprops={"linewidth": 0.58, "color": AXIS_COLOR},
+        capprops={"linewidth": 0.58, "color": AXIS_COLOR},
+        medianprops={"linewidth": 1.0, "color": NAVY},
+        zorder=3,
+    )
+    for patch in box["boxes"]:
+        patch.set_facecolor((1, 1, 1, 0.80))
+
+    for position, group in zip(plot_positions, GROUP_ORDER):
+        group_data = sub[sub["group"] == group]
+        identifiers = (
+            group_data[id_col].astype(str).tolist()
+            if id_col
+            else group_data.index.astype(str).tolist()
+        )
+        x = position + stable_jitter(identifiers, group, width=0.16)
+        ax.scatter(
+            x,
+            group_data[value_col],
+            s=7.0,
+            marker=GROUP_MARKERS[group],
+            facecolor=PALETTE[group],
+            edgecolor="white",
+            linewidth=0.18,
+            alpha=0.48,
+            zorder=2,
+        )
+
+    counts = sub.groupby("group", observed=True).size().reindex(GROUP_ORDER)
+    tick_labels = [
+        f"{group}\nn = {int(counts[group])}" if show_counts else group
+        for group in GROUP_ORDER
+    ]
+    ax.set_xticks(plot_positions)
+    ax.set_xticklabels(tick_labels)
+    ax.set_xlim(float(plot_positions.min() - 0.52), float(plot_positions.max() + 0.52))
+    style_axis(ax, grid_axis="y")
+    clean_axis(ax)
+    return counts
+
+
+def compact_table(ax, rows: list[list[str]], hemisphere: str, color: str) -> None:
+    """Render a light editorial coordinate table for one hemisphere."""
+    ax.axis("off")
+    ax.text(
+        0.0,
+        1.02,
+        "●",
+        transform=ax.transAxes,
+        ha="left",
+        va="bottom",
+        fontsize=7.4,
+        color=color,
+        clip_on=False,
+    )
+    ax.text(
+        0.038,
+        1.02,
+        f"{hemisphere} hemisphere",
+        transform=ax.transAxes,
+        ha="left",
+        va="bottom",
+        fontsize=6.75,
+        fontweight="semibold",
+        color=INK,
+        clip_on=False,
+    )
+    table_height = min(0.94, 0.118 * (len(rows) + 1))
+    table = ax.table(
         cellText=rows,
-        colLabels=["ROI", "MNI (x, y, z)", "Radius"],
-        colWidths=[0.49, 0.34, 0.17], cellLoc="left", loc="center",
+        colLabels=["ROI", "x", "y", "z", "r (mm)"],
+        colWidths=[0.56, 0.10, 0.10, 0.10, 0.14],
+        cellLoc="left",
+        bbox=[0.0, 0.94 - table_height, 1.0, table_height],
     )
     table.auto_set_font_size(False)
-    table.set_fontsize(6.4)
-    table.scale(1, 1.08)
-    for (r, c), cell in table.get_celld().items():
-        cell.set_edgecolor(GRID_COLOR)
-        cell.set_linewidth(0.45)
-        cell.PAD = 0.08
-        if r == 0:
-            cell.set_facecolor("#E9EDF2")
-            cell.set_text_props(color=INK, fontweight="semibold")
-        elif r % 2 == 0:
-            cell.set_facecolor("#F8F9FA")
+    table.set_fontsize(5.7)
+    for (row, column), cell in table.get_celld().items():
+        cell.PAD = 0.045
+        cell.set_edgecolor(HAIRLINE)
+        cell.set_linewidth(0.38)
+        if row == 0:
+            cell.visible_edges = "B"
+            cell.set_facecolor(COOL_PAPER)
+            cell.set_text_props(fontweight="semibold", color=MUTED_INK)
+        else:
+            cell.visible_edges = "B"
+            cell.set_facecolor(PAPER)
+        if column in (1, 2, 3):
+            cell.get_text().set_ha("center")
+        if column == 4:
+            cell.get_text().set_ha("right")
+
+
+# ---------------------------------------------------------------------------
+# Figure 1: core results
+# ---------------------------------------------------------------------------
+def figure_1_core_results() -> None:
+    participants = load_participants()
+    roi_values = pd.read_csv(ROI_DIR / f"{TARGET_CONTRAST}_roi_values.csv")
+
+    fig = plt.figure(figsize=(FIGURE_WIDTH, 5.35))
+    grid = fig.add_gridspec(
+        2,
+        2,
+        width_ratios=[0.96, 1.08],
+        height_ratios=[1.0, 0.94],
+        left=0.09,
+        right=0.985,
+        top=0.90,
+        bottom=0.125,
+        hspace=0.52,
+        wspace=0.33,
+    )
+
+    # A. Stored targeted post hoc ANCOVA effects.
+    ax = fig.add_subplot(grid[0, 0])
+    posthoc = pd.read_csv(POSTHOC_DIR / "posthoc_targeted.csv")
+    full = posthoc[posthoc["sample"] == "full_n69"].copy()
+    full["roi"] = pd.Categorical(full["roi"], TARGET_ROIS, ordered=True)
+    full = full.sort_values("roi").reset_index(drop=True)
+    y = np.arange(len(full))
+    ax.errorbar(
+        full["d_adj"],
+        y,
+        xerr=[
+            full["d_adj"] - full["d_adj_ci_lo"],
+            full["d_adj_ci_hi"] - full["d_adj"],
+        ],
+        fmt="none",
+        ecolor=MUTED_INK,
+        elinewidth=0.82,
+        capsize=2.8,
+        capthick=0.7,
+        zorder=2,
+    )
+    ax.scatter(
+        full["d_adj"],
+        y,
+        s=34,
+        marker="D",
+        facecolor=CORAL,
+        edgecolor=NAVY,
+        linewidth=0.48,
+        zorder=4,
+    )
+    for yi, row in full.iterrows():
+        ax.text(
+            row["d_adj"],
+            yi - 0.18,
+            f"d = {row['d_adj']:+.2f}  ·  Bonf. p = {row['p_bonferroni']:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=6.1,
+            color=INK,
+        )
+    ax.axvline(0, color=AXIS_COLOR, linewidth=0.62, linestyle=(0, (2.2, 2.2)))
+    ax.set_yticks(y)
+    ax.set_yticklabels([format_roi(roi) for roi in full["roi"]])
+    ax.set_ylim(len(full) - 0.44, -0.55)
+    ax.set_xlim(-1.72, 0.18)
+    ax.set_xticks([-1.5, -1.0, -0.5, 0.0])
+    ax.set_xlabel("Cohen's d (AVH− vs AVH+)")
+    panel_header(
+        ax,
+        "A",
+        "Adjusted effects",
+        "Sentences vs Reversed · 95% CI",
+    )
+    style_axis(ax, grid_axis="x")
+    clean_axis(ax)
+
+    # B. Stored primary AVH+ symptom association.
+    ax = fig.add_subplot(grid[0, 1])
+    hit = primary_correlation_hit()
+    if hit is None:
+        raise RuntimeError("No stored within-contrast FDR-surviving partial correlation.")
+    avh_plus = participants[participants["group"] == "AVH+"].dropna(
+        subset=["psyrats", "age", "iq"]
+    )
+    correlation_values = pd.read_csv(
+        ROI_DIR / f"{hit['contrast']}_roi_values.csv"
+    ).merge(
+        avh_plus[["participant_id", "psyrats", "age", "iq"]],
+        left_on="subject_id",
+        right_on="participant_id",
+        how="inner",
+    )
+    x_raw = correlation_values[hit["roi"]].to_numpy(dtype=float)
+    y_raw = correlation_values["psyrats"].to_numpy(dtype=float)
+    covariates = correlation_values[["age", "iq"]].to_numpy(dtype=float)
+    keep = (
+        np.isfinite(x_raw)
+        & np.isfinite(y_raw)
+        & np.all(np.isfinite(covariates), axis=1)
+    )
+    x_res = residualize(x_raw[keep], covariates[keep])
+    y_res = residualize(y_raw[keep], covariates[keep])
+    sns.regplot(
+        x=x_res,
+        y=y_res,
+        ax=ax,
+        color=SOFT_TEAL,
+        marker=GROUP_MARKERS["AVH+"],
+        truncate=False,
+        ci=95,
+        n_boot=2000,
+        seed=20260824,
+        scatter_kws={
+            "s": 15,
+            "facecolor": CORAL,
+            "edgecolor": "white",
+            "linewidths": 0.26,
+            "alpha": 0.64,
+        },
+        line_kws={"color": NAVY, "linewidth": 1.05},
+    )
+    ax.axhline(0, color=GRID_COLOR, linewidth=0.5, zorder=0)
+    ax.axvline(0, color=GRID_COLOR, linewidth=0.5, zorder=0)
+    ax.text(
+        0.025,
+        0.97,
+        f"partial r = {hit['partial_r']:+.2f}\n"
+        f"p = {hit['partial_p']:.4f}  ·  q = {hit['partial_fdr']:.3f}\n"
+        f"n = {hit['n']}  ·  df = {hit['df']}",
+        transform=ax.transAxes,
+        ha="left",
+        va="top",
+        fontsize=6.25,
+        color=INK,
+        linespacing=1.28,
+    )
+    ax.set_xlabel("Activation residual (beta)")
+    ax.set_ylabel("PSYRATS residual")
+    panel_header(
+        ax,
+        "B",
+        "Symptom association",
+        f"AVH+ · {format_roi(hit['roi'])} · {format_contrast(hit['contrast'])}",
+    )
+    style_axis(ax, grid_axis=None)
+    clean_axis(ax)
+
+    # C. One coordinated participant-level view of both targeted ROIs.
+    ax = fig.add_subplot(grid[1, :])
+    global_values = np.concatenate(
+        [roi_values[roi].dropna().to_numpy(dtype=float) for roi in TARGET_ROIS]
+    )
+    spread = float(np.nanmax(global_values) - np.nanmin(global_values))
+    lower = float(np.nanmin(global_values) - spread * 0.07)
+    upper = float(np.nanmax(global_values) + spread * 0.11)
+    distribution_positions = ([0.0, 1.0, 2.0], [4.0, 5.0, 6.0])
+    counts_by_roi: dict[str, pd.Series] = {}
+    for positions, roi in zip(distribution_positions, TARGET_ROIS):
+        counts_by_roi[roi] = draw_group_distribution(
+            ax,
+            roi_values,
+            roi,
+            id_col="subject_id",
+            show_counts=False,
+            positions=positions,
+        )
+    ax.axhline(0, color=AXIS_COLOR, linewidth=0.55, linestyle=(0, (2.2, 2.2)))
+    ax.axvline(3.0, color=HAIRLINE, linewidth=0.55, zorder=0)
+    ax.set_ylim(lower, upper)
+    ax.set_xlim(-0.62, 6.62)
+    ax.set_xlabel("")
+    ax.set_ylabel("Activation (beta)")
+    combined_ticks: list[float] = []
+    combined_labels: list[str] = []
+    for positions, roi in zip(distribution_positions, TARGET_ROIS):
+        for position, group in zip(positions, GROUP_ORDER):
+            combined_ticks.append(position)
+            combined_labels.append(
+                f"{group}\nn = {int(counts_by_roi[roi][group])}"
+            )
+    ax.set_xticks(combined_ticks)
+    ax.set_xticklabels(combined_labels)
+    for center, roi in zip((1.0, 5.0), TARGET_ROIS):
+        ax.text(
+            center,
+            0.965,
+            format_roi(roi),
+            transform=ax.get_xaxis_transform(),
+            ha="center",
+            va="bottom",
+            fontsize=6.9,
+            fontweight="semibold",
+            color=NAVY,
+            clip_on=False,
+        )
+    panel_header(
+        ax,
+        "C",
+        "Regional activation",
+        "Sentences vs Reversed",
+        header_y=1.15,
+    )
+    style_axis(ax, grid_axis="y")
+    clean_axis(ax)
+    save_figure(fig, OUTPUT_DIR / "Figure_1_core_results")
+
+
+# ---------------------------------------------------------------------------
+# Figure 2: effect-size landscape
+# ---------------------------------------------------------------------------
+def figure_2_effect_size_landscape() -> None:
+    effect_sizes = pd.read_csv(EFFECT_DIR / "effect_sizes_summary.csv")
+    effect_sizes = effect_sizes[
+        effect_sizes["comparison"] == "AVH-_vs_AVH+"
+    ].copy()
+    matrix = effect_sizes.pivot_table(
+        index="roi", columns="contrast", values="cohens_d"
+    )
+    rois = [roi for roi in ROI_ORDER if roi in matrix.index]
+    contrasts = [contrast for contrast in CONTRAST_ORDER if contrast in matrix.columns]
+    matrix = matrix.reindex(index=rois, columns=contrasts)
+
+    fig = plt.figure(figsize=(FIGURE_WIDTH, 4.05))
+    ax = fig.add_axes([0.205, 0.255, 0.755, 0.605])
+    cbar_ax = fig.add_axes([0.335, 0.105, 0.40, 0.020])
+    annotation_labels = matrix.map(
+        lambda value: "0.00" if abs(float(value)) < 0.005 else f"{value:.2f}"
+    )
+    heatmap = sns.heatmap(
+        matrix,
+        ax=ax,
+        cmap=DIVERGING_CMAP,
+        center=0,
+        vmin=-1.0,
+        vmax=1.0,
+        annot=annotation_labels,
+        fmt="",
+        annot_kws={"fontsize": 5.65},
+        linewidths=0.38,
+        linecolor=PAPER,
+        cbar=True,
+        cbar_ax=cbar_ax,
+        cbar_kws={"orientation": "horizontal", "ticks": [-1.0, -0.5, 0.0, 0.5, 1.0]},
+        xticklabels=[format_contrast(value).replace(" vs ", "\nvs ") for value in contrasts],
+        yticklabels=[format_roi(roi) for roi in rois],
+    )
+    values = matrix.to_numpy(dtype=float)
+    for text, value in zip(heatmap.texts, values.ravel()):
+        text.set_color("white" if abs(value) >= 0.60 else INK)
+        text.set_fontweight("semibold" if abs(value) >= 0.80 else "normal")
+
+    # Quietly separate task contrasts, baseline contrasts, and hemispheres.
+    ax.axvline(4, color=NAVY, linewidth=0.72, alpha=0.7, zorder=5)
+    ax.axhline(7, color=NAVY, linewidth=0.72, alpha=0.48, zorder=5)
+    significant_cells = omnibus_fdr_sig_cells()
+    for contrast, roi in significant_cells:
+        if contrast in contrasts and roi in rois:
+            col = contrasts.index(contrast)
+            row = rois.index(roi)
+            ax.add_patch(
+                Rectangle(
+                    (col, row),
+                    1,
+                    1,
+                    fill=False,
+                    edgecolor=NAVY,
+                    linewidth=1.15,
+                    zorder=6,
+                )
+            )
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.tick_params(length=0, pad=3)
+    plt.setp(ax.get_xticklabels(), rotation=0, ha="center", linespacing=1.05)
+    plt.setp(ax.get_yticklabels(), rotation=0)
+
+    cbar_ax.set_xlabel("Cohen's d (AVH− vs AVH+)", labelpad=3)
+    cbar_ax.tick_params(length=1.9, width=0.42, pad=1.5)
 
     fig.text(
-        0.02, 0.012,
-        "Spheres may overlap; overlapping ROI means are therefore not statistically independent.",
-        ha="left", va="bottom", fontsize=6.7, color=MUTED_INK,
+        0.5,
+        0.965,
+        "Effect-size landscape",
+        ha="center",
+        va="top",
+        fontsize=9.4,
+        fontweight="semibold",
+        color=NAVY,
     )
-    _save(fig, PAPER_DIR / "Figure_3_ROI_definitions.png")
-    print(f"  roi definition -> {PAPER_DIR / 'Figure_3_ROI_definitions.png'}")
+    save_figure(fig, OUTPUT_DIR / "Figure_2_effect_size_landscape")
 
 
-# ===========================================================================
-# Supplementary figure 1: whole-brain descriptive maps
-# ===========================================================================
-def supplement_whole_brain_inference() -> None:
+# ---------------------------------------------------------------------------
+# Figure 3: ROI definitions
+# ---------------------------------------------------------------------------
+def _roi_sphere_masks() -> tuple[object, dict[str, object]]:
+    """Rasterize the declared MNI spheres on a 2 mm anatomical template."""
+    template = datasets.load_mni152_template(resolution=2)
+    shape = template.shape[:3]
+    voxel_grid = np.indices(shape, dtype=np.float32)
+    world_grid = np.einsum(
+        "ij,jxyz->ixyz",
+        np.asarray(template.affine[:3, :3], dtype=np.float32),
+        voxel_grid,
+    )
+    world_grid += np.asarray(template.affine[:3, 3], dtype=np.float32)[
+        :, None, None, None
+    ]
+
+    masks: dict[str, object] = {}
+    for hemisphere in ("L_", "R_"):
+        mask = np.zeros(shape, dtype=np.uint8)
+        for key, center in ROIS.items():
+            if not key.startswith(hemisphere):
+                continue
+            squared_distance = np.zeros(shape, dtype=np.float32)
+            for axis, coordinate in enumerate(center):
+                delta = world_grid[axis] - float(coordinate)
+                squared_distance += delta * delta
+            mask[squared_distance <= float(ROI_RADII[key] ** 2)] = 1
+        masks[hemisphere] = new_img_like(template, mask)
+    return template, masks
+
+
+def figure_3_roi_definitions() -> None:
+    fig = plt.figure(figsize=(FIGURE_WIDTH, 4.25))
+    fig.text(
+        0.5,
+        0.965,
+        "ROI definitions",
+        ha="center",
+        va="top",
+        fontsize=9.4,
+        fontweight="semibold",
+        color=NAVY,
+    )
+
+    template, masks = _roi_sphere_masks()
+    left_cmap = ListedColormap([MUTED_BLUE, MUTED_BLUE], name="roi_left")
+    right_cmap = ListedColormap([CORAL, CORAL], name="roi_right")
+    slice_specs = [
+        ("x", -52),
+        ("x", 52),
+        ("y", -24),
+        ("y", 20),
+        ("z", 6),
+        ("z", 16),
+    ]
+    map_left = 0.055
+    map_right = 0.945
+    map_gap = 0.008
+    map_width = (map_right - map_left - map_gap * (len(slice_specs) - 1)) / len(
+        slice_specs
+    )
+    for index, (mode, coordinate) in enumerate(slice_specs):
+        left = map_left + index * (map_width + map_gap)
+        ax_map = fig.add_axes([left, 0.585, map_width, 0.245])
+        display = plot_anat(
+            template,
+            display_mode=mode,
+            cut_coords=[coordinate],
+            figure=fig,
+            axes=ax_map,
+            annotate=False,
+            threshold=1e-6,
+            draw_cross=False,
+            black_bg=False,
+            dim=-0.15,
+            colorbar=False,
+        )
+        display.annotate(left_right=True, positions=False, size=5.2)
+        for mask, cmap, outline in (
+            (masks["L_"], left_cmap, NAVY),
+            (masks["R_"], right_cmap, CORAL),
+        ):
+            display.add_overlay(
+                mask,
+                threshold=0.5,
+                cmap=cmap,
+                alpha=0.76,
+                colorbar=False,
+            )
+            display.add_contours(
+                mask,
+                levels=[0.5],
+                colors=[outline],
+                linewidths=0.42,
+                alpha=0.9,
+            )
+        fig.text(
+            left + map_width / 2,
+            0.575,
+            f"{mode} = {coordinate}",
+            ha="center",
+            va="top",
+            fontsize=5.2,
+            color=MUTED_INK,
+        )
+
+    handles = [
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="none",
+            markerfacecolor=MUTED_BLUE,
+            markeredgecolor=NAVY,
+            markeredgewidth=0.45,
+            markersize=4.6,
+            label="Left hemisphere",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="none",
+            markerfacecolor=CORAL,
+            markeredgecolor=NAVY,
+            markeredgewidth=0.45,
+            markersize=4.6,
+            label="Right hemisphere",
+        ),
+    ]
+    ax_legend = fig.add_axes([0.055, 0.515, 0.89, 0.035])
+    ax_legend.axis("off")
+    ax_legend.legend(
+        handles=handles,
+        loc="center",
+        ncol=2,
+        columnspacing=1.3,
+        handletextpad=0.35,
+        frameon=False,
+    )
+
+    left_keys = [key for key in ROIS if key.startswith("L_")]
+    right_keys = [key for key in ROIS if key.startswith("R_")]
+    left_rows = [
+        [
+            _roi_display(key),
+            f"{ROIS[key][0]:.0f}",
+            f"{ROIS[key][1]:.0f}",
+            f"{ROIS[key][2]:.0f}",
+            f"{ROI_RADII[key]}",
+        ]
+        for key in left_keys
+    ]
+    right_rows = [
+        [
+            _roi_display(key),
+            f"{ROIS[key][0]:.0f}",
+            f"{ROIS[key][1]:.0f}",
+            f"{ROIS[key][2]:.0f}",
+            f"{ROI_RADII[key]}",
+        ]
+        for key in right_keys
+    ]
+    ax_left = fig.add_axes([0.055, 0.075, 0.42, 0.355])
+    ax_right = fig.add_axes([0.525, 0.075, 0.42, 0.355])
+    compact_table(ax_left, left_rows, "Left", MUTED_BLUE)
+    compact_table(ax_right, right_rows, "Right", CORAL)
+    save_figure(fig, OUTPUT_DIR / "Figure_3_ROI_definitions")
+
+
+# ---------------------------------------------------------------------------
+# Supplementary Figure 1: whole-brain inference
+# ---------------------------------------------------------------------------
+def supplement_figure_1_whole_brain() -> None:
     cluster_dir = DATA_DIR / "cluster_maps"
-    meta_path = cluster_dir / "analysis_summary.json"
-    if not meta_path.exists():
-        return
-    with open(meta_path) as f:
-        meta = json.load(f)
+    with open(cluster_dir / "analysis_summary.json") as stream:
+        metadata = json.load(stream)
 
-    contrasts = ["sentences_vs_reversed", "speech_vs_reversed", "words_vs_sentences"]
+    contrasts = [
+        "sentences_vs_reversed",
+        "speech_vs_reversed",
+        "words_vs_sentences",
+    ]
     maps: list[tuple[str, object]] = []
     vmax = 0.0
     for contrast in contrasts:
-        path = cluster_dir / f"{contrast}_AVH-_vs_AVH+_tstat.nii.gz"
-        if not path.exists():
-            continue
-        img = load_img(str(path))
-        values = np.asarray(img.get_fdata(), dtype=float)
-        finite = np.abs(values[np.isfinite(values)])
+        image = load_img(
+            str(cluster_dir / f"{contrast}_AVH-_vs_AVH+_tstat.nii.gz")
+        )
+        finite = np.abs(np.asarray(image.get_fdata(), dtype=float))
+        finite = finite[np.isfinite(finite)]
         if finite.size:
             vmax = max(vmax, float(np.nanmax(finite)))
-        maps.append((contrast, img))
-    if not maps:
-        return
-
+        maps.append((contrast, image))
     vmax = max(4.0, min(vmax, 6.0))
-    fig = plt.figure(figsize=(7.2, 2.25))
-    gs = fig.add_gridspec(
-        1, len(maps), wspace=0.07,
-        left=0.01, right=0.99, top=0.84, bottom=0.20,
+
+    fig = plt.figure(figsize=(FIGURE_WIDTH, 3.0))
+    figure_title(
+        fig,
+        "Whole-brain group contrasts",
+        "Descriptive AVH- versus AVH+ t maps",
+        x=0.035,
+        y=0.965,
     )
-    for idx, (contrast, img) in enumerate(maps):
-        ax = fig.add_subplot(gs[0, idx])
+    grid = fig.add_gridspec(
+        1,
+        3,
+        left=0.035,
+        right=0.965,
+        top=0.78,
+        bottom=0.34,
+        wspace=0.08,
+    )
+    for index, (contrast, image) in enumerate(maps):
+        ax = fig.add_subplot(grid[0, index])
         plot_glass_brain(
-            img, threshold=3.55, display_mode="lyrz", plot_abs=False,
-            cmap="cold_hot", symmetric_cbar=True, vmax=vmax,
-            colorbar=(idx == len(maps) - 1), figure=fig, axes=ax,
+            image,
+            threshold=3.55,
+            display_mode="lyrz",
+            plot_abs=False,
+            cmap=DIVERGING_CMAP,
+            symmetric_cbar=True,
+            vmax=vmax,
+            colorbar=False,
+            annotate=False,
+            figure=fig,
+            axes=ax,
             black_bg=False,
         )
-        ax.set_title(f"{chr(65 + idx)}  {format_contrast(contrast)}", loc="left", pad=5)
+        ax.text(
+            0.0,
+            1.06,
+            chr(65 + index),
+            transform=ax.transAxes,
+            ha="left",
+            va="bottom",
+            fontsize=8.3,
+            fontweight="bold",
+            color=NAVY,
+            clip_on=False,
+        )
+        ax.text(
+            0.10,
+            1.06,
+            format_contrast(contrast),
+            transform=ax.transAxes,
+            ha="left",
+            va="bottom",
+            fontsize=6.8,
+            fontweight="semibold",
+            color=INK,
+            clip_on=False,
+        )
 
-    n_perm = int(meta.get("n_permutations", 10_000))
-    first_result = next(iter(meta.get("results", {}).values()), {})
-    n_subjects = first_result.get("n_subjects", 45)
-    fig.text(
-        0.01, 0.055,
-        f"Descriptive t maps at two-sided voxel p < .001; n = {n_subjects}; "
-        f"{n_perm:,} permutations. No cluster survives maximum-cluster-size FWER p < .05.",
-        ha="left", va="bottom", fontsize=6.7, color=MUTED_INK,
+    cbar_ax = fig.add_axes([0.36, 0.235, 0.28, 0.024])
+    scalar = ScalarMappable(norm=Normalize(vmin=-vmax, vmax=vmax), cmap=DIVERGING_CMAP)
+    cbar = fig.colorbar(scalar, cax=cbar_ax, orientation="horizontal")
+    cbar.set_ticks([-vmax, 0, vmax])
+    cbar.set_ticklabels([f"-{vmax:.1f}", "0", f"{vmax:.1f}"])
+    cbar.ax.tick_params(length=1.8, width=0.4, pad=1.2, labelsize=5.8)
+    cbar.set_label("t statistic", fontsize=6.0, labelpad=1.5)
+    cbar.outline.set_linewidth(0.4)
+
+    first_result = next(iter(metadata["results"].values()))
+    add_note(
+        fig,
+        f"Two-sided voxel p < .001; n = {first_result['n_subjects']} (AVH- = {first_result['n_avh_minus']}, AVH+ = {first_result['n_avh_plus']}); "
+        f"{metadata['n_permutations']:,} permutations; covariates: age, IQ, and sex.\n"
+        "No cluster survives maximum-cluster-size FWER p < .05. Positive t is higher in AVH-; negative t is higher in AVH+.",
+        x=0.035,
+        y=0.025,
+        width_rule=0.93,
     )
-    _save(fig, PAPER_DIR / "Supplement_Figure_1_whole_brain_inference.png")
-    print(f"  whole brain -> {PAPER_DIR / 'Supplement_Figure_1_whole_brain_inference.png'}")
+    vectorize_scalar_images(fig)
+    save_figure(fig, OUTPUT_DIR / "Supplement_Figure_1_whole_brain_inference")
 
 
-# ===========================================================================
-# Supplementary figure 2: MVPA performance
-# ===========================================================================
-def supplement_mvpa() -> None:
-    path = DATA_DIR / "svm_weights" / "classification_results.json"
-    if not path.exists():
-        return
-    with open(path) as f:
-        payload = json.load(f)
-    rows = pd.DataFrame(payload.get("results", []))
-    if rows.empty:
-        return
+# ---------------------------------------------------------------------------
+# Supplementary Figure 2: MVPA
+# ---------------------------------------------------------------------------
+def supplement_figure_2_mvpa() -> None:
+    with open(DATA_DIR / "svm_weights" / "classification_results.json") as stream:
+        payload = json.load(stream)
+    rows = pd.DataFrame(payload["results"])
     rows["label"] = rows["contrast"].map(format_contrast)
-    rows = rows.iloc[::-1].reset_index(drop=True)
 
-    fig, ax = plt.subplots(figsize=(7.2, 3.0))
+    fig, ax = plt.subplots(figsize=(FIGURE_WIDTH, 3.15))
+    figure_title(
+        fig,
+        "MVPA performance",
+        "AVH- vs AVH+ · n = 40 (20/20) · shuffled five-fold KFold cross-validation",
+        x=0.055,
+        y=0.955,
+    )
     y = np.arange(len(rows))
-    ax.hlines(y, rows["auc"], rows["accuracy"], color=GRID_COLOR, linewidth=1.0, zorder=1)
-    ax.scatter(
-        rows["accuracy"], y, s=42, color=PALETTE["AVH-"], marker="o",
-        edgecolor=OUTLINE_COLOR, linewidth=0.6, label="Accuracy", zorder=3,
+    ax.hlines(
+        y,
+        rows["auc"],
+        rows["accuracy"],
+        color=HAIRLINE,
+        linewidth=0.85,
+        zorder=1,
     )
     ax.scatter(
-        rows["auc"], y, s=42, color="#E69F00", marker="D",
-        edgecolor=OUTLINE_COLOR, linewidth=0.6, label="ROC AUC", zorder=3,
+        rows["accuracy"],
+        y,
+        s=30,
+        marker="o",
+        facecolor=MUTED_BLUE,
+        edgecolor=NAVY,
+        linewidth=0.48,
+        label="Accuracy",
+        zorder=3,
     )
-    ax.axvline(0.5, color=OUTLINE_COLOR, lw=0.8, ls=(0, (3, 2)))
+    ax.scatter(
+        rows["auc"],
+        y,
+        s=34,
+        marker="D",
+        facecolor=PAPER,
+        edgecolor=SOFT_TEAL,
+        linewidth=0.85,
+        label="ROC AUC",
+        zorder=3,
+    )
+    ax.axvline(0.50, color=AXIS_COLOR, linewidth=0.62, linestyle=(0, (2.2, 2.2)))
     for yi, row in rows.iterrows():
         ax.text(
-            max(row["accuracy"], row["auc"]) + 0.025, yi,
-            f"p = {row['p_value']:.3f}", va="center", fontsize=7.2,
+            row["accuracy"] + 0.012,
+            yi,
+            f"{row['accuracy']:.3f}",
+            ha="left",
+            va="center",
+            fontsize=5.95,
+            color=MUTED_BLUE,
+        )
+        ax.text(
+            row["auc"] - 0.012,
+            yi,
+            f"{row['auc']:.3f}",
+            ha="right",
+            va="center",
+            fontsize=5.95,
+            color=SOFT_TEAL,
+        )
+        ax.text(
+            0.735,
+            yi,
+            f"p = {row['p_value']:.3f}",
+            ha="right",
+            va="center",
+            fontsize=6.0,
+            color=MUTED_INK,
         )
     ax.set_yticks(y)
     ax.set_yticklabels(rows["label"])
+    ax.invert_yaxis()
     ax.set_xlim(0.20, 0.76)
     ax.set_xlabel("Cross-validated score")
-    ax.set_title(
-        "MVPA classification performance\nAVH\N{MINUS SIGN} versus AVH+; shuffled five-fold KFold CV",
-        loc="left", pad=8,
+    ax.legend(
+        loc="upper right",
+        bbox_to_anchor=(1.0, 1.13),
+        ncol=2,
+        handletextpad=0.38,
+        columnspacing=1.0,
     )
-    ax.legend(loc="lower right", ncol=2)
     style_axis(ax, grid_axis="x")
-    fig.text(
-        0.02, 0.015,
-        "Dashed line indicates chance (0.50). Permutation p values use the stored 100-permutation analysis; "
-        "increase before confirmatory use.",
-        ha="left", va="bottom", fontsize=6.7, color=MUTED_INK,
+    clean_axis(ax)
+    fig.subplots_adjust(left=0.255, right=0.98, top=0.76, bottom=0.24)
+    add_note(
+        fig,
+        "Dashed line marks chance (0.50). Permutation p values use the stored 100-permutation analysis; increase before confirmatory use. KFold random_state = 42.",
+        x=0.055,
+        y=0.025,
+        width_rule=0.925,
     )
-    fig.subplots_adjust(left=0.25, right=0.98, top=0.80, bottom=0.23)
-    _save(fig, PAPER_DIR / "Supplement_Figure_2_MVPA.png")
-    print(f"  mvpa -> {PAPER_DIR / 'Supplement_Figure_2_MVPA.png'}")
+    save_figure(fig, OUTPUT_DIR / "Supplement_Figure_2_MVPA")
 
 
-# ===========================================================================
-# Supplementary figure 3: sample characteristics and motion QC
-# ===========================================================================
-def supplement_sample_qc() -> None:
-    parts = _load_participants()
-    qc_path = DATA_DIR / "qc.csv"
-    qc = pd.read_csv(qc_path) if qc_path.exists() else pd.DataFrame()
-    if not qc.empty:
-        qc = qc.merge(
-            parts[["participant_id", "group"]],
-            left_on="subject_id", right_on="participant_id", how="left",
-        )
-        qc["group"] = pd.Categorical(qc["group"], categories=GROUP_ORDER, ordered=True)
+# ---------------------------------------------------------------------------
+# Supplementary Figure 3: sample and quality control
+# ---------------------------------------------------------------------------
+def supplement_figure_3_sample_qc() -> None:
+    participants = load_participants()
+    qc = pd.read_csv(DATA_DIR / "qc.csv").merge(
+        participants[["participant_id", "group"]],
+        left_on="subject_id",
+        right_on="participant_id",
+        how="left",
+    )
+    qc["group"] = pd.Categorical(qc["group"], GROUP_ORDER, ordered=True)
 
-    fig, axes = plt.subplots(2, 3, figsize=(7.2, 4.55))
+    fig, axes = plt.subplots(2, 3, figsize=(FIGURE_WIDTH, 4.85))
+    figure_title(
+        fig,
+        "Sample and quality control",
+        "Participant-level distributions and cohort composition",
+        x=0.055,
+        y=0.97,
+    )
 
-    def distribution(ax, data, variable: str, title: str, ylabel: str) -> None:
-        sub = data.dropna(subset=[variable]).copy()
-        sns.violinplot(
-            data=sub, x="group", y=variable, order=GROUP_ORDER, hue="group",
-            palette=PALETTE, inner=None, cut=0, linewidth=0.7, legend=False, ax=ax,
+    def distribution(
+        ax,
+        data: pd.DataFrame,
+        variable: str,
+        label: str,
+        title: str,
+        ylabel: str,
+        id_col: str,
+    ) -> None:
+        draw_group_distribution(
+            ax,
+            data,
+            variable,
+            id_col=id_col,
+            show_counts=True,
         )
-        for collection in ax.collections:
-            collection.set_alpha(0.25)
-        sns.boxplot(
-            data=sub, x="group", y=variable, order=GROUP_ORDER, width=0.20,
-            showfliers=False, color="white",
-            boxprops={"edgecolor": OUTLINE_COLOR, "linewidth": 0.7},
-            whiskerprops={"color": OUTLINE_COLOR, "linewidth": 0.7},
-            capprops={"color": OUTLINE_COLOR, "linewidth": 0.7},
-            medianprops={"color": OUTLINE_COLOR, "linewidth": 0.9}, ax=ax,
-        )
-        sns.stripplot(
-            data=sub, x="group", y=variable, order=GROUP_ORDER, hue="group",
-            palette=PALETTE, size=2.1, alpha=0.72, jitter=0.16,
-            edgecolor="white", linewidth=0.2, legend=False, ax=ax,
-        )
-        ax.set_title(title, loc="left", pad=5)
         ax.set_xlabel("")
         ax.set_ylabel(ylabel)
-        style_axis(ax, grid_axis="y")
+        panel_header(ax, label, title)
 
-    distribution(axes[0, 0], parts, "age", "A  Age", "Years")
-    distribution(axes[0, 1], parts, "iq", "B  IQ", "IQ score")
-    if not qc.empty:
-        distribution(axes[0, 2], qc, "mean_fd", "C  Mean framewise displacement", "Mean FD (mm)")
-        axes[0, 2].axhline(0.5, color=OUTLINE_COLOR, lw=0.7, ls=(0, (3, 2)))
-        distribution(axes[1, 0], qc, "pct_high_motion", "D  High-motion volumes", "Volumes (%)")
-    else:
-        axes[0, 2].axis("off")
-        axes[1, 0].axis("off")
+    distribution(
+        axes[0, 0], participants, "age", "A", "Age", "Years", "participant_id"
+    )
+    distribution(
+        axes[0, 1], participants, "iq", "B", "IQ", "IQ score", "participant_id"
+    )
+    distribution(
+        axes[0, 2],
+        qc,
+        "mean_fd",
+        "C",
+        "Mean framewise displacement",
+        "Mean FD (mm)",
+        "subject_id",
+    )
+    axes[0, 2].axhline(
+        0.5, color=AXIS_COLOR, linewidth=0.62, linestyle=(0, (2.2, 2.2))
+    )
+    axes[0, 2].text(
+        2.46,
+        0.5,
+        "0.5 mm",
+        ha="right",
+        va="bottom",
+        fontsize=5.65,
+        color=MUTED_INK,
+    )
+    distribution(
+        axes[1, 0],
+        qc,
+        "pct_high_motion",
+        "D",
+        "High-motion volumes",
+        "Volumes (%)",
+        "subject_id",
+    )
 
-    counts = parts.groupby("group", observed=True).size().reindex(GROUP_ORDER)
+    counts = participants.groupby("group", observed=True).size().reindex(GROUP_ORDER)
     axes[1, 1].bar(
-        GROUP_ORDER, counts.values, color=[PALETTE[g] for g in GROUP_ORDER],
-        edgecolor=OUTLINE_COLOR, linewidth=0.6, width=0.62,
+        GROUP_ORDER,
+        counts.to_numpy(dtype=float),
+        width=0.56,
+        color=[lighten(PALETTE[group], 0.12) for group in GROUP_ORDER],
+        edgecolor=[PALETTE[group] for group in GROUP_ORDER],
+        linewidth=0.62,
+        zorder=2,
     )
-    for idx, value in enumerate(counts.values):
-        axes[1, 1].text(idx, value + 0.45, f"n = {int(value)}", ha="center", fontsize=7.2)
-    axes[1, 1].set_ylim(0, max(counts.values) * 1.18)
-    axes[1, 1].set_ylabel("Participants")
-    axes[1, 1].set_title("E  Analysis cohort", loc="left", pad=5)
-    style_axis(axes[1, 1], grid_axis="y")
-
-    sex = (
-        parts.groupby(["group", "sex"], observed=True).size()
-        .unstack(fill_value=0).reindex(GROUP_ORDER)
-    )
-    props = sex.div(sex.sum(axis=1), axis=0)
-    bottom = np.zeros(len(props))
-    sex_colors = {"male": "#0072B2", "female": "#CC79A7"}
-    for label in [c for c in ("male", "female") if c in props.columns]:
-        values = props[label].to_numpy(dtype=float)
-        axes[1, 2].bar(
-            GROUP_ORDER, values, bottom=bottom, color=sex_colors[label],
-            edgecolor="white", linewidth=0.5, width=0.62, label=label.capitalize(),
+    for index, value in enumerate(counts):
+        axes[1, 1].text(
+            index,
+            value + 0.50,
+            f"n = {int(value)}",
+            ha="center",
+            va="bottom",
+            fontsize=6.0,
         )
+    axes[1, 1].set_ylim(0, max(counts) * 1.20)
+    axes[1, 1].set_ylabel("Participants")
+    panel_header(axes[1, 1], "E", "Analysis cohort")
+    style_axis(axes[1, 1], grid_axis="y")
+    clean_axis(axes[1, 1])
+
+    sex_counts = (
+        participants.groupby(["group", "sex"], observed=True)
+        .size()
+        .unstack(fill_value=0)
+        .reindex(GROUP_ORDER)
+    )
+    sex_proportions = sex_counts.div(sex_counts.sum(axis=1), axis=0)
+    bottom = np.zeros(len(GROUP_ORDER), dtype=float)
+    sex_styles = {
+        "male": {"color": NAVY, "hatch": ""},
+        "female": {"color": PALE_BLUE, "hatch": "////"},
+    }
+    for sex in [value for value in ("male", "female") if value in sex_counts.columns]:
+        values = sex_proportions[sex].to_numpy(dtype=float)
+        bars = axes[1, 2].bar(
+            GROUP_ORDER,
+            values,
+            bottom=bottom,
+            width=0.56,
+            color=sex_styles[sex]["color"],
+            hatch=sex_styles[sex]["hatch"],
+            edgecolor=PAPER if sex == "male" else AXIS_COLOR,
+            linewidth=0.42,
+            label=sex.capitalize(),
+            zorder=2,
+        )
+        for index, (bar, proportion) in enumerate(zip(bars, values)):
+            if proportion >= 0.10:
+                axes[1, 2].text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bottom[index] + proportion / 2,
+                    str(int(sex_counts.iloc[index][sex])),
+                    ha="center",
+                    va="center",
+                    fontsize=5.8,
+                    color=PAPER if sex == "male" else INK,
+                )
         bottom += values
     axes[1, 2].set_ylim(0, 1)
     axes[1, 2].set_ylabel("Proportion")
-    axes[1, 2].set_title("F  Sex distribution", loc="left", pad=5)
-    axes[1, 2].legend(loc="upper right")
+    panel_header(axes[1, 2], "F", "Sex distribution")
+    axes[1, 2].legend(
+        loc="upper right",
+        bbox_to_anchor=(1.0, 1.14),
+        ncol=2,
+        handlelength=0.95,
+        handletextpad=0.30,
+        columnspacing=0.60,
+    )
     style_axis(axes[1, 2], grid_axis="y")
+    clean_axis(axes[1, 2])
 
-    fig.text(
-        0.02, 0.012,
-        "Points represent participants; boxes show median and interquartile range. "
-        "Dashed line in C marks mean FD = 0.5 mm.",
-        ha="left", va="bottom", fontsize=6.7, color=MUTED_INK,
+    fig.subplots_adjust(
+        left=0.075,
+        right=0.99,
+        top=0.84,
+        bottom=0.14,
+        hspace=0.62,
+        wspace=0.38,
     )
-    fig.subplots_adjust(left=0.08, right=0.99, top=0.96, bottom=0.12, hspace=0.48, wspace=0.40)
-    _save(fig, PAPER_DIR / "Supplement_Figure_3_sample_and_QC.png")
-    print(f"  sample/QC -> {PAPER_DIR / 'Supplement_Figure_3_sample_and_QC.png'}")
-
-
-# ===========================================================================
-# Supplementary figure 4: exploratory connectivity and laterality
-# ===========================================================================
-def supplement_exploratory_network() -> None:
-    conn_path = DATA_DIR / "connectivity_significant.csv"
-    lat_path = DATA_DIR / "laterality_stats.csv"
-    if not conn_path.exists() and not lat_path.exists():
-        return
-
-    fig, axes = plt.subplots(
-        2, 1, figsize=(7.2, 5.75),
-        gridspec_kw={"height_ratios": [0.75, 2.35]},
+    add_note(
+        fig,
+        "Points are participants; violins show density and boxes show median and IQR. Dashed line in C marks mean FD = 0.5 mm. Panel F numbers are participant counts within sex strata.",
+        x=0.055,
+        y=0.025,
+        width_rule=0.935,
     )
-    ax = axes[0]
-    if conn_path.exists():
-        conn = pd.read_csv(conn_path).sort_values("diff")
-        labels = [
-            f"{format_roi(a)} \N{LEFT RIGHT ARROW} {format_roi(b)}"
-            for a, b in zip(conn["roi1"], conn["roi2"])
-        ]
-        y = np.arange(len(conn))
-        colors = [PALETTE["AVH-"] if value > 0 else PALETTE["AVH+"] for value in conn["diff"]]
-        ax.barh(y, conn["diff"], color=colors, edgecolor=OUTLINE_COLOR, linewidth=0.6, height=0.56)
-        ax.set_yticks(y)
-        ax.set_yticklabels(labels)
-        for yi, row in conn.reset_index(drop=True).iterrows():
-            ax.text(
-                row["diff"] / 2, yi, f"p = {row['p_value']:.3f}",
-                va="center", ha="center", fontsize=7.0, color="white",
-            )
-        ax.axvline(0, color=OUTLINE_COLOR, lw=0.8)
-        ax.set_xlim(-0.23, 0.23)
-        ax.set_xlabel("Difference in Fisher z (AVH\N{MINUS SIGN} \N{MINUS SIGN} AVH+)")
-        ax.set_title("A  Connectivity differences\nUncorrected p < .05", loc="left", pad=7)
-        style_axis(ax, grid_axis="x")
-    else:
-        ax.axis("off")
+    save_figure(fig, OUTPUT_DIR / "Supplement_Figure_3_sample_and_QC")
 
-    ax = axes[1]
-    if lat_path.exists():
-        lat = pd.read_csv(lat_path)
-        lat = lat[lat["comparison"] == "AVH-_vs_AVH+"].copy()
-        lat["abs_d"] = lat["cohens_d"].abs()
-        lat = lat.nlargest(10, "abs_d").sort_values("cohens_d")
-        lat["label"] = [
-            f"{format_contrast(c)}; {r.replace('_', ' ')}"
-            for c, r in zip(lat["contrast"], lat["roi_pair"])
-        ]
-        y = np.arange(len(lat))
-        ax.hlines(y, 0, lat["cohens_d"], color=GRID_COLOR, linewidth=1.1)
-        ax.scatter(
-            lat["cohens_d"], y, s=28, color=PALETTE["AVH-"],
-            edgecolor=OUTLINE_COLOR, linewidth=0.55, zorder=3,
-        )
-        for yi, row in lat.reset_index(drop=True).iterrows():
-            ax.text(
-                0.56, yi, f"p = {row['p_value']:.3f}",
-                va="center", ha="left", fontsize=6.7,
-            )
-        ax.axvline(0, color=OUTLINE_COLOR, lw=0.8)
-        ax.set_xlim(-0.55, 0.72)
-        ax.set_yticks(y)
-        ax.set_yticklabels(lat["label"], fontsize=6.5)
-        ax.set_xlabel("Cohen's d (AVH\N{MINUS SIGN} vs AVH+)")
-        ax.set_title("B  Laterality effects\nTen largest absolute effects", loc="left", pad=7)
-        style_axis(ax, grid_axis="x")
-    else:
-        ax.axis("off")
 
-    fig.text(
-        0.02, 0.012,
-        "Exploratory results only. Connectivity differences are uncorrected and none survive FDR; "
-        "no laterality comparison reaches p < .05.",
-        ha="left", va="bottom", fontsize=6.7, color=MUTED_INK,
+# ---------------------------------------------------------------------------
+# Supplementary Figure 4: exploratory connectivity and laterality
+# ---------------------------------------------------------------------------
+def supplement_figure_4_exploratory_network() -> None:
+    connectivity = pd.read_csv(DATA_DIR / "connectivity_uncorrected_edges.csv").sort_values(
+        "diff"
     )
-    fig.subplots_adjust(left=0.33, right=0.98, top=0.96, bottom=0.105, hspace=0.62)
-    _save(fig, PAPER_DIR / "Supplement_Figure_4_exploratory_network.png")
-    print(f"  exploratory -> {PAPER_DIR / 'Supplement_Figure_4_exploratory_network.png'}")
+    laterality = pd.read_csv(DATA_DIR / "laterality_stats.csv")
+    laterality = laterality[laterality["comparison"] == "AVH-_vs_AVH+"].copy()
+    laterality["abs_d"] = laterality["cohens_d"].abs()
+    laterality = laterality.nlargest(10, "abs_d").sort_values("cohens_d")
 
+    fig = plt.figure(figsize=(FIGURE_WIDTH, 5.45))
+    figure_title(
+        fig,
+        "Exploratory network effects",
+        "Connectivity and laterality comparisons",
+        x=0.055,
+        y=0.97,
+    )
+    grid = fig.add_gridspec(
+        2,
+        1,
+        height_ratios=[0.82, 2.42],
+        left=0.33,
+        right=0.96,
+        top=0.82,
+        bottom=0.13,
+        hspace=0.57,
+    )
 
-# ===========================================================================
-# README
-# ===========================================================================
-def write_readme() -> None:
-    lines = [
-        "# Paper Figures",
-        "",
-        "Journal-oriented figures generated by",
-        "`code/python/paper_visualizations.py` from the consolidated stats in",
-        "`results/data/`. Re-run with:",
-        "",
-        "    python code/python/paper_visualizations.py",
-        "",
-        "## Figures",
-        "",
-        "- **Figure_1_core_results** — Adjusted post hoc ANCOVA effects; age/IQ-residualized "
-        "PSYRATS association; and raw subject-level activation distributions.",
-        "- **Figure_2_effect_size_landscape** — ROI by contrast Cohen's d matrix for AVH- "
-        "versus AVH+; no omnibus ROI cell survives within-contrast FDR.",
-        "- **Figure_3_ROI_definitions** — Glass-brain ROI locations and MNI coordinate/radius table.",
-        "- **Supplement_Figure_1_whole_brain_inference** — Descriptive whole-brain t maps with the null corrected result stated explicitly.",
-        "- **Supplement_Figure_2_MVPA** — Cross-validated accuracy and ROC AUC with permutation p values and chance reference.",
-        "- **Supplement_Figure_3_sample_and_QC** — Demographic distributions, cohort counts, sex, and motion diagnostics.",
-        "- **Supplement_Figure_4_exploratory_network** — Uncorrected connectivity differences and the largest laterality effects.",
-        "",
-        "## Conventions",
-        "",
-        "- Each figure is exported as 600 dpi PNG, editable SVG, and vector PDF.",
-        "- Figures are sized for a roughly 7.2-inch two-column journal width.",
-        "- Groups use a color-vision-deficiency-safe gray/blue/vermillion palette.",
-        "- Negative Cohen's d (AVH- vs AVH+) = higher activation in AVH+.",
-        "- Statistical values are read from stored analysis outputs; figure generation does not rerun models.",
-        "",
+    ax = fig.add_subplot(grid[0])
+    labels = [
+        f"{format_roi(roi1)} to {format_roi(roi2)}"
+        for roi1, roi2 in zip(connectivity["roi1"], connectivity["roi2"])
     ]
-    (PAPER_DIR / "README.md").write_text("\n".join(lines))
+    y = np.arange(len(connectivity))
+    ax.hlines(y, 0, connectivity["diff"], color=HAIRLINE, linewidth=1.1, zorder=1)
+    for yi, (_, row) in enumerate(connectivity.iterrows()):
+        positive = row["diff"] > 0
+        color = MUTED_BLUE if positive else CORAL
+        ax.scatter(
+            row["diff"],
+            yi,
+            s=30,
+            marker="o" if positive else "^",
+            facecolor=color,
+            edgecolor=NAVY,
+            linewidth=0.45,
+            zorder=3,
+        )
+        offset = 0.014
+        ax.text(
+            row["diff"] + offset,
+            yi + (0.10 if not positive else 0.0),
+            f"{row['diff']:+.3f}  ·  p = {row['p_value']:.3f}",
+            ha="left",
+            va="center",
+            fontsize=5.9,
+            color=MUTED_INK,
+        )
+    ax.axvline(0, color=AXIS_COLOR, linewidth=0.62)
+    ax.set_xlim(-0.25, 0.25)
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels)
+    ax.set_xlabel("Difference in Fisher z (AVH- minus AVH+)")
+    panel_header(
+        ax,
+        "A",
+        "Connectivity differences",
+        "Uncorrected p < .05",
+        header_y=1.24,
+    )
+    style_axis(ax, grid_axis="x")
+    clean_axis(ax)
+
+    ax = fig.add_subplot(grid[1])
+    laterality_labels = [
+        f"{format_contrast(contrast)}; {roi_pair.replace('_', ' ')}"
+        for contrast, roi_pair in zip(laterality["contrast"], laterality["roi_pair"])
+    ]
+    y = np.arange(len(laterality))
+    ax.hlines(y, 0, laterality["cohens_d"], color=HAIRLINE, linewidth=0.92, zorder=1)
+    for yi, (_, row) in enumerate(laterality.iterrows()):
+        positive = row["cohens_d"] > 0
+        ax.scatter(
+            row["cohens_d"],
+            yi,
+            s=24,
+            marker="o" if positive else "^",
+            facecolor=MUTED_BLUE if positive else CORAL,
+            edgecolor=NAVY,
+            linewidth=0.42,
+            zorder=3,
+        )
+        ax.text(
+            0.55,
+            yi,
+            f"d = {row['cohens_d']:+.3f}  ·  p = {row['p_value']:.3f}",
+            ha="left",
+            va="center",
+            fontsize=5.85,
+            color=MUTED_INK,
+        )
+    ax.axvline(0, color=AXIS_COLOR, linewidth=0.62)
+    ax.set_xlim(-0.55, 0.76)
+    ax.set_yticks(y)
+    ax.set_yticklabels(laterality_labels, fontsize=6.05)
+    ax.set_xlabel("Cohen's d (AVH- vs AVH+)")
+    panel_header(ax, "B", "Laterality effects", "Ten largest absolute effects")
+    style_axis(ax, grid_axis="x")
+    clean_axis(ax)
+
+    add_note(
+        fig,
+        "Exploratory results only. Connectivity differences are uncorrected and none survive FDR; no laterality comparison reaches p < .05.",
+        x=0.055,
+        y=0.025,
+        width_rule=0.905,
+    )
+    save_figure(fig, OUTPUT_DIR / "Supplement_Figure_4_exploratory_network")
 
 
 def main() -> None:
-    PAPER_DIR.mkdir(parents=True, exist_ok=True)
-    print("\n" + "=" * 70)
-    print("BUILDING results/paper_figures/")
-    print("=" * 70)
-    figure1_main_results()
-    effect_size_heatmap()
-    roi_definition_panel()
-    supplement_whole_brain_inference()
-    supplement_mvpa()
-    supplement_sample_qc()
-    supplement_exploratory_network()
-    write_readme()
-    print(f"\nDone. See {PAPER_DIR}\n")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    figure_1_core_results()
+    figure_2_effect_size_landscape()
+    figure_3_roi_definitions()
+    supplement_figure_1_whole_brain()
+    supplement_figure_2_mvpa()
+    supplement_figure_3_sample_qc()
+    supplement_figure_4_exploratory_network()
+    print(f"Created seven manuscript figure triplets in {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":

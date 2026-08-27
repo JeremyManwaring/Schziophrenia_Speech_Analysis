@@ -123,7 +123,7 @@ def generate_summary_report(results_dir, output_path):
     
     # QC Summary
     report.append("\n\n## QUALITY CONTROL SUMMARY\n")
-    qc_file = results_dir / 'qc' / 'qc_summary.csv'
+    qc_file = results_dir / 'data' / 'qc.csv'
     if qc_file.exists():
         import pandas as pd
         qc_df = pd.read_csv(qc_file)
@@ -132,7 +132,7 @@ def generate_summary_report(results_dir, output_path):
             report.append(f"Mean framewise displacement: {qc_df['mean_fd'].mean():.3f} mm")
             report.append(f"Range: {qc_df['mean_fd'].min():.3f} - {qc_df['mean_fd'].max():.3f} mm")
         
-        exclusion_file = results_dir / 'qc' / 'motion_exclusions.txt'
+        exclusion_file = results_dir / 'data' / 'motion_exclusions.txt'
         if exclusion_file.exists():
             with open(exclusion_file) as f:
                 content = f.read()

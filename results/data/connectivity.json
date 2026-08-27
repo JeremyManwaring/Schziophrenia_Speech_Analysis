@@ -5,7 +5,8 @@
   "n_rois": 12,
   "n_avh_minus": 23,
   "n_avh_plus": 23,
-  "n_significant_connections": 2,
+  "n_uncorrected_edges": 2,
+  "n_fdr_significant_edges": 0,
   "roi_names": [
     "L_STG_posterior",
     "L_STG_anterior",

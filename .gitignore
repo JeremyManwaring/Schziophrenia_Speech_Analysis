@@ -36,6 +36,9 @@ ENV/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+.pytest_cache/
+.ruff_cache/
+.coverage
 
 # Environment variables
 .env
@@ -77,4 +80,5 @@ derivatives/
 results/data/first_level/
 nilearn_cache/
 work/
+tmp/
 *.nii.gz
