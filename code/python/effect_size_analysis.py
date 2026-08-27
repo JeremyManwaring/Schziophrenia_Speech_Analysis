@@ -11,10 +11,8 @@ This script:
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
-import json
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -541,7 +539,7 @@ def run_effect_size_analysis(roi_dir, output_dir):
             # Print summary of large effects
             large_effects = effect_df[effect_df['interpretation'] == 'large']
             if len(large_effects) > 0:
-                print(f"  Large effects found:")
+                print("  Large effects found:")
                 for _, row in large_effects.iterrows():
                     print(f"    - {row['roi']} ({row['comparison']}): d={row['cohens_d']:.2f}")
             

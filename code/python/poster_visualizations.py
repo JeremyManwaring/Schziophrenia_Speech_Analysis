@@ -23,10 +23,10 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
-from scipy import stats
 
 sys.path.insert(0, str(Path(__file__).parent))
-from poster_style import (  # noqa: E402
+import surface_brain_plots
+from poster_style import (
     GROUP_ORDER,
     PALETTE,
     SEX_PALETTE,
@@ -34,7 +34,6 @@ from poster_style import (  # noqa: E402
     format_contrast,
     format_roi,
 )
-import surface_brain_plots  # noqa: E402
 
 warnings.filterwarnings("ignore")
 apply_style()
@@ -404,7 +403,7 @@ def make_significant_effects_bar() -> None:
         xerr = [merged["cohens_d"] - merged["d_ci_lower"],
                 merged["d_ci_upper"] - merged["cohens_d"]]
     ax.barh(y, merged["cohens_d"], color=colors, edgecolor="black", lw=0.9,
-            xerr=xerr, capsize=3, error_kw=dict(ecolor="gray", lw=1), zorder=3)
+            xerr=xerr, capsize=3, error_kw={"ecolor": "gray", "lw": 1}, zorder=3)
     ax.axvline(0, color="black", lw=0.7, ls="--", alpha=0.6)
     ax.set_yticks(y)
     ax.set_yticklabels(merged["label"], fontsize=11)
@@ -529,8 +528,8 @@ def _corr_scatter_panel(ax, x: np.ndarray, y: np.ndarray, hit: dict) -> None:
     """Single clean PSYRATS scatter with regression line + 95% CI band."""
     sns.regplot(
         x=x, y=y, ax=ax, color=PALETTE["AVH+"], truncate=False,
-        scatter_kws=dict(s=70, edgecolor="black", linewidths=0.6, alpha=0.85),
-        line_kws=dict(color="black", lw=1.6, ls="--"),
+        scatter_kws={"s": 70, "edgecolor": "black", "linewidths": 0.6, "alpha": 0.85},
+        line_kws={"color": "black", "lw": 1.6, "ls": "--"},
     )
     ax.set_xlabel("Activation (β)")
     ax.set_ylabel("PSYRATS Total")
@@ -541,8 +540,8 @@ def _corr_scatter_panel(ax, x: np.ndarray, y: np.ndarray, hit: dict) -> None:
            f"raw r = {hit['raw_r']:+.2f}    n = {len(x)}")
     ax.text(0.04, 0.96, txt, transform=ax.transAxes, va="top", ha="left",
             fontsize=10, fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.45", facecolor="white",
-                      edgecolor=SIG_OK, linewidth=1.2, alpha=0.92))
+            bbox={"boxstyle": "round,pad=0.45", "facecolor": "white",
+                  "edgecolor": SIG_OK, "linewidth": 1.2, "alpha": 0.92})
 
 
 def make_correlations_significant() -> None:
@@ -624,8 +623,8 @@ def make_classification() -> None:
     fig, ax = plt.subplots(figsize=(11, 6))
     bars1 = ax.bar(x - width / 2, rows["accuracy"], width, color="#3498db",
                    edgecolor="black", lw=0.8, label="Accuracy")
-    bars2 = ax.bar(x + width / 2, rows["auc"], width, color="#e67e22",
-                   edgecolor="black", lw=0.8, label="ROC AUC")
+    ax.bar(x + width / 2, rows["auc"], width, color="#e67e22",
+           edgecolor="black", lw=0.8, label="ROC AUC")
     ax.axhline(0.5, color="black", lw=1.0, ls="--", alpha=0.7, label="Chance")
     ax.set_xticks(x)
     ax.set_xticklabels(rows["contrast_label"], rotation=15, ha="right")
@@ -677,7 +676,8 @@ def make_classification() -> None:
 def make_connectivity() -> None:
     out = POSTER_DIR / "05_connectivity"
     summary_path = DATA_DIR / "connectivity.json"
-    sig_path = DATA_DIR / "connectivity_significant.csv"
+    edge_path = DATA_DIR / "connectivity_uncorrected_edges.csv"
+    diff_path = DATA_DIR / "connectivity" / "connectivity_difference.npy"
     if not summary_path.exists():
         return
     with open(summary_path) as f:
@@ -685,17 +685,10 @@ def make_connectivity() -> None:
 
     rois = meta["roi_names"]
 
-    # Build a "difference" matrix from significant connections (sparse)
     n = len(rois)
-    diff = np.zeros((n, n))
-    pmat = np.ones((n, n))
-    if sig_path.exists():
-        sig = pd.read_csv(sig_path)
-        idx = {r: i for i, r in enumerate(rois)}
-        for _, row in sig.iterrows():
-            i, j = idx[row["roi1"]], idx[row["roi2"]]
-            diff[i, j] = diff[j, i] = row["diff"]
-            pmat[i, j] = pmat[j, i] = row["p_value"]
+    diff = np.load(diff_path) if diff_path.exists() else np.zeros((n, n))
+    if diff.shape != (n, n):
+        raise ValueError(f"Unexpected connectivity matrix shape: {diff.shape}")
 
     fig, ax = plt.subplots(figsize=(11, 9))
     vmax = max(0.05, np.abs(diff).max())
@@ -710,18 +703,24 @@ def make_connectivity() -> None:
     fig.tight_layout()
     _save(fig, out / "connectivity_matrix.png")
 
-    if sig_path.exists():
-        sig = pd.read_csv(sig_path).copy()
-        sig["pair"] = [f"{format_roi(a)} ↔ {format_roi(b)}" for a, b in zip(sig["roi1"], sig["roi2"])]
-        sig = sig.sort_values("diff")
-        colors = [PALETTE["AVH-"] if d > 0 else PALETTE["AVH+"] for d in sig["diff"]]
-        fig, ax = plt.subplots(figsize=(11, max(4, 0.55 * len(sig))))
-        ax.barh(sig["pair"], sig["diff"], color=colors, edgecolor="black", lw=0.8)
+    if edge_path.exists():
+        edges = pd.read_csv(edge_path).copy()
+        edges["pair"] = [
+            f"{format_roi(a)} ↔ {format_roi(b)}"
+            for a, b in zip(edges["roi1"], edges["roi2"])
+        ]
+        edges = edges.sort_values("diff")
+        colors = [
+            PALETTE["AVH-"] if d > 0 else PALETTE["AVH+"]
+            for d in edges["diff"]
+        ]
+        fig, ax = plt.subplots(figsize=(11, max(4, 0.55 * len(edges))))
+        ax.barh(edges["pair"], edges["diff"], color=colors, edgecolor="black", lw=0.8)
         ax.axvline(0, color="black", lw=0.6, ls="--")
         ax.set_xlabel("Δ Fisher z (AVH- − AVH+)")
-        ax.set_title("Significant Connectivity Differences (p < 0.05)",
+        ax.set_title("Nominal Connectivity Differences (uncorrected p < 0.05)",
                      fontsize=16, fontweight="bold")
-        for i, (d, p) in enumerate(zip(sig["diff"], sig["p_value"])):
+        for i, (d, p) in enumerate(zip(edges["diff"], edges["p_value"])):
             ax.text(d + (0.005 if d > 0 else -0.005), i,
                     f" p = {p:.3f}{_sig_marker(p)}",
                     va="center", ha="left" if d > 0 else "right", fontsize=10)
@@ -731,7 +730,7 @@ def make_connectivity() -> None:
         ]
         ax.legend(handles=handles, loc="lower right", frameon=True)
         fig.tight_layout()
-        _save(fig, out / "significant_connections.png")
+        _save(fig, out / "nominal_connections.png")
 
 
 # ===========================================================================
@@ -987,8 +986,8 @@ def make_summary() -> None:
         "   no connectivity edge survives FDR."
     )
     ax.text(0.0, 1.0, msg, va="top", ha="left", fontsize=12.5, linespacing=1.35,
-            bbox=dict(boxstyle="round,pad=0.9", facecolor="#f4f6f7",
-                      edgecolor="#2c3e50", linewidth=1.5))
+            bbox={"boxstyle": "round,pad=0.9", "facecolor": "#f4f6f7",
+                  "edgecolor": "#2c3e50", "linewidth": 1.5})
 
     fig.suptitle("Schizophrenia Auditory Verbal Hallucinations  ·  Key Findings",
                  fontsize=20, fontweight="bold", y=0.965)
@@ -1000,7 +999,7 @@ def make_summary() -> None:
 # ===========================================================================
 def write_readme() -> None:
     es_path = EFFECT_DIR / "effect_sizes_summary.csv"
-    sig_path = DATA_DIR / "connectivity_significant.csv"
+    edge_path = DATA_DIR / "connectivity_uncorrected_edges.csv"
     cls_path = DATA_DIR / "svm_weights" / "classification_results.json"
 
     sections = [
@@ -1008,7 +1007,7 @@ def write_readme() -> None:
         ("02_roi_effects", "Raincloud + grouped-bar + forest plots of ROI activation by group, plus the targeted post hoc ANCOVA forest."),
         ("03_correlations", "ROI activation vs PSYRATS scatter plots in the AVH+ group."),
         ("04_classification", "MVPA SVM accuracy / AUC + permutation summary; shuffled five-fold KFold CV with random_state=42."),
-        ("05_connectivity", "Functional connectivity matrix and significant ROI-ROI group differences."),
+        ("05_connectivity", "Functional connectivity matrix and nominal ROI-ROI group differences."),
         ("06_laterality", "Hemispheric laterality heatmap, bar plots, and effect-size summary."),
         ("07_demographics_qc", "Age, IQ, sex distribution, and motion QC."),
         ("summary", "Single hero figure with the headline finding."),
@@ -1034,13 +1033,12 @@ def write_readme() -> None:
         n_med = int(((es["cohens_d"].abs() >= 0.2) & (es["cohens_d"].abs() < 0.5)).sum())
     else:
         n_sig = n_med = 0
-    n_conn = len(pd.read_csv(sig_path)) if sig_path.exists() else 0
+    n_conn = len(pd.read_csv(edge_path)) if edge_path.exists() else 0
     n_omnibus_fdr = len(_omnibus_fdr_significant())
     cls_summary = ""
     if cls_path.exists():
         with open(cls_path) as f:
             cls = json.load(f)
-        rows = pd.DataFrame(cls["results"])
         cls_summary = ", ".join(f"{format_contrast(r['contrast'])}: acc={r['accuracy']:.2f} (p={r['p_value']:.2f})"
                                 for r in cls["results"])
 
@@ -1087,7 +1085,7 @@ def main() -> None:
     print("\n[1/8] Brain maps ...")
     try:
         make_brain_maps()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - retain non-brain poster sections
         print(f"  ! brain maps failed: {exc}")
 
     print("\n[2/8] ROI effects ...")

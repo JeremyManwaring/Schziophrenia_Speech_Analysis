@@ -11,13 +11,12 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import nibabel as nib
-from nilearn.glm.first_level import FirstLevelModel, make_first_level_design_matrix
+from nilearn.glm.first_level import FirstLevelModel
 from nilearn.glm.contrasts import expression_to_contrast_vector
-from nilearn.plotting import plot_design_matrix, plot_contrast_matrix
+from nilearn.plotting import plot_design_matrix
 from nilearn.image import load_img
 import warnings
 import json
-import os
 
 warnings.filterwarnings('ignore')
 
@@ -202,7 +201,7 @@ def run_first_level_glm(subject_id, fmriprep_dir, events_path, output_dir,
         n_jobs=-1
     )
     
-    print(f"    Fitting GLM...")
+    print("    Fitting GLM...")
     
     # Fit the model
     fmri_glm.fit(str(bold_file), events=events, confounds=confounds)
@@ -210,7 +209,7 @@ def run_first_level_glm(subject_id, fmriprep_dir, events_path, output_dir,
     # Compute and save contrasts
     results = {'subject_id': subject_id, 'contrasts': {}}
     
-    print(f"    Computing contrasts...")
+    print("    Computing contrasts...")
     
     for contrast_name, contrast_def in CONTRASTS.items():
         try:
@@ -406,7 +405,7 @@ def main():
     exclude_subjects = []
     
     if exclusion_file.exists():
-        print(f"\nNote: Found motion exclusions file. Review before excluding subjects.")
+        print("\nNote: Found motion exclusions file. Review before excluding subjects.")
     
     # Run first-level GLM for all subjects
     results = run_all_subjects(

@@ -11,9 +11,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import nibabel as nib
-from nilearn.glm.second_level import SecondLevelModel, non_parametric_inference
-from nilearn.image import load_img, concat_imgs, mean_img
-from nilearn.plotting import plot_stat_map, plot_glass_brain
+from nilearn.glm.second_level import SecondLevelModel
+from nilearn.plotting import plot_glass_brain
 from nilearn.reporting import get_clusters_table
 import matplotlib.pyplot as plt
 import json
@@ -231,7 +230,7 @@ def run_group_anova(maps, design_matrix, output_dir, contrast_name,
                 clusters = get_clusters_table(z_map, stat_threshold=2.3, min_distance=8)
                 if len(clusters) > 0:
                     clusters.to_csv(contrast_output / f'{contrast_name}_{name}_clusters.csv', index=False)
-            except:
+            except Exception:
                 pass
                 
         except Exception as e:
@@ -292,7 +291,7 @@ def create_group_summary_figure(results_dir, contrast_name, output_dir):
                     display_mode='lyrz',
                     colorbar=True
                 )
-            except:
+            except Exception:
                 axes[i].text(0.5, 0.5, 'Error loading map', ha='center', va='center')
                 axes[i].set_title(comparison)
         else:

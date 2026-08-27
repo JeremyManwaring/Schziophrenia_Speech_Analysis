@@ -7,7 +7,6 @@ This script performs:
 """
 
 import pandas as pd
-import numpy as np
 from pathlib import Path
 from scipy import stats
 import warnings

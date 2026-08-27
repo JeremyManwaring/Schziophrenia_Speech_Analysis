@@ -5,7 +5,7 @@
   "interpretation": {
     "LI > 0": "Left hemisphere dominant",
     "LI < 0": "Right hemisphere dominant",
-    "LI \u2248 0": "Bilateral/symmetric"
+    "LI ~ 0": "Bilateral / symmetric"
   },
   "roi_pairs_analyzed": [
     "STG_posterior",

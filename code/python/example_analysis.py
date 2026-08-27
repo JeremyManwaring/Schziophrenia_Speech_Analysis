@@ -4,7 +4,6 @@ Example analysis script for ds004302 dataset.
 This script demonstrates basic BIDS dataset exploration and data loading.
 """
 
-import os
 from pathlib import Path
 import pandas as pd
 import nibabel as nib

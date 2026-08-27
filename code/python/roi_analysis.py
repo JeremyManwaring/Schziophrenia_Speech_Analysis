@@ -11,10 +11,8 @@ This script:
 import numpy as np
 import pandas as pd
 from pathlib import Path
-import nibabel as nib
-from nilearn import datasets
-from nilearn.image import load_img, resample_to_img
-from nilearn.maskers import NiftiLabelsMasker, NiftiSpheresMasker
+from nilearn.image import load_img
+from nilearn.maskers import NiftiSpheresMasker
 from scipy import stats
 from statsmodels.stats.multitest import multipletests
 import json
@@ -463,7 +461,7 @@ def create_roi_barplot(descriptive_df, output_dir, contrast_name, rois_to_plot=N
                 sems.append(0)
         
         x = np.arange(len(groups))
-        bars = ax.bar(x, means, yerr=sems, color=colors, capsize=5, edgecolor='black')
+        ax.bar(x, means, yerr=sems, color=colors, capsize=5, edgecolor='black')
         
         ax.set_xticks(x)
         ax.set_xticklabels(groups)
@@ -559,11 +557,11 @@ def run_full_roi_analysis(first_level_dir, participants_path, output_dir):
             sig_rois = anova_df[anova_df['p_fdr'] < 0.05]
             
             if len(sig_rois) > 0:
-                print(f"\n  Significant ROIs (FDR p < 0.05):")
+                print("\n  Significant ROIs (FDR p < 0.05):")
                 for _, row in sig_rois.iterrows():
                     print(f"    - {row['roi']}: F={row['F_stat']:.2f}, p_fdr={row['p_fdr']:.4f}, eta²={row['eta_squared']:.3f}")
             else:
-                print(f"\n  No significant ROIs after FDR correction")
+                print("\n  No significant ROIs after FDR correction")
             
         except Exception as e:
             print(f"  ERROR: {e}")

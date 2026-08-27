@@ -1,6 +1,10 @@
 Motion-based exclusion recommendations
 ==================================================
 
+Criteria:
+  - Mean FD > 0.5 mm
+  - >20% of volumes with FD > 0.5 mm
+
 Flagged subjects (4):
   sub-02: pct_high_motion=28.5%
   sub-22: pct_high_motion=20.6%

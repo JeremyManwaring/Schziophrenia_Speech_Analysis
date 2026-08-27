@@ -4,7 +4,7 @@ Functional Connectivity Analysis: AVH- vs AVH+ (data only).
 Computes ROI-to-ROI connectivity matrices (Fisher-z transformed Pearson r),
 performs independent t-tests with FDR correction, and writes:
   - results/data/connectivity.json              (analysis summary + ROI metadata)
-  - results/data/connectivity_significant.csv   (p < 0.05 connections)
+  - results/data/connectivity_uncorrected_edges.csv (nominal p < 0.05 edges)
   - results/data/connectivity/connectivity_AVH-.npy
   - results/data/connectivity/connectivity_AVH+.npy
   - results/data/connectivity/connectivity_difference.npy
@@ -77,7 +77,7 @@ def _extract_timeseries(bold_path: str, confound_path: str):
     )
     try:
         return masker.fit_transform(bold_path, confounds=confounds)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - continue past a failed subject
         print(f"    Error extracting timeseries: {exc}")
         return None
 
@@ -154,11 +154,11 @@ def main() -> None:
 
     diff = avh_minus_mean - avh_plus_mean
 
-    sig: list[dict] = []
+    nominal_edges: list[dict] = []
     for i in range(n_rois):
         for j in range(i + 1, n_rois):
             if p_values[i, j] < 0.05:
-                sig.append({
+                nominal_edges.append({
                     "roi1": roi_names[i],
                     "roi2": roi_names[j],
                     "diff": float(diff[i, j]),
@@ -172,11 +172,14 @@ def main() -> None:
     np.save(OUTPUT_DIR / "connectivity_difference.npy", diff)
     np.save(OUTPUT_DIR / "connectivity_pvalues.npy", p_values)
 
-    if sig:
-        sig_df = pd.DataFrame(sig).sort_values("p_value")
+    if nominal_edges:
+        edge_df = pd.DataFrame(nominal_edges).sort_values("p_value")
     else:
-        sig_df = pd.DataFrame(columns=["roi1", "roi2", "diff", "t_stat", "p_value", "p_fdr"])
-    sig_df.to_csv(DATA_DIR / "connectivity_significant.csv", index=False)
+        edge_df = pd.DataFrame(
+            columns=["roi1", "roi2", "diff", "t_stat", "p_value", "p_fdr"]
+        )
+    edge_path = DATA_DIR / "connectivity_uncorrected_edges.csv"
+    edge_df.to_csv(edge_path, index=False)
 
     summary = {
         "analysis": "ROI-to-ROI Functional Connectivity",
@@ -185,7 +188,8 @@ def main() -> None:
         "n_rois": n_rois,
         "n_avh_minus": len(avh_minus_subs),
         "n_avh_plus": len(avh_plus_subs),
-        "n_significant_connections": len(sig),
+        "n_uncorrected_edges": len(nominal_edges),
+        "n_fdr_significant_edges": int(np.sum(p_fdr_flat < 0.05)),
         "roi_names": roi_names,
         "roi_coordinates": {k: list(v) for k, v in ROIS.items()},
     }
@@ -193,7 +197,7 @@ def main() -> None:
         json.dump(summary, f, indent=2)
 
     print(f"  -> {DATA_DIR / 'connectivity.json'}")
-    print(f"  -> {DATA_DIR / 'connectivity_significant.csv'} ({len(sig)} sig)")
+    print(f"  -> {edge_path} ({len(nominal_edges)} nominal p < 0.05 edges)")
 
 
 if __name__ == "__main__":

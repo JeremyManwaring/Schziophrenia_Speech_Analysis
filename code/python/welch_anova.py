@@ -244,8 +244,8 @@ def print_anova_results(variable, F_stat, p_value, df_between, df_within, error_
         print(f"{'='*70}")
         return
     
-    print(f"\nH0: All group means are equal")
-    print(f"H1: At least one group mean differs")
+    print("\nH0: All group means are equal")
+    print("H1: At least one group mean differs")
     print(f"\nF-statistic: {F_stat:.4f}")
     print(f"Degrees of freedom (between): {df_between:.2f}")
     print(f"Degrees of freedom (within): {df_within:.2f}")

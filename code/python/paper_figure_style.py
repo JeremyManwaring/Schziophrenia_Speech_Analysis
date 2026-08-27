@@ -1,10 +1,4 @@
-"""Editorial visual system for the source-faithful neuroscience figure package.
-
-The style is inspired by the restraint and hierarchy of high-impact scientific
-publishing without copying any journal's proprietary templates.  It uses an
-exact 7.2-inch page width, Helvetica Neue typography, hairline rules, muted
-scientific color, and deterministic participant jitter.
-"""
+"""Shared visual system for the source-faithful manuscript figures."""
 
 from __future__ import annotations
 
@@ -15,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, to_rgb
 from matplotlib.transforms import Bbox, ScaledTranslation
-
 
 FIGURE_WIDTH = 7.2
 PAPER_DPI = 600
@@ -57,7 +50,7 @@ def lighten(color: str, amount: float = 0.72) -> tuple[float, float, float]:
     return tuple(rgb + (1.0 - rgb) * amount)
 
 
-def apply_nature_style() -> None:
+def apply_figure_style() -> None:
     """Apply compact, vector-safe defaults for manuscript figures."""
     plt.rcParams.update(
         {
@@ -272,7 +265,7 @@ def stable_jitter(ids, group: str, width: float = 0.12) -> np.ndarray:
     """Return deterministic horizontal jitter without changing observed values."""
     offsets = []
     for index, value in enumerate(ids):
-        token = f"{group}|{value if value is not None else index}".encode("utf-8")
+        token = f"{group}|{value if value is not None else index}".encode()
         digest = hashlib.sha1(token).digest()
         unit = int.from_bytes(digest[:8], "big") / float(2**64 - 1)
         offsets.append((unit * 2.0 - 1.0) * width)
@@ -327,12 +320,18 @@ def save_figure(fig, output_stem: Path) -> None:
             bbox_inches=exact_canvas,
             pad_inches=0.0,
         )
+        svg_path = output_stem.with_suffix(".svg")
         fig.savefig(
-            output_stem.with_suffix(".svg"),
+            svg_path,
             bbox_inches=exact_canvas,
             pad_inches=0.0,
         )
+    svg_text = svg_path.read_text(encoding="utf-8")
+    svg_path.write_text(
+        "\n".join(line.rstrip() for line in svg_text.splitlines()) + "\n",
+        encoding="utf-8",
+    )
     plt.close(fig)
 
 
-apply_nature_style()
+apply_figure_style()

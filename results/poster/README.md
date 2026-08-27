@@ -11,7 +11,7 @@ from the consolidated stats in `results/data/`. Re-run with:
 - **02_roi_effects/** — Raincloud + grouped-bar + forest plots of ROI activation by group, plus the targeted post hoc ANCOVA forest.
 - **03_correlations/** — ROI activation vs PSYRATS scatter plots in the AVH+ group.
 - **04_classification/** — MVPA SVM accuracy / AUC + permutation summary; shuffled five-fold KFold CV with random_state=42.
-- **05_connectivity/** — Functional connectivity matrix and significant ROI-ROI group differences.
+- **05_connectivity/** — Functional connectivity matrix and nominal ROI-ROI group differences.
 - **06_laterality/** — Hemispheric laterality heatmap, bar plots, and effect-size summary.
 - **07_demographics_qc/** — Age, IQ, sex distribution, and motion QC.
 - **summary/** — Single hero figure with the headline finding.
