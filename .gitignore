@@ -44,6 +44,7 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+.Rhistory
 
 # MATLAB
 *.asv
@@ -77,4 +78,3 @@ results/data/first_level/
 nilearn_cache/
 work/
 *.nii.gz
-
