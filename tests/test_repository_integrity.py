@@ -7,6 +7,7 @@ import struct
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+import nibabel as nib
 import numpy as np
 import pandas as pd
 
@@ -179,6 +180,24 @@ def test_exploratory_outputs_report_multiplicity_corrections() -> None:
     assert len(laterality_stats) == 20
     assert set(laterality_stats["comparison"]) == {"AVH-_vs_AVH+"}
     assert (laterality_stats["p_fdr"] >= 0.05).all()
+
+
+def test_historical_mvpa_weight_maps_are_complete() -> None:
+    weight_dir = DATA_DIR / "svm_weights"
+    expected = {
+        "sentences_vs_reversed_svm_weights.nii.gz",
+        "speech_vs_reversed_svm_weights.nii.gz",
+        "words_vs_reversed_svm_weights.nii.gz",
+        "words_vs_sentences_svm_weights.nii.gz",
+    }
+    actual = {path.name for path in weight_dir.glob("*_svm_weights.nii.gz")}
+    assert actual == expected
+
+    for name in expected:
+        image = nib.load(weight_dir / name)
+        values = image.get_fdata()
+        assert image.shape == (62, 77, 40)
+        assert np.isfinite(values).all()
 
 
 def test_quality_control_has_one_canonical_record() -> None:
