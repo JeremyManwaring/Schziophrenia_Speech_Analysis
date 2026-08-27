@@ -82,3 +82,4 @@ nilearn_cache/
 work/
 tmp/
 *.nii.gz
+!results/data/svm_weights/*.nii.gz
