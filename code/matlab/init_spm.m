@@ -3,7 +3,7 @@
 %
 % Usage:
 %   Run this script first before any SPM analysis
-%   You may need to modify the SPM_PATH variable below
+%   Set SPM_PATH below if automatic detection fails
 
 %% Configuration
 % Auto-detect SPM installation, or set manually below
@@ -53,9 +53,9 @@ if isempty(SPM_PATH)
     end
 end
 
-% If still not found, prompt user or use default
+% Fall back to the default installation path
 if isempty(SPM_PATH)
-    % Set default path (user should modify if needed)
+    % Default SPM installation path
     SPM_PATH = '~/Documents/MATLAB/spm12';
     fprintf('Using default SPM path: %s\n', SPM_PATH);
     fprintf('If SPM is not found, please modify SPM_PATH in init_spm.m\n');

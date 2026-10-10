@@ -16,7 +16,7 @@ complete-case samples.
 
 The 142 raw T1w and task-BOLD paths in this Git checkout are git-annex links.
 The binary objects are not stored on GitHub and were not present in the local
-annex during the August 2026 release audit. Retrieve the official ds004302
+annex when checked in August 2026. Retrieve the official ds004302
 snapshot from OpenNeuro before raw-data preprocessing. The repository README
 provides a current command-line download example.
 
@@ -31,9 +31,9 @@ not raw-BIDS names.
 
 `derivatives/fmriprep/`, `work/`, and `results/data/first_level/` are ignored
 because they are large computational inputs or rebuild products. They are not
-part of the public Git release.
+part of the public Git repository.
 
-The local first-level audit requires seven effect maps and seven z maps for
+First-level analysis produces seven effect maps and seven z maps for
 each of the 71 participants (994 maps total). One absent file,
 `sub-59_words_vs_baseline_zstat.nii.gz`, was regenerated from the existing
 fMRIPrep input. All 13 comparable sub-59 maps were numerically identical to a

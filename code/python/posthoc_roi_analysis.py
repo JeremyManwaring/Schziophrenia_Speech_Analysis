@@ -1,5 +1,5 @@
 """
-Post hoc targeted ROI ANCOVA for the AVH replication rework.
+Post hoc targeted ROI ANCOVA for the AVH group comparison.
 
 Reads pre-computed ROI activation values from results/data/roi_values/ and
 adds the analyses needed to defend the inference against the original

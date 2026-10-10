@@ -16,7 +16,7 @@
 DATASET_ROOT = evalin('base', 'DATASET_ROOT');
 
 % Preprocessing parameters
-% These should match your acquisition parameters (see task-speech_bold.json)
+% Acquisition parameters are recorded in task-speech_bold.json
 TR = 2.0;  % Repetition time in seconds
 VoxelSize = [2 2 2];  % Voxel size for normalization (mm)
 FWHM = [8 8 8];  % Smoothing kernel FWHM (mm)
@@ -64,8 +64,8 @@ for s = 1:length(subjects)
     func_path = fullfile(func_dir, func_files(1).name);
     anat_path = fullfile(anat_dir, anat_files(1).name);
     
-    % Note: You may need to unzip .gz files first or use gunzip() function
-    % For now, we assume files are unzipped or SPM12 handles them
+    % Functional realignment requires uncompressed .nii files in func_dir.
+    % Decompress .nii.gz inputs before running this batch.
     
     %% 1. REALIGNMENT
     fprintf('Step 1: Realignment...\n');

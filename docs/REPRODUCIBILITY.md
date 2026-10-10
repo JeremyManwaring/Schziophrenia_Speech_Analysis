@@ -52,7 +52,7 @@ all planned first-level maps and aborts before replacing its summary if a run
 fails. The MVPA outputs are historical and should not be promoted to
 confirmatory evidence without redesigning the validation and permutation plan.
 
-## Release validation
+## Validation
 
 ```bash
 python -m pytest -q

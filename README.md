@@ -5,10 +5,9 @@ perception fMRI dataset: 71 participants divided among healthy controls (HC),
 patients without auditory verbal hallucinations (AVH-), and patients with
 auditory verbal hallucinations (AVH+).
 
-The original BIDS dataset is Soler-Vidal et al. (2022). The analysis code,
-validated result tables, inferential maps, and manuscript figures are kept
-separate so researchers can distinguish source data, derived statistics, and
-presentation artifacts.
+The original BIDS dataset is Soler-Vidal et al. (2022). Analysis code is in
+`code/`, statistical outputs are in `results/data/`, and manuscript figures
+are in `results/paper_figures/`.
 
 ## Dataset notes
 
@@ -29,7 +28,7 @@ served as an implicit baseline.
 - [Data provenance](docs/DATA_PROVENANCE.md): cohort coverage, git-annex data,
   and local-only derivatives.
 - [Manuscript figures](results/paper_figures/README.md): the canonical seven-
-  figure package and its rendering contract.
+  figure set, formats, and dimensions.
 
 ## Repository map
 
@@ -48,7 +47,7 @@ Generated environments, fMRIPrep derivatives, work directories, first-level
 maps, and other large local intermediates are intentionally excluded from Git.
 They are inputs or rebuild products, not source files.
 
-## Setup and release checks
+## Setup and validation
 
 ```bash
 python3 -m venv .venv
@@ -60,8 +59,7 @@ bids-validator-deno . --ignoreNiftiHeaders --prune
 python code/python/paper_visualizations.py
 ```
 
-The figure generator reads stored records under `results/data/`; it does not
-rerun models or synthesize observations.
+The figure generator plots the stored results under `results/data/`.
 
 ## Raw data access
 
@@ -108,7 +106,7 @@ depends on them.
 
 ## Statistical methods and interpretation
 
-- ROI omnibus tests use Welch's one-way ANOVA and genuine Games-Howell
+- ROI omnibus tests use Welch's one-way ANOVA and Games-Howell
   pairwise comparisons. Benjamini-Hochberg FDR is applied within each contrast
   across 12 ROI omnibus tests.
 - AVH+ partial correlations control age and IQ and use `df = n - k - 2`.

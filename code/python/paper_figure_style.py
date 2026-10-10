@@ -1,4 +1,4 @@
-"""Shared visual system for the source-faithful manuscript figures."""
+"""Shared plotting styles for manuscript figures."""
 
 from __future__ import annotations
 
@@ -124,7 +124,7 @@ def style_axis(ax, *, grid_axis: str | None = "y", zero_line: bool = False) -> N
 
 
 def clean_axis(ax, *, keep: tuple[str, ...] = ("left", "bottom")) -> None:
-    """Remove unused axis edges while preserving deliberate anchors."""
+    """Hide unused axis edges."""
     for name, spine in ax.spines.items():
         spine.set_visible(name in keep)
         if name in keep:
@@ -198,7 +198,7 @@ def figure_title(
     x: float = 0.055,
     y: float = 0.965,
 ) -> None:
-    """Add a concise editorial figure heading."""
+    """Add a figure heading."""
     fig.text(
         x,
         y,

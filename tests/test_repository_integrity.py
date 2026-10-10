@@ -1,4 +1,4 @@
-"""Release checks for dataset grain, stored results, and figure artifacts."""
+"""Integrity checks for participants, stored results, and figures."""
 
 from __future__ import annotations
 

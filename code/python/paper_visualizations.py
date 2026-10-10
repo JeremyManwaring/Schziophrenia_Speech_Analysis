@@ -1,8 +1,4 @@
-"""Build the canonical manuscript figure set from stored analysis records.
-
-This script only renders figures. It does not rerun statistical models or
-alter values under ``results/data``.
-"""
+"""Render manuscript figures from the stored results in ``results/data``."""
 
 from __future__ import annotations
 
@@ -60,7 +56,7 @@ apply_figure_style()
 
 
 # ---------------------------------------------------------------------------
-# Paths and immutable display orders
+# Paths and display orders
 # ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).parent.parent.parent
 DATA_DIR = BASE_DIR / "results" / "data"
@@ -281,7 +277,7 @@ def draw_group_distribution(
 
 
 def compact_table(ax, rows: list[list[str]], hemisphere: str, color: str) -> None:
-    """Render a light editorial coordinate table for one hemisphere."""
+    """Render the ROI coordinate table for one hemisphere."""
     ax.axis("off")
     ax.text(
         0.0,

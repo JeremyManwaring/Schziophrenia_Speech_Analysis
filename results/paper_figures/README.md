@@ -1,15 +1,13 @@
 # Manuscript Figure Package
 
-This is the single canonical manuscript figure set. Regenerate it from the
-stored records under `results/data/` with:
+Generate the seven manuscript figures from `results/data/` with:
 
 ```bash
 python code/python/paper_visualizations.py
 ```
 
 Each of the seven figures is exported at 7.2-inch width as a 600 dpi PNG, an
-editable SVG, and a PDF. The generator uses deterministic participant jitter
-and does not rerun or modify any statistical model.
+editable SVG, and a PDF. Participant jitter is deterministic.
 
 ## Main figures
 
@@ -29,17 +27,15 @@ and does not rerun or modify any statistical model.
 - `Supplement_Figure_4_exploratory_network`: uncorrected connectivity and
   laterality effects with their limitations visible.
 
-## Fidelity rules
+## Plot conventions
 
-- No observations, group labels, ROI definitions, sample sizes, or statistics
-  are synthesized.
+- Panels display the observations and statistics in `results/data/`.
 - Negative AVH- minus AVH+ effects indicate higher activation in AVH+;
   positive effects indicate higher activation in AVH-.
 - Color is paired with marker shape or direct labels where group identity is
   important.
-- Raw participant points remain visible in distribution panels.
-- Corrected, post hoc, historical, and exploratory results remain explicitly
-  distinguished.
+- Distribution panels show individual participant values.
+- Labels identify corrected, post hoc, historical, and exploratory results.
 
 Sources: `code/python/paper_visualizations.py` and
 `code/python/paper_figure_style.py`.

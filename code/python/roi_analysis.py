@@ -212,7 +212,7 @@ def run_welch_anova(data, groups):
     # Filter out NaN values
     group_data = [g[~np.isnan(g)] for g in group_data]
 
-    # Check if we have enough data
+    # Check the minimum sample size
     if any(len(g) < 2 for g in group_data):
         return np.nan, np.nan, np.nan, np.nan
 
